@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Allow indexing of main pages
+Allow: /tools/lorcana-mulligan/
+
+# Disallow sensitive directories
+Disallow: /config/
+Disallow: /docs/
+Disallow: /tools/lorcana-mulligan/utils/
+Disallow: /tools/lorcana-mulligan/data/cards.json
+Disallow: /tools/lorcana-mulligan/data/meta-decks.json
+
+# Allow card images for image search
+Allow: /tools/lorcana-mulligan/assets/images/cards/
+
+# Sitemap location
+Sitemap: https://your-domain.com/sitemap.xml

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic meta information -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawstep - Gaming Tools Hub</title>
+    
+    <!-- Font preloads for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body>
+    <!-- ============================== -->
+    <!-- NAVIGATION & MENUS -->
+    <!-- ============================== -->
+    
+    <!-- Hamburger Menu Button & Navigation Overlay -->
+    <div class="hamburger-menu">
+        <!-- Hamburger button with three spans for the lines -->
+        <button class="hamburger-btn" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <!-- Full screen overlay containing navigation menu -->
+        <div class="menu-overlay" id="menuOverlay">
+            <div class="menu-content">
+                <!-- Close button for menu -->
+                <button class="menu-close" id="menuClose">×</button>
+                
+                <!-- Navigation sections -->
+                <nav class="menu-nav">
+                    <!-- Main tools navigation -->
+                    <div class="menu-section-title">Navigation</div>
+                    <a href="tools/lorcana-mulligan/" class="menu-item">
+                        🃏 Lorcana Mulligan Trainer
+                    </a>
+                    <a href="#" class="menu-item disabled">
+                        📊 Tournament Tracker 
+                        <span class="coming-soon-badge">Coming Soon</span>
+                    </a>
+                    
+                    <div class="menu-separator"></div>
+                    
+                    <!-- Future projects section -->
+                    <div class="menu-section-title">Other Projects</div>
+                    <a href="#" class="menu-item disabled">
+                        📈 Meta Tracker 
+                        <span class="coming-soon-badge">Coming Soon</span>
+                    </a>
+                    
+                    <div class="menu-separator"></div>
+                    
+                    <!-- Community & support section -->
+                    <div class="menu-section-title">Community</div>
+                    <a href="#" class="menu-item" id="menuSupportBtn">
+                        💝 Support the Project
+                    </a>
+                    <a href="contact.html" class="menu-item">
+                        🐛 Report Bug
+                    </a>
+                    <a href="contact.html" class="menu-item">
+                        💬 Send Feedback
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!-- SUPPORT OVERLAY -->
+    <!-- ============================== -->
+    
+    <!-- Support modal overlay -->
+    <div class="support-overlay" id="supportOverlay">
+        <div class="support-content">
+            <!-- Close button for support modal -->
+            <button class="support-close" id="supportClose">×</button>
+            
+            <!-- Support header with title and description -->
+            <div class="support-header">
+                <span class="support-emoji">💖</span>
+                <h3>Support the Project</h3>
+                <p>Help keep this project alive and growing!</p>
+            </div>
+            
+            <!-- Support options with different platforms -->
+            <div class="support-options">
+                <!-- Ko-fi support option -->
+                <a href="https://ko-fi.com/" target="_blank" class="support-option kofi">
+                    <span class="support-option-icon">☕</span>
+                    <div class="support-option-text">
+                        <strong>Ko-fi</strong>
+                        <small>Buy me a coffee</small>
+                    </div>
+                </a>
+                
+                <!-- Patreon support option -->
+                <a href="https://patreon.com/" target="_blank" class="support-option patreon">
+                    <span class="support-option-icon">🎯</span>
+                    <div class="support-option-text">
+                        <strong>Patreon</strong>
+                        <small>Monthly support</small>
+                    </div>
+                </a>
+                
+                <!-- PayPal support option -->
+                <a href="https://paypal.com/" target="_blank" class="support-option paypal">
+                    <span class="support-option-icon">💳</span>
+                    <div class="support-option-text">
+                        <strong>PayPal</strong>
+                        <small>One-time donation</small>
+                    </div>
+                </a>
+                
+                <div class="support-separator"></div>
+                
+                <!-- Alternative support method (starring) -->
+                <div class="support-other">
+                    <span class="support-option-icon">⭐</span>
+                    <div class="support-option-text">
+                        <strong>Star this project</strong>
+                        <small>Show your appreciation</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================== -->
+    
+    <!-- Main container for page content -->
+    <div class="container">
+        
+        <!-- Header section with logo -->
+        <header>
+            <img src="assets/images/logos/drawstep_logo.png" 
+                 alt="Drawstep Logo" 
+                 style="max-width: 400px; height: auto;">
+        </header>
+
+        <!-- Main content area -->
+        <main>
+            <!-- Grid containing tool cards -->
+            <div class="tools-grid">
+                
+                <!-- Lorcana Trainer Tool Card -->
+                <div class="tool-card">
+                    <div class="tool-icon">🃏</div>
+                    <h2 class="tool-title">LORCANA TRAINER</h2>
+                    <p class="tool-description">
+                        Perfect your mulligan decisions for Lorcana TCG. 
+                        Train with different deck setups and analyze your strategies.
+                    </p>
+                    <a href="tools/lorcana-mulligan/" class="tool-link">Start Training</a>
+                </div>
+
+                <!-- Tournament Tracker Tool Card (Coming Soon) -->
+                <div class="tool-card">
+                    <div class="tool-icon">📊</div>
+                    <h2 class="tool-title">TOURNAMENT TRACKER</h2>
+                    <p class="tool-description">
+                        Manage your TCG tournaments, track results and 
+                        calculate your top cut chances with our mobile app.
+                    </p>
+                    <span class="tool-link coming-soon">Coming Soon</span>
+                </div>
+                
+            </div>
+        </main>
+
+        <!-- Footer section -->
+        <footer>
+            <p class="footer-text">© 2025 Drawstep - TCG Strategy Hub</p>
+        </footer>
+        
+    </div>
+
+    <!-- ============================== -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================== -->
+    
+    <!-- Main functionality script -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

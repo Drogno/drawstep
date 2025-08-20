@@ -1,0 +1,46 @@
+# ============================================
+# DRAWSTEP - Git Ignore Rules
+# ============================================
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local development files
+test-*.html
+
+# Large card image directory (will be added separately)
+# Uncomment if card images are too large for git
+# tools/lorcana-mulligan/assets/images/cards/*.webp
+
+# Local server files
+*.php.bak
+config/local.json

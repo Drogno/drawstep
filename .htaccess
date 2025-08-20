@@ -1,0 +1,90 @@
+# ============================================
+# DRAWSTEP - Apache Configuration
+# ============================================
+
+# Enable URL Rewriting
+RewriteEngine On
+
+# Remove .html extensions for clean URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+# Redirect old URLs to new structure
+RewriteRule ^drawstep\.html$ / [R=301,L]
+RewriteRule ^Mulli/mulli\.html$ /tools/lorcana-mulligan/ [R=301,L]
+RewriteRule ^mulli\.html$ /tools/lorcana-mulligan/ [R=301,L]
+
+# ============================================
+# CACHING & PERFORMANCE
+# ============================================
+
+# Enable compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Set cache headers for assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Images
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    
+    # CSS and JavaScript
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType text/javascript "access plus 1 week"
+    
+    # Fonts
+    ExpiresByType font/woff2 "access plus 1 month"
+    ExpiresByType font/woff "access plus 1 month"
+    ExpiresByType font/ttf "access plus 1 month"
+    
+    # HTML
+    ExpiresByType text/html "access plus 1 day"
+</IfModule>
+
+# ============================================
+# SECURITY
+# ============================================
+
+# Hide sensitive files
+<Files ~ "^\.">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect config and data files
+<FilesMatch "\.(json|log|md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow specific JSON files that need to be accessible
+<Files "allCards.json">
+    Order deny,allow
+    Allow from all
+</Files>
+
+<Files "metadecks.json">
+    Order deny,allow
+    Allow from all
+</Files>
+
+<Files "cardImageMap.js">
+    Order deny,allow
+    Allow from all
+</Files>
+
+# ============================================
+# ERROR PAGES
+# ============================================
+
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html
