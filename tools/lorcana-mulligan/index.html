@@ -248,6 +248,18 @@
 
 <div id="hand" style="margin: 18px 0 18px 0;"></div>
 
+<!-- Manakurve der aktuellen Hand -->
+<div id="manaCurveArea" style="margin: 12px 0; display: none;">
+    <div style="background: linear-gradient(145deg, #252629, #1f2022); padding: 15px 20px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.2); max-width: 600px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <h4 style="color: #FFD34E; margin: 0; font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 0.5px;">MANA-KURVE</h4>
+            <span id="manaCurveStats" style="color: #D0D0D0; font-size: 0.9rem;"></span>
+        </div>
+        <div id="manaCurveChart" style="display: flex; align-items: flex-end; gap: 8px; height: 60px; margin-top: 10px;">
+        </div>
+    </div>
+</div>
+
 <div id="gameControlsArea" style="margin: 20px 0; display: none;">
   <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
     <button id="drawHandBtn" disabled>Draw Hand (7 Cards)</button>
@@ -976,6 +988,150 @@ function showHand(hand, selectable = true) {
     }
     handDiv.appendChild(img);
   });
+  
+  // Update mana curve display
+  updateManaCurve(hand);
+}
+
+// ============================================
+// MANA CURVE FUNCTIONALITY
+// ============================================
+
+/**
+ * Updates the mana curve visualization for the current hand
+ * @param {Array} hand - Array of card objects in current hand
+ */
+function updateManaCurve(hand) {
+  const manaCurveArea = document.getElementById('manaCurveArea');
+  const manaCurveChart = document.getElementById('manaCurveChart');
+  const manaCurveStats = document.getElementById('manaCurveStats');
+  
+  if (!hand || hand.length === 0) {
+    manaCurveArea.style.display = 'none';
+    return;
+  }
+  
+  // Show the mana curve area
+  manaCurveArea.style.display = '';
+  
+  // Extract mana costs from cards
+  const manaCosts = hand.map(card => getCardManaCost(card)).filter(cost => cost !== null);
+  
+  if (manaCosts.length === 0) {
+    manaCurveArea.style.display = 'none';
+    return;
+  }
+  
+  // Calculate mana curve distribution (0-7+)
+  const curve = new Array(8).fill(0); // [0, 1, 2, 3, 4, 5, 6, 7+]
+  manaCosts.forEach(cost => {
+    if (cost >= 7) {
+      curve[7]++; // 7+ bucket
+    } else {
+      curve[cost]++;
+    }
+  });
+  
+  // Calculate statistics
+  const totalCards = manaCosts.length;
+  const avgCost = totalCards > 0 ? (manaCosts.reduce((sum, cost) => sum + cost, 0) / totalCards).toFixed(1) : 0;
+  
+  // Update stats display
+  manaCurveStats.textContent = `${totalCards} Karten • Ø ${avgCost} Mana`;
+  
+  // Create bar chart visualization
+  manaCurveChart.innerHTML = '';
+  const maxCount = Math.max(...curve);
+  
+  curve.forEach((count, manaValue) => {
+    const bar = document.createElement('div');
+    bar.style.cssText = `
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 32px;
+    `;
+    
+    // Mana cost label
+    const label = document.createElement('div');
+    label.textContent = manaValue === 7 ? '7+' : manaValue.toString();
+    label.style.cssText = `
+      color: #D0D0D0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      min-height: 12px;
+    `;
+    
+    // Bar visualization
+    const barHeight = maxCount > 0 ? Math.max(4, (count / maxCount) * 40) : 4;
+    const barElement = document.createElement('div');
+    barElement.style.cssText = `
+      width: 24px;
+      height: ${barHeight}px;
+      background: ${count > 0 ? 'linear-gradient(180deg, #3FD0C9, #9B5DE5)' : 'rgba(63, 208, 201, 0.2)'};
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(63, 208, 201, 0.3);
+    `;
+    
+    // Count number on top of bar
+    const countLabel = document.createElement('div');
+    countLabel.textContent = count > 0 ? count.toString() : '';
+    countLabel.style.cssText = `
+      color: #FFD34E;
+      font-size: 0.8rem;
+      font-weight: bold;
+      text-align: center;
+      min-height: 12px;
+      line-height: 12px;
+    `;
+    
+    // Add hover effect
+    if (count > 0) {
+      barElement.addEventListener('mouseenter', () => {
+        barElement.style.transform = 'scale(1.1)';
+        barElement.style.boxShadow = '0 4px 8px rgba(63, 208, 201, 0.4)';
+      });
+      barElement.addEventListener('mouseleave', () => {
+        barElement.style.transform = 'scale(1)';
+        barElement.style.boxShadow = 'none';
+      });
+    }
+    
+    bar.appendChild(countLabel);
+    bar.appendChild(barElement);
+    bar.appendChild(label);
+    manaCurveChart.appendChild(bar);
+  });
+}
+
+/**
+ * Extracts mana cost from card data
+ * @param {Object} card - Card object
+ * @returns {number|null} - Mana cost or null if not found
+ */
+function getCardManaCost(card) {
+  // First try to get cost from the card data loaded via API
+  if (allCardsData && allCardsData.cards) {
+    const cardData = allCardsData.cards.find(c => 
+      c.fullName === card.Name || 
+      c.name === card.Name ||
+      (c.fullName && c.fullName.toLowerCase() === card.Name.toLowerCase())
+    );
+    if (cardData && typeof cardData.cost === 'number') {
+      return cardData.cost;
+    }
+  }
+  
+  // Fallback: Try to extract from card name patterns (some meta decks might have costs)
+  if (card.cost !== undefined && typeof card.cost === 'number') {
+    return card.cost;
+  }
+  
+  // Default fallback for unknown cards
+  return null;
 }
 
 function updateMulliganHistory() {
