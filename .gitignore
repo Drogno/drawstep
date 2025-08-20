@@ -44,3 +44,9 @@ test-*.html
 # Local server files
 *.php.bak
 config/local.json
+
+# Backend files
+node_modules/
+.env
+database/*.db
+*.log
