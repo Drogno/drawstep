@@ -215,6 +215,18 @@
         </div>
       </div>
     </div>
+    <div class="stat-box" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+      <div style="display: flex; gap: 24px; align-items: center;">
+        <div style="text-align: center;">
+          <div class="stat-number" style="color: #22C55E; font-size: 1.6rem;" id="avgInkCostBefore">0.00</div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>before Mulligan</span></div>
+        </div>
+        <div style="text-align: center;">
+          <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgInkCostAfter">0.00</div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>after Mulligan</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -486,7 +498,11 @@ clearHistoryBtn.addEventListener('click', () => {
       trainingStats = {
         totalHands: 0,
         totalCardsExchanged: 0,
-        totalMulligans: 0
+        totalMulligans: 0,
+        totalUninkBefore: 0,
+        totalUninkAfter: 0,
+        totalInkCostBefore: 0,
+        totalInkCostAfter: 0
       };
       updateStatistics();
       updateMulliganHistory();
@@ -620,7 +636,9 @@ let trainingStats = {
   totalCardsExchanged: 0,
   totalMulligans: 0,
   totalUninkBefore: 0,
-  totalUninkAfter: 0
+  totalUninkAfter: 0,
+  totalInkCostBefore: 0,
+  totalInkCostAfter: 0
 };
 
 function updateStatistics() {
@@ -628,8 +646,10 @@ function updateStatistics() {
   const avgCardsElement = document.getElementById('avgCardsExchanged');
   const avgUninkBeforeElement = document.getElementById('avgUninkBefore');
   const avgUninkAfterElement = document.getElementById('avgUninkAfter');
+  const avgInkCostBeforeElement = document.getElementById('avgInkCostBefore');
+  const avgInkCostAfterElement = document.getElementById('avgInkCostAfter');
 
-  if (totalHandsElement && avgCardsElement && avgUninkBeforeElement && avgUninkAfterElement) {
+  if (totalHandsElement && avgCardsElement && avgUninkBeforeElement && avgUninkAfterElement && avgInkCostBeforeElement && avgInkCostAfterElement) {
     totalHandsElement.textContent = trainingStats.totalHands;
     const avgCards = trainingStats.totalHands > 0 ? 
       (trainingStats.totalCardsExchanged / trainingStats.totalHands).toFixed(1) : '0.0';
@@ -640,6 +660,12 @@ function updateStatistics() {
     const avgUninkAfter = trainingStats.totalHands > 0 ? (trainingStats.totalUninkAfter / trainingStats.totalHands).toFixed(2) : '0.00';
     avgUninkBeforeElement.textContent = avgUninkBefore;
     avgUninkAfterElement.textContent = avgUninkAfter;
+
+    // Calculate average ink cost before and after mulligan
+    const avgInkCostBefore = trainingStats.totalHands > 0 ? (trainingStats.totalInkCostBefore / trainingStats.totalHands).toFixed(2) : '0.00';
+    const avgInkCostAfter = trainingStats.totalHands > 0 ? (trainingStats.totalInkCostAfter / trainingStats.totalHands).toFixed(2) : '0.00';
+    avgInkCostBeforeElement.textContent = avgInkCostBefore;
+    avgInkCostAfterElement.textContent = avgInkCostAfter;
   }
   
   // Statistik-Bereich anzeigen, wenn mindestens eine Hand geübt wurde
@@ -1149,6 +1175,17 @@ function getCardManaCost(card) {
   return null;
 }
 
+/**
+ * Calculates the average ink cost of a hand
+ * @param {Array} hand - Array of card objects
+ * @returns {number} - Average ink cost of the hand
+ */
+function calculateAverageInkCost(hand) {
+  const inkCosts = hand.map(card => getCardManaCost(card)).filter(cost => cost !== null);
+  if (inkCosts.length === 0) return 0;
+  return inkCosts.reduce((sum, cost) => sum + cost, 0) / inkCosts.length;
+}
+
 function updateMulliganHistory() {
   mulliganHistoryDiv.innerHTML = '';
   mulliganHistory.forEach((entry, idx) => {
@@ -1428,8 +1465,14 @@ mulliganBtn.addEventListener('click', () => {
   // ...nach dem Mulligan
   const uninkAfter = countUnink(newHand);
 
+  // Calculate ink costs before and after mulligan
+  const inkCostBefore = calculateAverageInkCost(currentHand);
+  const inkCostAfter = calculateAverageInkCost(newHand);
+
   trainingStats.totalUninkBefore += uninkBefore;
   trainingStats.totalUninkAfter += uninkAfter;
+  trainingStats.totalInkCostBefore += inkCostBefore;
+  trainingStats.totalInkCostAfter += inkCostAfter;
 
   // Statistiken aktualisieren
   trainingStats.totalHands++;
@@ -1538,7 +1581,11 @@ chooseOtherDeckBtn.addEventListener('click', async () => {
   trainingStats = {
     totalHands: 0,
     totalCardsExchanged: 0,
-    totalMulligans: 0
+    totalMulligans: 0,
+    totalUninkBefore: 0,
+    totalUninkAfter: 0,
+    totalInkCostBefore: 0,
+    totalInkCostAfter: 0
   };
   updateStatistics();
   updateMulliganHistory();
