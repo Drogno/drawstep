@@ -122,12 +122,13 @@
              class="logo-img" 
              style="max-width: 400px; height: auto;">
         
-        <!-- User Info (shown when logged in) -->
+        <!-- User Info (shown when logged in or in guest mode) -->
         <div id="userContainer" style="display: none; margin-top: 15px; text-align: center;">
             <div style="background: rgba(63, 208, 201, 0.1); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.3); display: inline-block;">
                 <span style="color: #3FD0C9; font-weight: bold;">Welcome, </span>
                 <span id="usernameDisplay" style="color: #FFD34E; font-weight: bold;"></span>
                 <span style="color: #D0D0D0; margin-left: 10px;">|</span>
+                <button id="upgradeToAccountBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.9rem; margin-left: 10px; display: none;">Create Account</button>
                 <button id="logoutBtn" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.9rem; margin-left: 10px;">Logout</button>
             </div>
         </div>
@@ -139,8 +140,24 @@
     
     <div id="authContainer" style="display: block; max-width: 500px; margin: 30px auto; text-align: center;">
         <div style="background: linear-gradient(145deg, #252629, #1f2022); padding: 30px; border-radius: 12px; border: 1px solid rgba(63, 208, 201, 0.3);">
-            <h2 style="color: #FFD34E; margin-bottom: 20px; font-family: 'Bebas Neue', cursive; font-size: 1.8rem;">LOGIN TO CONTINUE</h2>
-            <p style="color: #D0D0D0; margin-bottom: 25px;">Sign in to save your training progress and access advanced features</p>
+            <h2 style="color: #FFD34E; margin-bottom: 20px; font-family: 'Bebas Neue', cursive; font-size: 1.8rem;">WELCOME TO LORCANA MULLIGAN TRAINER</h2>
+            <p style="color: #D0D0D0; margin-bottom: 25px;">Choose how you want to use the trainer:</p>
+            
+            <!-- Mode Selection -->
+            <div style="margin-bottom: 30px;">
+                <button id="continueAsGuest" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #666, #444); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1.1rem;">
+                    🚀 CONTINUE AS GUEST
+                </button>
+                <p style="color: #999; font-size: 0.9rem; margin-bottom: 20px;">Practice mulligans immediately (progress not saved)</p>
+                
+                <button id="showLoginOptions" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
+                    📊 LOGIN FOR ADVANCED FEATURES
+                </button>
+                <p style="color: #999; font-size: 0.9rem;">Save progress, view statistics, join leaderboards</p>
+            </div>
+            
+            <!-- Login Options (initially hidden) -->
+            <div id="loginOptionsContainer" style="display: none;">
             
             <!-- Login Form -->
             <div id="loginContainer" style="display: block;">
@@ -187,6 +204,8 @@
                     <button id="showLogin" style="background: none; border: none; color: #3FD0C9; cursor: pointer; text-decoration: underline;">Sign in here</button>
                 </p>
             </div>
+            
+            </div> <!-- End loginOptionsContainer -->
         </div>
     </div>
 

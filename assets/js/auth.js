@@ -7,12 +7,16 @@ class AuthManager {
   constructor() {
     this.token = localStorage.getItem('drawstep_token');
     this.user = null;
+    this.guestMode = localStorage.getItem('drawstep_guest_mode') === 'true';
     this.init();
   }
 
   async init() {
     if (this.token) {
       await this.validateToken();
+    } else if (this.guestMode) {
+      // User previously chose guest mode
+      this.user = { username: 'Guest', guest: true };
     }
     this.setupEventListeners();
     this.updateUI();
@@ -143,9 +147,20 @@ class AuthManager {
 
     this.token = null;
     this.user = null;
+    this.guestMode = false;
     localStorage.removeItem('drawstep_token');
+    localStorage.removeItem('drawstep_guest_mode');
     this.updateUI();
     this.showMessage('Logged out successfully', 'success');
+  }
+
+  // Enable guest mode
+  enableGuestMode() {
+    this.guestMode = true;
+    this.user = { username: 'Guest', guest: true };
+    localStorage.setItem('drawstep_guest_mode', 'true');
+    this.updateUI();
+    this.showMessage('Welcome! Using guest mode - progress will not be saved.', 'info');
   }
 
   // ============================================
@@ -182,6 +197,12 @@ class AuthManager {
       logoutBtn.addEventListener('click', () => this.logout());
     }
 
+    // Upgrade to account button (for guests)
+    const upgradeBtn = document.getElementById('upgradeToAccountBtn');
+    if (upgradeBtn) {
+      upgradeBtn.addEventListener('click', () => this.showUpgradeToAccount());
+    }
+
     // Show register/login toggles
     const showRegisterBtn = document.getElementById('showRegister');
     const showLoginBtn = document.getElementById('showLogin');
@@ -193,6 +214,18 @@ class AuthManager {
     if (showLoginBtn) {
       showLoginBtn.addEventListener('click', () => this.showLoginForm());
     }
+
+    // Guest mode and login options
+    const continueAsGuestBtn = document.getElementById('continueAsGuest');
+    const showLoginOptionsBtn = document.getElementById('showLoginOptions');
+    
+    if (continueAsGuestBtn) {
+      continueAsGuestBtn.addEventListener('click', () => this.enableGuestMode());
+    }
+    
+    if (showLoginOptionsBtn) {
+      showLoginOptionsBtn.addEventListener('click', () => this.showLoginOptionsContainer());
+    }
   }
 
   updateUI() {
@@ -200,8 +233,8 @@ class AuthManager {
     const userContainer = document.getElementById('userContainer');
     const mainContent = document.getElementById('mainContent');
 
-    if (this.isLoggedIn()) {
-      // User is logged in
+    if (this.isLoggedIn() || this.guestMode) {
+      // User is logged in or using guest mode
       if (authContainer) authContainer.style.display = 'none';
       if (userContainer) {
         userContainer.style.display = 'block';
@@ -209,7 +242,7 @@ class AuthManager {
       }
       if (mainContent) mainContent.style.display = 'block';
     } else {
-      // User is not logged in
+      // User is not logged in and not in guest mode
       if (authContainer) authContainer.style.display = 'block';
       if (userContainer) userContainer.style.display = 'none';
       if (mainContent) mainContent.style.display = 'none';
@@ -220,9 +253,39 @@ class AuthManager {
     if (this.user) {
       const usernameDisplay = document.getElementById('usernameDisplay');
       const userEmailDisplay = document.getElementById('userEmailDisplay');
+      const upgradeBtn = document.getElementById('upgradeToAccountBtn');
       
-      if (usernameDisplay) usernameDisplay.textContent = this.user.username;
-      if (userEmailDisplay) userEmailDisplay.textContent = this.user.email;
+      if (usernameDisplay) {
+        usernameDisplay.textContent = this.user.username;
+        // Add guest indicator
+        if (this.user.guest) {
+          usernameDisplay.style.color = '#FFD34E';
+          usernameDisplay.textContent += ' (Guest Mode)';
+          // Show upgrade button for guests
+          if (upgradeBtn) upgradeBtn.style.display = 'inline';
+        } else {
+          // Hide upgrade button for logged in users
+          if (upgradeBtn) upgradeBtn.style.display = 'none';
+        }
+      }
+      if (userEmailDisplay && this.user.email) {
+        userEmailDisplay.textContent = this.user.email;
+      }
+    }
+  }
+
+  showUpgradeToAccount() {
+    this.guestMode = false;
+    localStorage.removeItem('drawstep_guest_mode');
+    this.user = null;
+    this.updateUI();
+    this.showMessage('Please create an account to save your progress permanently', 'info');
+  }
+
+  showLoginOptionsContainer() {
+    const loginOptionsContainer = document.getElementById('loginOptionsContainer');
+    if (loginOptionsContainer) {
+      loginOptionsContainer.style.display = 'block';
     }
   }
 
@@ -297,7 +360,11 @@ class AuthManager {
   // ============================================
 
   isLoggedIn() {
-    return !!(this.token && this.user);
+    return !!(this.token && this.user && !this.user.guest);
+  }
+
+  isActive() {
+    return this.isLoggedIn() || this.guestMode;
   }
 
   getToken() {
