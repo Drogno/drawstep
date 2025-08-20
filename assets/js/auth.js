@@ -23,12 +23,27 @@ class AuthManager {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
         this.setupEventListeners();
-        this.updateUI();
+        // Only update UI if we're not on the mulligan page with authContainer
+        this.conditionalUpdateUI();
       });
     } else {
       this.setupEventListeners();
-      this.updateUI();
+      // Only update UI if we're not on the mulligan page with authContainer
+      this.conditionalUpdateUI();
     }
+  }
+
+  conditionalUpdateUI() {
+    const authContainer = document.getElementById('authContainer');
+    
+    // If authContainer exists and user hasn't made a choice yet, don't hide it
+    if (authContainer && !this.token && !this.guestMode) {
+      // Don't update UI - let the user see the welcome screen
+      return;
+    }
+    
+    // Otherwise, proceed with normal UI update
+    this.updateUI();
   }
 
   // ============================================
@@ -262,10 +277,20 @@ class AuthManager {
       }
       if (mainContent) mainContent.style.display = 'block';
     } else {
-      // User is not logged in and not in guest mode
+      // User is not logged in and not in guest mode - show auth container
       if (authContainer) authContainer.style.display = 'block';
       if (userContainer) userContainer.style.display = 'none';
       if (mainContent) mainContent.style.display = 'none';
+    }
+
+    // Also update main menu auth section if function exists
+    if (typeof updateMainMenuAuth === 'function') {
+      updateMainMenuAuth();
+    }
+    
+    // Also update mulligan menu auth section if function exists
+    if (typeof updateMulliganMenuAuth === 'function') {
+      updateMulliganMenuAuth();
     }
   }
 

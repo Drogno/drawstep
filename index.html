@@ -58,6 +58,33 @@
                     
                     <div class="menu-separator"></div>
                     
+                    <!-- Account section -->
+                    <div class="menu-section-title">Account</div>
+                    <div id="menuAuthSection">
+                        <!-- Logged in user display -->
+                        <div id="menuUserInfo" style="display: none;">
+                            <div class="menu-item-static">
+                                <span style="color: #3FD0C9; font-weight: bold;">Welcome, </span>
+                                <span id="menuUsername" style="color: #FFD34E; font-weight: bold;"></span>
+                            </div>
+                            <a href="#" class="menu-item" id="menuLogoutBtn">
+                                🚪 Logout
+                            </a>
+                        </div>
+                        
+                        <!-- Not logged in options -->
+                        <div id="menuLoginOptions" style="display: block;">
+                            <a href="#" class="menu-item" id="menuLoginBtn">
+                                🔐 Login
+                            </a>
+                            <a href="#" class="menu-item" id="menuRegisterBtn">
+                                📝 Create Account
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-separator"></div>
+                    
                     <!-- Community & support section -->
                     <div class="menu-section-title">Community</div>
                     <a href="#" class="menu-item" id="menuSupportBtn">
@@ -135,6 +162,61 @@
     </div>
 
     <!-- ============================== -->
+    <!-- LOGIN MODAL -->
+    <!-- ============================== -->
+    
+    <!-- Login Modal Overlay -->
+    <div class="auth-overlay" id="loginOverlay">
+        <div class="auth-content">
+            <button class="auth-close" id="loginClose">×</button>
+            <div class="auth-header">
+                <h3>Login to Your Account</h3>
+                <p>Access your saved progress and statistics</p>
+            </div>
+            <form id="mainLoginForm" class="auth-form">
+                <div class="form-group">
+                    <input type="email" id="mainLoginEmail" placeholder="Email Address" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="mainLoginPassword" placeholder="Password" required>
+                </div>
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+            <p class="auth-switch">
+                Don't have an account? 
+                <button type="button" id="switchToRegister" class="link-btn">Sign up here</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal Overlay -->
+    <div class="auth-overlay" id="registerOverlay">
+        <div class="auth-content">
+            <button class="auth-close" id="registerClose">×</button>
+            <div class="auth-header">
+                <h3>Create Account</h3>
+                <p>Save your progress and join the community</p>
+            </div>
+            <form id="mainRegisterForm" class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="mainRegisterUsername" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="mainRegisterEmail" placeholder="Email Address" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="mainRegisterPassword" placeholder="Password (min. 6 characters)" required minlength="6">
+                </div>
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+            <p class="auth-switch">
+                Already have an account? 
+                <button type="button" id="switchToLogin" class="link-btn">Sign in here</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================== -->
     <!-- MAIN CONTENT -->
     <!-- ============================== -->
     
@@ -189,6 +271,8 @@
     <!-- JAVASCRIPT -->
     <!-- ============================== -->
     
+    <!-- Authentication script -->
+    <script src="assets/js/auth.js"></script>
     <!-- Main functionality script -->
     <script src="assets/js/main.js"></script>
 </body>

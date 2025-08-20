@@ -26,6 +26,21 @@ const supportOverlay = document.getElementById('supportOverlay');
 const supportClose = document.getElementById('supportClose');
 const menuSupportBtn = document.getElementById('menuSupportBtn');
 
+// Auth overlay elements
+const loginOverlay = document.getElementById('loginOverlay');
+const registerOverlay = document.getElementById('registerOverlay');
+const loginClose = document.getElementById('loginClose');
+const registerClose = document.getElementById('registerClose');
+const menuLoginBtn = document.getElementById('menuLoginBtn');
+const menuRegisterBtn = document.getElementById('menuRegisterBtn');
+const menuLogoutBtn = document.getElementById('menuLogoutBtn');
+const switchToRegister = document.getElementById('switchToRegister');
+const switchToLogin = document.getElementById('switchToLogin');
+
+// Auth forms
+const mainLoginForm = document.getElementById('mainLoginForm');
+const mainRegisterForm = document.getElementById('mainRegisterForm');
+
 // ============================================
 // HAMBURGER MENU FUNCTIONALITY
 // ============================================
@@ -91,6 +106,158 @@ supportOverlay.addEventListener('click', (e) => {
 });
 
 // ============================================
+// AUTH MODAL FUNCTIONALITY
+// ============================================
+
+/**
+ * Opens the login modal and closes hamburger menu
+ */
+menuLoginBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    menuOverlay.classList.remove('show');
+    loginOverlay.classList.add('show');
+});
+
+/**
+ * Opens the register modal and closes hamburger menu
+ */
+menuRegisterBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    menuOverlay.classList.remove('show');
+    registerOverlay.classList.add('show');
+});
+
+/**
+ * Logout functionality from hamburger menu
+ */
+menuLogoutBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    menuOverlay.classList.remove('show');
+    if (window.authManager) {
+        window.authManager.logout();
+    }
+});
+
+/**
+ * Closes the login modal
+ */
+loginClose?.addEventListener('click', () => {
+    loginOverlay.classList.remove('show');
+});
+
+/**
+ * Closes the register modal
+ */
+registerClose?.addEventListener('click', () => {
+    registerOverlay.classList.remove('show');
+});
+
+/**
+ * Switch from login to register modal
+ */
+switchToRegister?.addEventListener('click', () => {
+    loginOverlay.classList.remove('show');
+    registerOverlay.classList.add('show');
+});
+
+/**
+ * Switch from register to login modal
+ */
+switchToLogin?.addEventListener('click', () => {
+    registerOverlay.classList.remove('show');
+    loginOverlay.classList.add('show');
+});
+
+/**
+ * Close auth modals when clicking outside
+ */
+loginOverlay?.addEventListener('click', (e) => {
+    if (e.target === loginOverlay) {
+        loginOverlay.classList.remove('show');
+    }
+});
+
+registerOverlay?.addEventListener('click', (e) => {
+    if (e.target === registerOverlay) {
+        registerOverlay.classList.remove('show');
+    }
+});
+
+/**
+ * Handle login form submission
+ */
+mainLoginForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (window.authManager) {
+        const email = document.getElementById('mainLoginEmail').value;
+        const password = document.getElementById('mainLoginPassword').value;
+        
+        const result = await window.authManager.login(email, password);
+        if (result.success) {
+            loginOverlay.classList.remove('show');
+            updateMainMenuAuth();
+        }
+    }
+});
+
+/**
+ * Handle register form submission
+ */
+mainRegisterForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (window.authManager) {
+        const username = document.getElementById('mainRegisterUsername').value;
+        const email = document.getElementById('mainRegisterEmail').value;
+        const password = document.getElementById('mainRegisterPassword').value;
+        
+        const result = await window.authManager.register(username, email, password);
+        if (result.success) {
+            registerOverlay.classList.remove('show');
+            updateMainMenuAuth();
+        }
+    }
+});
+
+/**
+ * Updates the hamburger menu authentication section
+ */
+function updateMainMenuAuth() {
+    const menuUserInfo = document.getElementById('menuUserInfo');
+    const menuLoginOptions = document.getElementById('menuLoginOptions');
+    const menuUsername = document.getElementById('menuUsername');
+
+    if (window.authManager && window.authManager.isActive()) {
+        const user = window.authManager.getUser();
+        if (user) {
+            if (user.guest) {
+                // Guest mode: show login options instead of user info
+                if (menuUserInfo) menuUserInfo.style.display = 'none';
+                if (menuLoginOptions) menuLoginOptions.style.display = 'block';
+            } else {
+                // Logged in user: show user info
+                if (menuUserInfo) menuUserInfo.style.display = 'block';
+                if (menuLoginOptions) menuLoginOptions.style.display = 'none';
+                
+                if (menuUsername) {
+                    menuUsername.textContent = user.username;
+                    menuUsername.style.color = '#FFD34E';
+                }
+            }
+        }
+    } else {
+        // Not logged in: show login options
+        if (menuUserInfo) menuUserInfo.style.display = 'none';
+        if (menuLoginOptions) menuLoginOptions.style.display = 'block';
+    }
+}
+
+// Initialize auth UI when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Small delay to ensure authManager is initialized
+    setTimeout(updateMainMenuAuth, 100);
+});
+
+// ============================================
 // KEYBOARD SHORTCUTS
 // ============================================
 
@@ -109,6 +276,15 @@ document.addEventListener('keydown', (e) => {
         // Close support overlay if open
         if (supportOverlay.classList.contains('show')) {
             supportOverlay.classList.remove('show');
+        }
+        
+        // Close auth overlays if open
+        if (loginOverlay?.classList.contains('show')) {
+            loginOverlay.classList.remove('show');
+        }
+        
+        if (registerOverlay?.classList.contains('show')) {
+            registerOverlay.classList.remove('show');
         }
     }
 });
