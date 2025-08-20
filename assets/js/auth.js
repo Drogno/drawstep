@@ -18,8 +18,17 @@ class AuthManager {
       // User previously chose guest mode
       this.user = { username: 'Guest', guest: true };
     }
-    this.setupEventListeners();
-    this.updateUI();
+    
+    // Wait for DOM to be fully loaded before setting up listeners
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        this.setupEventListeners();
+        this.updateUI();
+      });
+    } else {
+      this.setupEventListeners();
+      this.updateUI();
+    }
   }
 
   // ============================================
@@ -168,6 +177,29 @@ class AuthManager {
   // ============================================
 
   setupEventListeners() {
+    console.log('Setting up event listeners...');
+    
+    // Guest mode and login options (main buttons)
+    const continueAsGuestBtn = document.getElementById('continueAsGuest');
+    const showLoginOptionsBtn = document.getElementById('showLoginOptions');
+    
+    console.log('Guest button found:', !!continueAsGuestBtn);
+    console.log('Login options button found:', !!showLoginOptionsBtn);
+    
+    if (continueAsGuestBtn) {
+      continueAsGuestBtn.addEventListener('click', () => {
+        console.log('Guest button clicked!');
+        this.enableGuestMode();
+      });
+    }
+    
+    if (showLoginOptionsBtn) {
+      showLoginOptionsBtn.addEventListener('click', () => {
+        console.log('Show login options clicked!');
+        this.showLoginOptionsContainer();
+      });
+    }
+
     // Login form
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
@@ -213,18 +245,6 @@ class AuthManager {
     
     if (showLoginBtn) {
       showLoginBtn.addEventListener('click', () => this.showLoginForm());
-    }
-
-    // Guest mode and login options
-    const continueAsGuestBtn = document.getElementById('continueAsGuest');
-    const showLoginOptionsBtn = document.getElementById('showLoginOptions');
-    
-    if (continueAsGuestBtn) {
-      continueAsGuestBtn.addEventListener('click', () => this.enableGuestMode());
-    }
-    
-    if (showLoginOptionsBtn) {
-      showLoginOptionsBtn.addEventListener('click', () => this.showLoginOptionsContainer());
     }
   }
 
