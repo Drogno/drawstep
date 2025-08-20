@@ -978,6 +978,7 @@ function showHand(hand, selectable = true) {
           selectedIndices.add(i);
           img.classList.add('selected');
         }
+        updateMulliganButtonText();
         
       });
       img.style.pointerEvents = '';
@@ -1105,6 +1106,20 @@ function updateManaCurve(hand) {
     bar.appendChild(label);
     manaCurveChart.appendChild(bar);
   });
+}
+
+/**
+ * Updates the mulligan button text based on selected cards
+ */
+function updateMulliganButtonText() {
+  const selectedCount = selectedIndices.size;
+  if (selectedCount === 0) {
+    mulliganBtn.textContent = 'Perform Mulligan';
+  } else if (selectedCount === 1) {
+    mulliganBtn.textContent = 'Mulligan 1 card';
+  } else {
+    mulliganBtn.textContent = `Mulligan ${selectedCount} cards`;
+  }
 }
 
 /**
@@ -1290,6 +1305,7 @@ importBtn.addEventListener('click', async () => {
   handDiv.innerHTML = '';
   currentHand = [];
   selectedIndices.clear();
+  updateMulliganButtonText();
 
   customDeckArea.style.display = 'none';
   metaDeckArea.style.display = 'none';
@@ -1373,6 +1389,7 @@ drawHandBtn.addEventListener('click', () => {
   showHand(currentHand, true);
   
   selectedIndices.clear();
+  updateMulliganButtonText();
 
   
 
@@ -1432,6 +1449,7 @@ mulliganBtn.addEventListener('click', () => {
   currentHand = newHand;
   showHand(currentHand, false);
   selectedIndices.clear();
+  updateMulliganButtonText();
   mulliganBtn.style.display = 'none';
   newHandBtn.style.display = 'block';
   drawHandBtn.style.display = 'none';
@@ -1452,6 +1470,7 @@ newHandBtn.addEventListener('click', () => {
   showHand(currentHand, true);
   
   selectedIndices.clear();
+  updateMulliganButtonText();
 
   mulliganBtn.style.display = 'inline-block';
   newHandBtn.style.display = 'none';
@@ -1588,6 +1607,7 @@ chooseOtherDeckBtn.addEventListener('click', async () => {
   deck = [];
   currentHand = [];
   selectedIndices.clear();
+  updateMulliganButtonText();
   updateDeckDisplay();
 });
 
