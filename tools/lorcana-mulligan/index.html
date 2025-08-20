@@ -207,11 +207,11 @@
       <div style="display: flex; gap: 24px; align-items: center;">
         <div style="text-align: center;">
           <div class="stat-number" style="color: #9B5DE5; font-size: 1.6rem;" id="avgUninkBefore">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>vor Mulligan</span></div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>before Mulligan</span></div>
         </div>
         <div style="text-align: center;">
           <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgUninkAfter">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>nach Mulligan</span></div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>after Mulligan</span></div>
         </div>
       </div>
     </div>
@@ -246,14 +246,14 @@
   </div>
 </div>
 
-<!-- Manakurve der aktuellen Hand -->
+<!-- Ink curve of the current hand -->
 <div id="manaCurveArea" style="margin: 12px 0; display: none;">
     <div style="background: linear-gradient(145deg, #252629, #1f2022); padding: 15px 20px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.2); max-width: 600px;">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-            <h4 style="color: #FFD34E; margin: 0; font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 0.5px;">MANA-KURVE</h4>
+            <h4 style="color: #FFD34E; margin: 0; font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 0.5px;">INK CURVE</h4>
             <span id="manaCurveStats" style="color: #D0D0D0; font-size: 0.9rem;"></span>
         </div>
-        <div id="manaCurveChart" style="display: flex; align-items: flex-end; gap: 8px; height: 60px; margin-top: 10px;">
+        <div id="manaCurveChart" style="display: flex; align-items: flex-end; gap: 8px; height: 60px; margin-top: 20px;">
         </div>
     </div>
 </div>
@@ -359,32 +359,32 @@ function updateCardPreviewPosition(event) {
   if (!cardPreviewElement) return;
   
   const preview = cardPreviewElement;
-  const margin = 8; // Kleinerer Abstand
+  const margin = 8; // Smaller distance
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
   
-  // Hole die tatsächlichen Dimensionen der Preview
+  // Get actual dimensions of the preview
   const rect = preview.getBoundingClientRect();
-  const previewWidth = rect.width || 400; // Fallback zu 400px (vergrößert)
-  const previewHeight = rect.height || 500; // Fallback zu 500px (vergrößert)
+  const previewWidth = rect.width || 400; // Fallback to 400px (enlarged)
+  const previewHeight = rect.height || 500; // Fallback to 500px (enlarged)
   
   let x, y;
   
-  // Horizontale Position: Prüfe ob rechts genug Platz ist
+  // Horizontal position: Check if there's enough space on the right
   if (event.clientX + margin + previewWidth <= viewportWidth) {
-    // Genug Platz rechts
+    // Enough space on the right
     x = event.clientX + margin;
   } else {
-    // Nicht genug Platz rechts, zeige links mit kleinerem Abstand
+    // Not enough space on the right, show on the left with smaller distance
     x = event.clientX - margin - previewWidth;
   }
   
-  // Vertikale Position: Prüfe ob unten genug Platz ist
+  // Vertical position: Check if there's enough space below
   if (event.clientY + margin + previewHeight <= viewportHeight) {
-    // Genug Platz unten
+    // Enough space below
     y = event.clientY + margin;
   } else {
-    // Nicht genug Platz unten, zeige oben
+    // Not enough space below, show above
     y = event.clientY - margin - previewHeight;
   }
   
@@ -431,8 +431,8 @@ async function loadAllCards() {
       }
     }
   } catch (e) {
-    console.error('Fehler beim Laden der allCards.json:', e);
-    console.log('Fallback-Modus wird verwendet für Deck-Statistiken');
+    console.error('Error loading allCards.json:', e);
+    console.log('Fallback mode is used for deck statistics');
     allCardsData = null;
   }
 }
@@ -635,7 +635,7 @@ function updateStatistics() {
       (trainingStats.totalCardsExchanged / trainingStats.totalHands).toFixed(1) : '0.0';
     avgCardsElement.textContent = avgCards;
 
-    // Berechne Durchschnitt Unink-Karten vor und nach dem Mulligan
+    // Calculate average unink cards before and after mulligan
     const avgUninkBefore = trainingStats.totalHands > 0 ? (trainingStats.totalUninkBefore / trainingStats.totalHands).toFixed(2) : '0.00';
     const avgUninkAfter = trainingStats.totalHands > 0 ? (trainingStats.totalUninkAfter / trainingStats.totalHands).toFixed(2) : '0.00';
     avgUninkBeforeElement.textContent = avgUninkBefore;
@@ -684,7 +684,7 @@ function updateSituationInfo() {
   if (currentMulliganSituation.opponent && currentMulliganSituation.opponent !== 'unknown') {
     text += ' vs. ' + (presetDecks[currentMulliganSituation.opponent] ? document.querySelector(`#opponentDeckSelect option[value="${currentMulliganSituation.opponent}"], #presetDecks option[value="${currentMulliganSituation.opponent}"]`)?.textContent || currentMulliganSituation.opponent : currentMulliganSituation.opponent);
   } else {
-    text += ' vs. unbekannt';
+    text += ' vs. unknown';
   }
   
   // Update the prominent situation display
@@ -965,7 +965,7 @@ function showHand(hand, selectable = true) {
   hand.forEach((card, i) => {
     const img = document.createElement('img');
     img.src = card.Image || '';
-    img.alt = card.Name || '(unbekannte Karte)';
+    img.alt = card.Name || '(unknown card)';
     img.title = card.Name || '';
     img.dataset.index = i;
     if (selectedIndices.has(i)) img.classList.add('selected');
@@ -1038,7 +1038,7 @@ function updateManaCurve(hand) {
   const avgCost = totalCards > 0 ? (manaCosts.reduce((sum, cost) => sum + cost, 0) / totalCards).toFixed(1) : 0;
   
   // Update stats display
-  manaCurveStats.textContent = `${totalCards} Karten • Ø ${avgCost} Mana`;
+  manaCurveStats.textContent = `${totalCards} cards • Ø ${avgCost} ink`;
   
   // Create bar chart visualization
   manaCurveChart.innerHTML = '';
@@ -1123,9 +1123,9 @@ function updateMulliganButtonText() {
 }
 
 /**
- * Extracts mana cost from card data
+ * Extracts ink cost from card data
  * @param {Object} card - Card object
- * @returns {number|null} - Mana cost or null if not found
+ * @returns {number|null} - Ink cost or null if not found
  */
 function getCardManaCost(card) {
   // First try to get cost from the card data loaded via API
@@ -1257,7 +1257,7 @@ importMetaDeckBtn.addEventListener('click', () => {
 importBtn.addEventListener('click', async () => {
   const rawText = deckInput.value.trim();
   if (!rawText) {
-    await showInfoDialog('Bitte Deck einfügen.');
+    await showInfoDialog('Please paste a deck.');
     return;
   }
 
@@ -1284,7 +1284,7 @@ importBtn.addEventListener('click', async () => {
 
   if (!imageFile) {
     error = true;
-    await showInfoDialog(`Karte nicht gefunden: ${name}`);
+    await showInfoDialog(`Card not found: ${name}`);
     continue;
   }
 
@@ -1333,7 +1333,7 @@ importBtn.addEventListener('click', async () => {
     await showInfoDialog(`Deck successfully loaded (${totalCards} cards)!`);
   } else if (!error && deck.length === 0) {
     error = true;
-    await showInfoDialog('Es wurden keine Karten importiert.');
+    await showInfoDialog('No cards were imported.');
   }
 });
 
