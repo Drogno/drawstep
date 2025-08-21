@@ -86,6 +86,9 @@ DRAWSTEP - TCG tools and websites for Trading Card Games, specifically focused o
 - **Lint/Build**: (To be determined - ask user for specific commands)
 - **Test**: (To be determined - ask user for specific commands)
 
+## Current Issues
+- **Welcome Window Bug**: Welcome window für Mulligan Trainer zeigt sich nur einmal, dann nie wieder - auch nach Browser-Neustart nicht. localStorage Flag wird permanent gesetzt und verhindert erneute Anzeige. Problem: Ctrl+Shift+R leert nur Cache, nicht localStorage. Verschiedene Lösungsansätze mit localStorage/sessionStorage noch nicht zufriedenstellend.
+
 ## Notes
 - Tournament tracking will be handled by separate app, not this mulligan trainer
 - Focus on training and practice features for the mulligan trainer

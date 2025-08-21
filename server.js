@@ -16,7 +16,22 @@ const PORT = process.env.PORT || 3000;
 // ============================================
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.')); // Serve static files from current directory
+
+// Serve static files with proper cache headers
+app.use(express.static('.', {
+    setHeaders: (res, path) => {
+        // Set cache headers based on file type
+        if (path.endsWith('.html')) {
+            // HTML files: no cache for development, short cache for production
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+        } else if (path.endsWith('.css') || path.endsWith('.js')) {
+            // CSS/JS: short cache with must-revalidate
+            res.setHeader('Cache-Control', 'public, max-age=300, must-revalidate');
+        }
+    }
+}));
 
 // ============================================
 // DATABASE SETUP

@@ -12,19 +12,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="assets/css/mulligan.css">
+    <link rel="stylesheet" href="assets/css/mulligan.css?v=1.1">
     
     <!-- Check first visit status before page renders to prevent flashing -->
     <script>
-        // Check if user has visited the mulligan trainer specifically before
-        const hasVisitedMulliganBefore = localStorage.getItem('mulligan_trainer_visited') === 'true';
-        console.log('DEBUG: Head script - mulligan_trainer_visited:', hasVisitedMulliganBefore);
-        if (hasVisitedMulliganBefore) {
-            // Add CSS to hide welcome window for returning visitors
-            console.log('DEBUG: Head script - Hiding authContainer for returning visitor');
+        // Check if user has visited the mulligan trainer in this session OR is a returning guest
+        const hasVisitedMulliganBefore = sessionStorage.getItem('mulligan_trainer_visited') === 'true';
+        const wasGuest = localStorage.getItem('mulligan_guest_mode') === 'true';
+        
+        console.log('DEBUG: Head script - mulligan_trainer_visited (session):', hasVisitedMulliganBefore);
+        console.log('DEBUG: Head script - mulligan_guest_mode (persistent):', wasGuest);
+        
+        if (hasVisitedMulliganBefore || wasGuest) {
+            // Add CSS to hide welcome window for returning visitors or persistent guests
+            console.log('DEBUG: Head script - Hiding authContainer for returning visitor or persistent guest');
             document.write('<style>#authContainer { display: none !important; }</style>');
         } else {
-            console.log('DEBUG: Head script - First time visitor, showing authContainer');
+            console.log('DEBUG: Head script - First time visitor this session, showing authContainer');
         }
     </script>
 </head>
@@ -136,16 +140,6 @@
              class="logo-img" 
              style="max-width: 400px; height: auto;">
         
-        <!-- User Info (shown when logged in or in guest mode) -->
-        <div id="userContainer" style="display: none; margin-top: 15px; text-align: center;">
-            <div style="background: rgba(63, 208, 201, 0.1); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.3); display: inline-block;">
-                <span style="color: #3FD0C9; font-weight: bold;">Welcome, </span>
-                <span id="usernameDisplay" style="color: #FFD34E; font-weight: bold;"></span>
-                <span style="color: #D0D0D0; margin-left: 10px;">|</span>
-                <button id="upgradeToAccountBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.9rem; margin-left: 10px; display: none;">Create Account</button>
-                <button id="logoutBtn" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.9rem; margin-left: 10px;">Logout</button>
-            </div>
-        </div>
     </div>
 
     <!-- ============================== -->
@@ -242,6 +236,21 @@
     <!-- ============================== -->
     
     <div id="mainContent" style="display: block;">
+
+    <!-- ============================== -->
+    <!-- USER INFO SECTION -->
+    <!-- ============================== -->
+    
+    <!-- User Info (shown when logged in or in guest mode) -->
+    <div id="userContainer" style="display: none; position: absolute; top: 80px; left: 20px; z-index: 100;">
+        <div style="background: rgba(63, 208, 201, 0.1); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.3); display: inline-block;">
+            <span style="color: #3FD0C9; font-weight: bold; font-size: 0.9rem;">Welcome, </span>
+            <span id="usernameDisplay" style="color: #FFD34E; font-weight: bold; font-size: 0.9rem;"></span>
+            <span style="color: #D0D0D0; margin-left: 8px;">|</span>
+            <button id="upgradeToAccountBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Create Account</button>
+            <button id="logoutBtn" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.8rem; margin-left: 8px;">Logout</button>
+        </div>
+    </div>
 
     <!-- ============================== -->
     <!-- DECK MANAGEMENT SECTION -->
@@ -1992,9 +2001,9 @@ function handleGuestMode() {
     // Save to localStorage for persistence (separate key for mulligan page)
     localStorage.setItem('mulligan_guest_mode', 'true');
     
-    // Mark mulligan trainer as visited - welcome screen will never show again
-    console.log('DEBUG: Setting mulligan_trainer_visited from handleGuestMode');
-    localStorage.setItem('mulligan_trainer_visited', 'true');
+    // Mark mulligan trainer as visited for this session
+    console.log('DEBUG: Setting mulligan_trainer_visited from handleGuestMode (session)');
+    sessionStorage.setItem('mulligan_trainer_visited', 'true');
     
     // Show message
     showLocalMessage('Welcome! Using guest mode - progress will not be saved.', 'info');
@@ -2006,15 +2015,15 @@ function handleShowLogin() {
         loginOptionsContainer.style.display = 'block';
     }
     
-    // Mark mulligan trainer as visited when user chooses to see login options
-    console.log('DEBUG: Setting mulligan_trainer_visited from handleShowLogin');
-    localStorage.setItem('mulligan_trainer_visited', 'true');
+    // Mark mulligan trainer as visited for this session when user chooses to see login options
+    console.log('DEBUG: Setting mulligan_trainer_visited from handleShowLogin (session)');
+    sessionStorage.setItem('mulligan_trainer_visited', 'true');
 }
 
 // Reset function to clear guest mode and show welcome screen again
 function resetToWelcomeScreen() {
     localStorage.removeItem('mulligan_guest_mode');
-    localStorage.removeItem('mulligan_trainer_visited');
+    sessionStorage.removeItem('mulligan_trainer_visited');
     localAuthState.isGuest = false;
     localAuthState.isLoggedIn = false;
     localAuthState.user = null;
@@ -2071,15 +2080,15 @@ function showLocalMessage(message, type = 'info') {
 
 // Check if user has visited mulligan trainer before
 function initLocalAuth() {
-    const hasVisitedBefore = localStorage.getItem('mulligan_trainer_visited') === 'true';
+    const hasVisitedBefore = sessionStorage.getItem('mulligan_trainer_visited') === 'true';
     const wasGuest = localStorage.getItem('mulligan_guest_mode') === 'true';
     
-    console.log('DEBUG: initLocalAuth - mulligan_trainer_visited:', hasVisitedBefore);
+    console.log('DEBUG: initLocalAuth - mulligan_trainer_visited (session):', hasVisitedBefore);
     console.log('DEBUG: initLocalAuth - mulligan_guest_mode:', wasGuest);
     
     if (hasVisitedBefore) {
-        // User has visited before - never show welcome screen again
-        console.log('DEBUG: User has visited before - skipping welcome screen');
+        // User has visited before in this session - skip welcome screen
+        console.log('DEBUG: User has visited before in this session - skipping welcome screen');
         
         if (wasGuest) {
             // Restore guest mode
