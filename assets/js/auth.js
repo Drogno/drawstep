@@ -198,8 +198,17 @@ class AuthManager {
     const continueAsGuestBtn = document.getElementById('continueAsGuest');
     const showLoginOptionsBtn = document.getElementById('showLoginOptions');
     
+    // Menu-based auth buttons (global navigation)
+    const menuGuestBtn = document.getElementById('menuGuestBtn');
+    const menuLoginBtn = document.getElementById('menuLoginBtn');
+    const menuRegisterBtn = document.getElementById('menuRegisterBtn');
+    const menuLogoutBtn = document.getElementById('menuLogoutBtn');
+    
     console.log('Guest button found:', !!continueAsGuestBtn);
     console.log('Login options button found:', !!showLoginOptionsBtn);
+    console.log('Menu guest button found:', !!menuGuestBtn);
+    console.log('Menu login button found:', !!menuLoginBtn);
+    console.log('Menu register button found:', !!menuRegisterBtn);
     
     if (continueAsGuestBtn) {
       continueAsGuestBtn.addEventListener('click', () => {
@@ -212,6 +221,39 @@ class AuthManager {
       showLoginOptionsBtn.addEventListener('click', () => {
         console.log('Show login options clicked!');
         this.showLoginOptionsContainer();
+      });
+    }
+
+    // Menu auth buttons
+    if (menuGuestBtn) {
+      menuGuestBtn.addEventListener('click', () => {
+        console.log('Menu guest button clicked!');
+        this.enableGuestMode();
+        this.closeMenu();
+      });
+    }
+
+    if (menuLoginBtn) {
+      menuLoginBtn.addEventListener('click', () => {
+        console.log('Menu login button clicked!');
+        this.showLoginModal();
+        this.closeMenu();
+      });
+    }
+
+    if (menuRegisterBtn) {
+      menuRegisterBtn.addEventListener('click', () => {
+        console.log('Menu register button clicked!');
+        this.showRegisterModal();
+        this.closeMenu();
+      });
+    }
+
+    if (menuLogoutBtn) {
+      menuLogoutBtn.addEventListener('click', () => {
+        console.log('Menu logout button clicked!');
+        this.logout();
+        this.closeMenu();
       });
     }
 
@@ -235,6 +277,58 @@ class AuthManager {
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
         await this.register(username, email, password);
+      });
+    }
+
+    // Main page login/register forms (modals)
+    const mainLoginForm = document.getElementById('mainLoginForm');
+    if (mainLoginForm) {
+      mainLoginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('mainLoginEmail').value;
+        const password = document.getElementById('mainLoginPassword').value;
+        await this.login(email, password);
+        this.hideLoginModal();
+      });
+    }
+
+    const mainRegisterForm = document.getElementById('mainRegisterForm');
+    if (mainRegisterForm) {
+      mainRegisterForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('mainRegisterUsername').value;
+        const email = document.getElementById('mainRegisterEmail').value;
+        const password = document.getElementById('mainRegisterPassword').value;
+        await this.register(username, email, password);
+        this.hideRegisterModal();
+      });
+    }
+
+    // Modal close buttons
+    const loginClose = document.getElementById('loginClose');
+    if (loginClose) {
+      loginClose.addEventListener('click', () => this.hideLoginModal());
+    }
+
+    const registerClose = document.getElementById('registerClose');
+    if (registerClose) {
+      registerClose.addEventListener('click', () => this.hideRegisterModal());
+    }
+
+    // Modal switching
+    const switchToRegister = document.getElementById('switchToRegister');
+    if (switchToRegister) {
+      switchToRegister.addEventListener('click', () => {
+        this.hideLoginModal();
+        this.showRegisterModal();
+      });
+    }
+
+    const switchToLogin = document.getElementById('switchToLogin');
+    if (switchToLogin) {
+      switchToLogin.addEventListener('click', () => {
+        this.hideRegisterModal();
+        this.showLoginModal();
       });
     }
 
@@ -283,6 +377,9 @@ class AuthManager {
       if (mainContent) mainContent.style.display = 'none';
     }
 
+    // Update global menu auth section
+    this.updateMenuAuthSection();
+
     // Also update main menu auth section if function exists
     if (typeof updateMainMenuAuth === 'function') {
       updateMainMenuAuth();
@@ -291,6 +388,30 @@ class AuthManager {
     // Also update mulligan menu auth section if function exists
     if (typeof updateMulliganMenuAuth === 'function') {
       updateMulliganMenuAuth();
+    }
+  }
+
+  updateMenuAuthSection() {
+    const menuUserInfo = document.getElementById('menuUserInfo');
+    const menuLoginOptions = document.getElementById('menuLoginOptions');
+    const menuUsernameSpan = document.getElementById('menuUsername');
+
+    if (this.isLoggedIn() || this.guestMode) {
+      // Show user info, hide login options
+      if (menuUserInfo) menuUserInfo.style.display = 'block';
+      if (menuLoginOptions) menuLoginOptions.style.display = 'none';
+      
+      // Update username display
+      if (menuUsernameSpan && this.user) {
+        menuUsernameSpan.textContent = this.user.username;
+        if (this.user.guest) {
+          menuUsernameSpan.textContent += ' (Guest)';
+        }
+      }
+    } else {
+      // Show login options, hide user info
+      if (menuUserInfo) menuUserInfo.style.display = 'none';
+      if (menuLoginOptions) menuLoginOptions.style.display = 'block';
     }
   }
 
@@ -348,6 +469,42 @@ class AuthManager {
     
     if (loginContainer) loginContainer.style.display = 'none';
     if (registerContainer) registerContainer.style.display = 'block';
+  }
+
+  // Modal management methods
+  showLoginModal() {
+    const modal = document.getElementById('loginOverlay');
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+  }
+
+  hideLoginModal() {
+    const modal = document.getElementById('loginOverlay');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  showRegisterModal() {
+    const modal = document.getElementById('registerOverlay');
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+  }
+
+  hideRegisterModal() {
+    const modal = document.getElementById('registerOverlay');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  closeMenu() {
+    const menuOverlay = document.getElementById('menuOverlay');
+    if (menuOverlay) {
+      menuOverlay.classList.remove('show');
+    }
   }
 
   showMessage(message, type = 'info') {

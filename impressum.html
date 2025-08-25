@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <!-- Basic meta information -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drawstep - Gaming Tools Hub</title>
+    <title>Impressum - Drawstep</title>
     
     <!-- Local fonts are loaded via CSS -->
     
@@ -36,6 +36,9 @@
                 <nav class="menu-nav">
                     <!-- Main tools navigation -->
                     <div class="menu-section-title">Navigation</div>
+                    <a href="index.html" class="menu-item">
+                        🏠 Startseite
+                    </a>
                     <a href="tools/lorcana-mulligan/" class="menu-item">
                         🃏 Lorcana Mulligan Trainer
                     </a>
@@ -160,61 +163,6 @@
     </div>
 
     <!-- ============================== -->
-    <!-- LOGIN MODAL -->
-    <!-- ============================== -->
-    
-    <!-- Login Modal Overlay -->
-    <div class="auth-overlay" id="loginOverlay">
-        <div class="auth-content">
-            <button class="auth-close" id="loginClose">×</button>
-            <div class="auth-header">
-                <h3>Login to Your Account</h3>
-                <p>Access your saved progress and statistics</p>
-            </div>
-            <form id="mainLoginForm" class="auth-form">
-                <div class="form-group">
-                    <input type="email" id="mainLoginEmail" placeholder="Email Address" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="mainLoginPassword" placeholder="Password" required>
-                </div>
-                <button type="submit" class="auth-btn">Login</button>
-            </form>
-            <p class="auth-switch">
-                Don't have an account? 
-                <button type="button" id="switchToRegister" class="link-btn">Sign up here</button>
-            </p>
-        </div>
-    </div>
-
-    <!-- Register Modal Overlay -->
-    <div class="auth-overlay" id="registerOverlay">
-        <div class="auth-content">
-            <button class="auth-close" id="registerClose">×</button>
-            <div class="auth-header">
-                <h3>Create Account</h3>
-                <p>Save your progress and join the community</p>
-            </div>
-            <form id="mainRegisterForm" class="auth-form">
-                <div class="form-group">
-                    <input type="text" id="mainRegisterUsername" placeholder="Username" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="mainRegisterEmail" placeholder="Email Address" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="mainRegisterPassword" placeholder="Password (min. 6 characters)" required minlength="6">
-                </div>
-                <button type="submit" class="auth-btn">Create Account</button>
-            </form>
-            <p class="auth-switch">
-                Already have an account? 
-                <button type="button" id="switchToLogin" class="link-btn">Sign in here</button>
-            </p>
-        </div>
-    </div>
-
-    <!-- ============================== -->
     <!-- MAIN CONTENT -->
     <!-- ============================== -->
     
@@ -223,38 +171,44 @@
         
         <!-- Header section with logo -->
         <header>
-            <img src="assets/images/logos/drawstep_logo.png" 
-                 alt="Drawstep Logo" 
-                 style="max-width: 400px; height: auto;">
+            <a href="index.html">
+                <img src="assets/images/logos/drawstep_logo.png" 
+                     alt="Drawstep Logo" 
+                     style="max-width: 400px; height: auto;">
+            </a>
         </header>
 
         <!-- Main content area -->
         <main>
-            <!-- Grid containing tool cards -->
-            <div class="tools-grid">
+            <!-- Legal content area -->
+            <div class="legal-content">
+                <h1>Legal Notice</h1>
                 
-                <!-- Lorcana Trainer Tool Card -->
-                <div class="tool-card">
-                    <div class="tool-icon">🃏</div>
-                    <h2 class="tool-title">LORCANA TRAINER</h2>
-                    <p class="tool-description">
-                        Perfect your mulligan decisions for Lorcana TCG. 
-                        Train with different deck setups and analyze your strategies.
-                    </p>
-                    <a href="tools/lorcana-mulligan/" class="tool-link">Start Training</a>
-                </div>
-
-                <!-- Tournament Tracker Tool Card (Coming Soon) -->
-                <div class="tool-card">
-                    <div class="tool-icon">📊</div>
-                    <h2 class="tool-title">TOURNAMENT TRACKER</h2>
-                    <p class="tool-description">
-                        Manage your TCG tournaments, track results and 
-                        calculate your top cut chances with our mobile app.
-                    </p>
-                    <span class="tool-link coming-soon">Coming Soon</span>
+                <!-- Placeholder content - wird vom User ersetzt -->
+                <div class="legal-section">
+                    <h2>Site Notice</h2>
+                    <p>Gordon Janicke <br>
+                       Schlachthofstr. 8 <br>
+                       37308 Heiligenstadt</p>
                 </div>
                 
+                <div class="legal-section">
+                    <h2>Contact</h2>
+                    <p>Phone: 0171 8296970 <br>
+                       E-mail: info@drawstep.de</p>
+                </div>
+                
+                <div class="legal-section">
+                    <h2>Person responsible for editorial</h2>
+                    <p>Gordon Janicke <br>
+                       Schlachthofstr. 8 <br>
+                       37308 Heiligenstadt</p>
+                </div>
+                
+                <div class="legal-section">
+                    <h2>Haftungsausschluss</h2>
+                    <p>[Hier kommt der Haftungsausschluss]</p>
+                </div>
             </div>
         </main>
 
@@ -274,8 +228,6 @@
     
     <!-- Cookie consent script -->
     <script src="assets/js/cookie-consent.js"></script>
-    <!-- Authentication script -->
-    <script src="assets/js/auth.js"></script>
     <!-- Main functionality script -->
     <script src="assets/js/main.js"></script>
 </body>
