@@ -1,3 +1,20 @@
+/* Font Face Declarations */
+@font-face {
+    font-family: 'Inter';
+    font-display: swap;
+    src: url('../fonts/inter.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bebas Neue';
+    font-display: swap;
+    src: url('../fonts/bebas-neue.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -14,6 +31,64 @@ body {
     overflow-x: hidden;
 }
 
+/* Global heading styles */
+h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: #3FD0C9;
+    text-transform: uppercase;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.2;
+}
+
+h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: #FFD34E;
+    text-transform: uppercase;
+    margin: 2rem 0 1rem 0;
+    line-height: 1.2;
+}
+
+h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    color: #3FD0C9;
+    font-weight: 600;
+    margin: 1.5rem 0 0.8rem 0;
+    line-height: 1.3;
+}
+
+h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.25rem;
+    color: #FFD34E;
+    font-weight: 600;
+    margin: 1.2rem 0 0.6rem 0;
+    line-height: 1.3;
+}
+
+h5 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    color: #E0E0E0;
+    font-weight: 500;
+    margin: 1rem 0 0.5rem 0;
+    line-height: 1.4;
+}
+
+h6 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: #B0B0B0;
+    font-weight: 500;
+    margin: 0.8rem 0 0.4rem 0;
+    line-height: 1.4;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -26,6 +101,319 @@ header {
     padding: 40px 0;
     text-align: center;
     position: relative;
+}
+
+/* Legal content styles */
+.legal-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.legal-content h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: #3FD0C9;
+    text-align: center;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+.legal-section {
+    margin-bottom: 30px;
+    background: linear-gradient(145deg, #252629, #1f2022);
+    border: 2px solid rgba(63, 208, 201, 0.2);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.legal-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: #FFD34E;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.legal-section p {
+    line-height: 1.6;
+    color: #E0E0E0;
+    margin-bottom: 10px;
+}
+
+.legal-section p:last-child {
+    margin-bottom: 0;
+}
+
+/* Cookie Banner */
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(145deg, #252629, #1f2022);
+    border-top: 2px solid #3FD0C9;
+    padding: 20px;
+    z-index: 1001;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cookie-banner.show {
+    transform: translateY(0);
+}
+
+.cookie-banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.cookie-banner-text {
+    flex: 1;
+    min-width: 300px;
+}
+
+.cookie-banner-text h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: #3FD0C9;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.cookie-banner-text p {
+    color: #E0E0E0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.cookie-banner-text a {
+    color: #FFD34E;
+    text-decoration: underline;
+}
+
+.cookie-banner-text a:hover {
+    color: #3FD0C9;
+}
+
+.cookie-banner-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cookie-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.cookie-btn-accept {
+    background: linear-gradient(145deg, #3FD0C9, #2fb8b0);
+    color: #1B1C1E;
+}
+
+.cookie-btn-accept:hover {
+    background: linear-gradient(145deg, #2fb8b0, #259a92);
+    transform: translateY(-1px);
+}
+
+.cookie-btn-settings {
+    background: transparent;
+    color: #3FD0C9;
+    border: 2px solid #3FD0C9;
+}
+
+.cookie-btn-settings:hover {
+    background: rgba(63, 208, 201, 0.1);
+    transform: translateY(-1px);
+}
+
+.cookie-btn-decline {
+    background: transparent;
+    color: #FFD34E;
+    border: 2px solid rgba(255, 211, 78, 0.5);
+}
+
+.cookie-btn-decline:hover {
+    background: rgba(255, 211, 78, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Cookie Settings Modal */
+.cookie-settings-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1002;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.cookie-settings-overlay.show {
+    display: flex;
+}
+
+.cookie-settings-content {
+    background: linear-gradient(145deg, #252629, #1f2022);
+    border: 2px solid #3FD0C9;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.cookie-settings-header {
+    margin-bottom: 20px;
+}
+
+.cookie-settings-header h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: #3FD0C9;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.cookie-settings-header p {
+    color: #E0E0E0;
+    line-height: 1.5;
+}
+
+.cookie-category {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(63, 208, 201, 0.05);
+    border-radius: 8px;
+}
+
+.cookie-category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.cookie-category h4 {
+    color: #FFD34E;
+    font-weight: 600;
+}
+
+.cookie-toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.cookie-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.cookie-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #555;
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+.cookie-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .cookie-slider {
+    background-color: #3FD0C9;
+}
+
+input:checked + .cookie-slider:before {
+    transform: translateX(26px);
+}
+
+input:disabled + .cookie-slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cookie-category p {
+    color: #B0B0B0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.cookie-settings-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.cookie-settings-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cookie-settings-close:hover {
+    color: #3FD0C9;
+}
+
+@media (max-width: 768px) {
+    .cookie-banner-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .cookie-banner-buttons {
+        justify-content: center;
+    }
+    
+    .cookie-settings-buttons {
+        flex-direction: column;
+    }
 }
 
 /* Hamburger Menu */
@@ -89,6 +477,8 @@ header {
     margin: 20px;
     padding: 50px 30px 30px 30px;
     min-width: 280px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
     animation: slideIn 0.3s ease;
     position: relative;

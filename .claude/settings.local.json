@@ -8,7 +8,11 @@
       "Bash(taskkill:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebFetch(domain:fonts.google.com)",
+      "Bash(curl:*)",
+      "Bash(node server.js)",
+      "Bash(npm install)"
     ],
     "deny": [],
     "ask": []

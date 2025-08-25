@@ -1,3 +1,20 @@
+/* Font Face Declarations */
+@font-face {
+    font-family: 'Inter';
+    font-display: swap;
+    src: url('../../assets/fonts/inter.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bebas Neue';
+    font-display: swap;
+    src: url('../../assets/fonts/bebas-neue.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -380,6 +397,8 @@ label {
   margin: 20px;
   padding: 50px 30px 30px 30px;
   min-width: 280px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   animation: slideIn 0.3s ease;
   position: relative;
