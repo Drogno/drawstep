@@ -4,7 +4,7 @@
     <!-- Basic meta information -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drawstep - Gaming Tools Hub</title>
+    <title>Contact - Drawstep</title>
     
     <!-- Font preloads for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,6 +39,9 @@
                 <nav class="menu-nav">
                     <!-- Main navigation -->
                     <div class="menu-section-title">Navigation</div>
+                    <a href="index.html" class="menu-item">
+                        🏠 Back to Main Page
+                    </a>
                     <a href="tools/lorcana-mulligan/" class="menu-item">
                         🃏 Lorcana Mulligan Trainer
                     </a>
@@ -92,47 +95,25 @@
     <!-- SUPPORT OVERLAY -->
     <!-- ============================== -->
     
-    <!-- Support modal overlay -->
+    <!-- Support Me Overlay -->
     <div class="support-overlay" id="supportOverlay">
         <div class="support-content">
-            <!-- Close button for support modal -->
             <button class="support-close" id="supportClose">×</button>
-            
-            <!-- Support header with title and description -->
             <div class="support-header">
-                <span class="support-emoji">💖</span>
-                <h3>Support the Project</h3>
-                <p>Help keep this project alive and growing!</p>
+                <h3>💝 Support the Project</h3>
+                <p>Help keep Drawstep running and growing!</p>
             </div>
             
-            <!-- Support options with different platforms -->
             <div class="support-options">
-                <!-- Ko-fi support option -->
-                <a href="https://ko-fi.com/" target="_blank" class="support-option kofi">
-                    <span class="support-option-icon">☕</span>
-                    <div class="support-option-text">
-                        <strong>Ko-fi</strong>
-                        <small>Buy me a coffee</small>
-                    </div>
-                </a>
-                
-                <!-- Patreon support option -->
-                <a href="https://patreon.com/" target="_blank" class="support-option patreon">
-                    <span class="support-option-icon">🎯</span>
-                    <div class="support-option-text">
-                        <strong>Patreon</strong>
-                        <small>Monthly support</small>
-                    </div>
-                </a>
-                
                 <!-- PayPal support option -->
-                <a href="https://paypal.com/" target="_blank" class="support-option paypal">
+                <div class="support-option">
                     <span class="support-option-icon">💳</span>
                     <div class="support-option-text">
-                        <strong>PayPal</strong>
-                        <small>One-time donation</small>
+                        <strong>Support via PayPal</strong>
+                        <small>One-time or monthly contribution</small>
                     </div>
-                </a>
+                    <a href="https://paypal.me/yourusername" class="support-btn" target="_blank">Donate</a>
+                </div>
                 
                 <div class="support-separator"></div>
                 
@@ -214,36 +195,79 @@
         <header>
             <img src="assets/images/logos/drawstep_logo.png" 
                  alt="Drawstep Logo" 
-                 style="max-width: 400px; height: auto;">
+                 style="max-width: 300px; height: auto;">
         </header>
 
         <!-- Main content area -->
         <main>
-            <!-- Grid containing tool cards -->
-            <div class="tools-grid">
+            <div class="contact-content">
+                <h1 class="page-title">Contact & Feedback</h1>
                 
-                <!-- Lorcana Trainer Tool Card -->
-                <div class="tool-card">
-                    <div class="tool-icon">🃏</div>
-                    <h2 class="tool-title">LORCANA TRAINER</h2>
-                    <p class="tool-description">
-                        Perfect your mulligan decisions for Lorcana TCG. 
-                        Train with different deck setups and analyze your strategies.
-                    </p>
-                    <a href="tools/lorcana-mulligan/" class="tool-link">Start Training</a>
+                <!-- Contact options -->
+                <div class="contact-grid">
+                    
+                    <!-- Bug Report Card -->
+                    <div class="contact-card">
+                        <div class="contact-icon">🐛</div>
+                        <h2 class="contact-title">Report a Bug</h2>
+                        <p class="contact-description">
+                            Found something that's not working correctly? 
+                            Help us improve by reporting bugs.
+                        </p>
+                        <div class="contact-methods">
+                            <a href="https://github.com/Drogno/drawstep/issues" class="contact-btn" target="_blank">
+                                📋 GitHub Issues
+                            </a>
+                            <a href="mailto:bugs@drawstep.de?subject=Bug Report" class="contact-btn">
+                                📧 Email Report
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Card -->
+                    <div class="contact-card">
+                        <div class="contact-icon">💬</div>
+                        <h2 class="contact-title">Send Feedback</h2>
+                        <p class="contact-description">
+                            Have suggestions or ideas? We'd love to hear 
+                            your thoughts on how to improve Drawstep.
+                        </p>
+                        <div class="contact-methods">
+                            <a href="https://github.com/Drogno/drawstep/discussions" class="contact-btn" target="_blank">
+                                💭 GitHub Discussions
+                            </a>
+                            <a href="mailto:feedback@drawstep.de?subject=Feedback" class="contact-btn">
+                                📧 Email Feedback
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- General Contact Card -->
+                    <div class="contact-card">
+                        <div class="contact-icon">📞</div>
+                        <h2 class="contact-title">General Contact</h2>
+                        <p class="contact-description">
+                            Questions, partnerships, or other inquiries? 
+                            Get in touch with the development team.
+                        </p>
+                        <div class="contact-methods">
+                            <a href="mailto:hello@drawstep.de?subject=General Inquiry" class="contact-btn">
+                                📧 Email Us
+                            </a>
+                        </div>
+                    </div>
+                    
                 </div>
 
-                <!-- Tournament Tracker Tool Card (Coming Soon) -->
-                <div class="tool-card">
-                    <div class="tool-icon">📊</div>
-                    <h2 class="tool-title">TOURNAMENT TRACKER</h2>
-                    <p class="tool-description">
-                        Manage your TCG tournaments, track results and 
-                        calculate your top cut chances with our mobile app.
-                    </p>
-                    <span class="tool-link coming-soon">Coming Soon</span>
+                <!-- Quick Tips -->
+                <div class="contact-tips">
+                    <h3>💡 Tips for Better Support</h3>
+                    <ul>
+                        <li><strong>Bug Reports:</strong> Include steps to reproduce the issue and your browser/device info</li>
+                        <li><strong>Feature Requests:</strong> Explain the use case and how it would improve your experience</li>
+                        <li><strong>General Questions:</strong> Check the FAQ section first, then feel free to reach out</li>
+                    </ul>
                 </div>
-                
             </div>
         </main>
 
@@ -261,13 +285,111 @@
         
     </div>
 
-    <!-- ============================== -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================== -->
-    
-    <!-- Authentication script -->
+    <!-- Include scripts -->
     <script src="assets/js/auth.js"></script>
-    <!-- Main functionality script -->
     <script src="assets/js/main.js"></script>
+    
+    <!-- Additional styles for contact page -->
+    <style>
+        .contact-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            text-align: center;
+            color: #FFD34E;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .contact-card {
+            background: linear-gradient(145deg, #2a2a2e, #1f1f23);
+            border: 1px solid rgba(63, 208, 201, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            border-color: rgba(63, 208, 201, 0.4);
+            transform: translateY(-5px);
+        }
+        
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-title {
+            color: #FFD34E;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-description {
+            color: #D0D0D0;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .contact-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #3FD0C9, #9B5DE5);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(63, 208, 201, 0.3);
+        }
+        
+        .contact-tips {
+            background: rgba(255, 212, 78, 0.1);
+            border: 1px solid rgba(255, 212, 78, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .contact-tips h3 {
+            color: #FFD34E;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-tips ul {
+            color: #D0D0D0;
+            line-height: 1.6;
+        }
+        
+        .contact-tips li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-tips strong {
+            color: #3FD0C9;
+        }
+    </style>
 </body>
 </html>

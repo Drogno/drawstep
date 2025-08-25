@@ -60,13 +60,20 @@
       <div class="menu-content">
         <button class="menu-close" id="menuClose">×</button>
         <nav class="menu-nav">
+          <!-- Main navigation -->
+          <div class="menu-section-title">Navigation</div>
           <a href="../../" class="menu-item">🏠 Back to Main Page</a>
+          
           <div class="menu-separator"></div>
-          <div class="menu-section-title">Other Projects</div>
-          <a href="#" class="menu-item disabled">📊 Tournament Tracker <span class="coming-soon-badge">Coming Soon</span></a>
-          <a href="#" class="menu-item disabled">🎯 Strategy Analyzer <span class="coming-soon-badge">Coming Soon</span></a>
-          <a href="#" class="menu-item disabled">📈 Meta Tracker <span class="coming-soon-badge">Coming Soon</span></a>
+          
+          <!-- Account section -->
+          <div class="menu-section-title">Account</div>
+          <a href="#" class="menu-item" id="menuLoginBtn">🔐 Login</a>
+          <a href="#" class="menu-item" id="menuRegisterBtn">👤 Create Account</a>
+          
           <div class="menu-separator"></div>
+          
+          <!-- Community section -->
           <div class="menu-section-title">Community</div>
           <a href="#" class="menu-item" id="menuSupportBtn">💝 Support the Project</a>
           <a href="contact.html" class="menu-item">🐛 Report Bug</a>
@@ -248,7 +255,8 @@
             <span id="usernameDisplay" style="color: #FFD34E; font-weight: bold; font-size: 0.9rem;"></span>
             <span style="color: #D0D0D0; margin-left: 8px;">|</span>
             <button id="upgradeToAccountBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Create Account</button>
-            <button id="logoutBtn" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.8rem; margin-left: 8px;">Logout</button>
+            <button id="loginBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Login</button>
+            <button id="logoutBtn" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Logout</button>
         </div>
     </div>
 
@@ -1998,6 +2006,9 @@ function handleGuestMode() {
         }
     }
     
+    // Update button visibility
+    updateAuthButtons();
+    
     // Save to localStorage for persistence (separate key for mulligan page)
     localStorage.setItem('mulligan_guest_mode', 'true');
     
@@ -2040,6 +2051,30 @@ function resetToWelcomeScreen() {
 
 // Add reset function to window for debugging
 window.resetToWelcomeScreen = resetToWelcomeScreen;
+
+// Update auth button visibility based on login state
+function updateAuthButtons() {
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const upgradeBtn = document.getElementById('upgradeToAccountBtn');
+    
+    if (localAuthState.isGuest) {
+        // Guest mode - show upgrade button only
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (upgradeBtn) upgradeBtn.style.display = 'inline';
+    } else if (localAuthState.isLoggedIn) {
+        // Logged in - show logout button only
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'inline';
+        if (upgradeBtn) upgradeBtn.style.display = 'none';
+    } else {
+        // Not logged in - show login button only
+        if (loginBtn) loginBtn.style.display = 'inline';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (upgradeBtn) upgradeBtn.style.display = 'none';
+    }
+}
 
 function showLocalMessage(message, type = 'info') {
     // Create or get message container
@@ -2106,6 +2141,9 @@ function initLocalAuth() {
             }
         }
         
+        // Update button visibility
+        updateAuthButtons();
+        
         // Always hide welcome screen for returning visitors
         const authContainer = document.getElementById('authContainer');
         if (authContainer) authContainer.style.display = 'none';
@@ -2123,11 +2161,67 @@ function initLocalAuth() {
         
         console.log('Welcome screen initialized - first time visitor');
     }
+    
+    // Update auth buttons regardless of state
+    updateAuthButtons();
+}
+
+// Add event listeners for login and logout buttons
+function setupLocalAuthEventListeners() {
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const upgradeBtn = document.getElementById('upgradeToAccountBtn');
+    
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            // Show login options
+            resetToWelcomeScreen();
+            handleShowLogin();
+        });
+    }
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Clear guest mode and show welcome screen
+            resetToWelcomeScreen();
+        });
+    }
+    
+    if (upgradeBtn) {
+        upgradeBtn.addEventListener('click', () => {
+            // Clear guest mode and show welcome screen with registration option
+            resetToWelcomeScreen();
+            handleShowLogin();
+        });
+    }
+    
+    // Menu login and register buttons
+    const menuLoginBtn = document.getElementById('menuLoginBtn');
+    const menuRegisterBtn = document.getElementById('menuRegisterBtn');
+    
+    if (menuLoginBtn) {
+        menuLoginBtn.addEventListener('click', () => {
+            menuOverlay.classList.remove('show'); // Close menu
+            resetToWelcomeScreen();
+            handleShowLogin();
+        });
+    }
+    
+    if (menuRegisterBtn) {
+        menuRegisterBtn.addEventListener('click', () => {
+            menuOverlay.classList.remove('show'); // Close menu
+            resetToWelcomeScreen();
+            handleShowLogin();
+        });
+    }
 }
 
 // Initialize local auth when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(initLocalAuth, 50);
+    setTimeout(() => {
+        initLocalAuth();
+        setupLocalAuthEventListeners();
+    }, 50);
 });
 
   
@@ -2168,6 +2262,18 @@ document.addEventListener('DOMContentLoaded', function() {
     <button id="filenameCancelBtn" style="margin:6px; background: linear-gradient(135deg, #666, #444);">Abbrechen</button>
   </div>
 </div>
+
+<!-- Footer section -->
+<footer style="margin-top: 4rem; padding: 2rem 0; border-top: 1px solid rgba(63, 208, 201, 0.2); text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 0 20px;">
+        <p style="color: #D0D0D0; margin: 0; font-size: 0.9rem;">© 2025 Drawstep - TCG Strategy Hub</p>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <a href="../../impressum.html" style="color: #3FD0C9; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Impressum</a>
+            <span style="color: #666;">|</span>
+            <a href="../../datenschutz.html" style="color: #3FD0C9; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Datenschutz</a>
+        </div>
+    </div>
+</footer>
 
 <!-- Disabled global auth.js - using custom auth for mulligan page -->
 <!-- <script src="../../assets/js/auth.js"></script> -->

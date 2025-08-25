@@ -762,6 +762,47 @@ body::before {
     color: #9B5DE5;
 }
 
+/* ============================================ */
+/* FOOTER STYLES */
+/* ============================================ */
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding: 0 20px;
+}
+
+.footer-text {
+    color: #D0D0D0;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-link {
+    color: #3FD0C9;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #9B5DE5;
+}
+
+.footer-separator {
+    color: #666;
+    font-size: 0.9rem;
+}
+
 /* Mobile responsiveness for auth modals */
 @media (max-width: 480px) {
     .auth-content {
@@ -771,5 +812,10 @@ body::before {
     
     .auth-header h3 {
         font-size: 1.5rem;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 1rem;
     }
 }

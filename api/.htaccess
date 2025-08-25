@@ -1,0 +1,17 @@
+RewriteEngine On
+
+# API Auth Routes
+RewriteRule ^auth/register$ auth/register.php [L]
+RewriteRule ^auth/login$ auth/login.php [L]
+RewriteRule ^auth/verify$ auth/verify.php [L]
+RewriteRule ^auth/me$ auth/me.php [L]
+RewriteRule ^auth/logout$ auth/logout.php [L]
+
+# Enable CORS for all API requests
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+# Handle OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule .* - [R=200,L]
