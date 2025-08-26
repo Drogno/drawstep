@@ -13,22 +13,14 @@
     <!-- Include auth modals CSS from main site -->
     <link rel="stylesheet" href="../../assets/css/main.css">
     
-    <!-- Check first visit status before page renders to prevent flashing -->
+    <!-- FORCE CLEAN AUTH STATE BEFORE ANY SCRIPTS LOAD -->
     <script>
-        // Check if user has visited the mulligan trainer in this session OR is a returning guest
-        const hasVisitedMulliganBefore = sessionStorage.getItem('mulligan_trainer_visited') === 'true';
-        const wasGuest = localStorage.getItem('mulligan_guest_mode') === 'true';
-        
-        console.log('DEBUG: Head script - mulligan_trainer_visited (session):', hasVisitedMulliganBefore);
-        console.log('DEBUG: Head script - mulligan_guest_mode (persistent):', wasGuest);
-        
-        if (hasVisitedMulliganBefore || wasGuest) {
-            // Add CSS to hide welcome window for returning visitors or persistent guests
-            console.log('DEBUG: Head script - Hiding authContainer for returning visitor or persistent guest');
-            document.write('<style>#authContainer { display: none !important; }</style>');
-        } else {
-            console.log('DEBUG: Head script - First time visitor this session, showing authContainer');
-        }
+        console.log('EMERGENCY AUTH RESET - clearing all auth data before scripts load');
+        localStorage.removeItem('drawstep_guest_mode');
+        localStorage.removeItem('drawstep_token');
+        localStorage.removeItem('mulligan_guest_mode');
+        sessionStorage.removeItem('mulligan_trainer_visited');
+        console.log('Auth state cleared in head');
     </script>
 </head>
 
@@ -67,8 +59,28 @@
           
           <!-- Account section -->
           <div class="menu-section-title">Account</div>
-          <a href="#" class="menu-item" id="menuLoginBtn">🔐 Login</a>
-          <a href="#" class="menu-item" id="menuRegisterBtn">👤 Create Account</a>
+          <div id="menuAuthSection">
+              <!-- Logged in user display -->
+              <div id="menuUserInfo" style="display: none;">
+                  <div class="menu-item-static">
+                      <span style="color: #3FD0C9; font-weight: bold;">Welcome, </span>
+                      <span id="menuUsername" style="color: #FFD34E; font-weight: bold;"></span>
+                  </div>
+                  <a href="#" class="menu-item" id="menuLogoutBtn">
+                      🚪 Logout
+                  </a>
+              </div>
+              
+              <!-- Not logged in options -->
+              <div id="menuLoginOptions" style="display: block;">
+                  <a href="#" class="menu-item" id="menuLoginBtn">
+                      🔐 Login
+                  </a>
+                  <a href="#" class="menu-item" id="menuRegisterBtn">
+                      👤 Create Account
+                  </a>
+              </div>
+          </div>
           
           <div class="menu-separator"></div>
           
@@ -170,7 +182,7 @@
             
             <!-- Mode Selection -->
             <div style="margin-bottom: 30px;">
-                <button id="continueAsGuest" onclick="handleGuestMode()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #666, #444); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1.1rem;">
+                <button id="continueAsGuest" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #666, #444); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1.1rem;">
                     🚀 CONTINUE AS GUEST
                 </button>
                 <div style="background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 6px; padding: 12px; margin-bottom: 20px;">
@@ -179,7 +191,7 @@
                     </p>
                 </div>
                 
-                <button id="showLoginOptions" onclick="handleShowLogin()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
+                <button id="showLogin" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
                     📊 LOGIN FOR ADVANCED FEATURES
                 </button>
                 <div style="background: rgba(63, 208, 201, 0.1); border: 1px solid rgba(63, 208, 201, 0.3); border-radius: 6px; padding: 15px; margin-top: 15px;">
@@ -577,14 +589,16 @@ async function loadAllCards() {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
-    allCardsData = await response.json();
-    console.log('allCards.json loaded successfully', allCardsData);
+    const loadedData = await response.json();
+    // Use loaded data directly (already has cards property)
+    allCardsData = loadedData;
+    console.log('allCards.json loaded successfully', allCardsData.cards.length, 'cards');
     
     // Test: Suche nach "A Whole New World"
     if (allCardsData && allCardsData.cards) {
       const testCard = allCardsData.cards.find(card => card.name === "A Whole New World");
       if (testCard) {
-        console.log('Test card found:', testCard.name, 'inkwell:', testCard.inkwell);
+        console.log('Test card found:', testCard.name, 'inkable:', testCard.inkwell);
       } else {
         console.warn('Test card "A Whole New World" not found');
       }
@@ -635,6 +649,7 @@ const nameCorrections = {
   "Snow White - Fair-hearted": "Snow White - Fair-haired",
   "Seven Dwarfs' Mine - Secure Fortress": "Seven Dwarfs' Mine"
 };
+
 
 
 clearHistoryBtn.addEventListener('click', () => {
@@ -885,7 +900,7 @@ function calculateDeckStats() {
     // Fallback-Methode: Verwende bekannte Uninkable-Karten
     const grouped = {};
     deck.forEach(card => {
-      const key = card.Name || '';
+      const key = card.name || '';
       if (!grouped[key]) grouped[key] = 0;
       grouped[key]++;
     });
@@ -902,9 +917,10 @@ function calculateDeckStats() {
     return { total: deck.length, uninkables: uninkables };
   }
   
+  
   const grouped = {};
-  deck.forEach(card => {
-    const key = card.Name || '';
+  deck.forEach((card, index) => {
+    const key = card.name || '';
     if (!grouped[key]) grouped[key] = 0;
     grouped[key]++;
   });
@@ -913,11 +929,11 @@ function calculateDeckStats() {
   Object.entries(grouped).forEach(([cardName, count]) => {
     // Suche die Karte in allCardsData.cards Array
     const possibleMatches = allCardsData.cards.filter(card => {
-      // Exakter Name-Match hat höchste Priorität
-      if (card.name === cardName || card.fullName === cardName) return true;
+      // Exakter Name-Match hat höchste Priorität  
+      if (card.Name === cardName || card.fullName === cardName) return true;
       
       // Normalisierte Namen vergleichen (aggressivere Normalisierung)
-      const normalizeString = (str) => str.toLowerCase()
+      const normalizeString = (str) => (str || '').toLowerCase()
         .replace(/[''`]/g, '')      // Apostrophe komplett entfernen
         .replace(/[""]/g, '')       // Anführungszeichen entfernen
         .replace(/[-–—]/g, ' ')     // Bindestriche durch Leerzeichen ersetzen
@@ -926,19 +942,15 @@ function calculateDeckStats() {
         .trim();
       
       const normalizedCardName = normalizeString(cardName);
-      const normalizedDbName = normalizeString(card.name);
+      const normalizedDbName = normalizeString(card.Name);
       const normalizedFullName = normalizeString(card.fullName || '');
       const normalizedSimpleName = normalizeString(card.simpleName || '');
       
-      // Verschiedene Matching-Strategien
+      // Nur exakte Matches zulassen - includes ist zu aggressiv
       const matches = [
         normalizedDbName === normalizedCardName,
         normalizedFullName === normalizedCardName,
-        normalizedSimpleName === normalizedCardName,
-        normalizedDbName.includes(normalizedCardName),
-        normalizedCardName.includes(normalizedDbName),
-        normalizedFullName.includes(normalizedCardName),
-        normalizedCardName.includes(normalizedFullName)
+        normalizedSimpleName === normalizedCardName
       ];
       
       return matches.some(match => match);
@@ -946,36 +958,22 @@ function calculateDeckStats() {
     
     // Sortiere Matches nach Priorität (exakte Matches zuerst)
     const cardData = possibleMatches.sort((a, b) => {
-      const aExact = a.name === cardName || a.fullName === cardName;
-      const bExact = b.name === cardName || b.fullName === cardName;
+      const aExact = a.Name === cardName || a.fullName === cardName;
+      const bExact = b.Name === cardName || b.fullName === cardName;
       if (aExact && !bExact) return -1;
       if (!aExact && bExact) return 1;
       return 0;
     })[0];
     
-    if (possibleMatches.length > 1) {
-      console.log(`Multiple matches found for "${cardName}":`, possibleMatches.map(m => `${m.name} (${m.fullName}) - Set ${m.setCode}`));
-    }
     
-    if (cardData) {
-      if (cardData.inkwell === false) {
-        uninkables += count;
-        console.log(`Found uninkable card: ${cardName} (${count}x) - DB: ${cardData.name || cardData.fullName} (ID: ${cardData.id}, Set: ${cardData.setCode}), inkwell: ${cardData.inkwell}`);
-      } else {
-        console.log(`Found inkable card: ${cardName} (${count}x) - DB: ${cardData.name || cardData.fullName} (ID: ${cardData.id}, Set: ${cardData.setCode}), inkwell: ${cardData.inkwell}`);
-      }
-    } else {
-      // Fallback für nicht gefundene Karten
-      if (knownUninkables.includes(cardName)) {
-        uninkables += count;
-        console.log(`Fallback: Found uninkable card: ${cardName} (${count}x)`);
-      } else {
-        console.warn(`Card not found in database: ${cardName}`);
-      }
+    // Use Inkable property from imported cards directly
+    const sampleCard = deck.find(card => card.name === cardName);
+    
+    if (sampleCard && sampleCard.inkable === false) {
+      uninkables += count;
     }
   });
   
-  console.log(`Total deck stats: ${deck.length} total, ${uninkables} uninkables`);
   return { total: deck.length, uninkables: uninkables };
 }
 
@@ -1096,7 +1094,7 @@ function updateDeckDisplay() {
   deckImagesBox.innerHTML = '';
   const grouped = {};
   deck.forEach(card => {
-    const key = (card.Name || '') + '|' + (card.Image || '');
+    const key = (card.name || '') + '|' + (card.Image || '');
     if (!grouped[key]) grouped[key] = { card, count: 0 };
     grouped[key].count++;
   });
@@ -1107,12 +1105,12 @@ function updateDeckDisplay() {
 
     const img = document.createElement('img');
     img.src = card.Image || '';
-    img.alt = card.Name || '';
-    img.title = (card.Name || '') + (count > 1 ? ` (${count}x)` : '');
+    img.alt = card.name || '';
+    img.title = (card.name || '') + (count > 1 ? ` (${count}x)` : '');
     img.className = 'deck-card-img';
     
     // Hover-Effekt für vergrößerte Ansicht hinzufügen
-    img.addEventListener('mouseenter', (e) => showCardPreview(e, card.Image || '', card.Name || ''));
+    img.addEventListener('mouseenter', (e) => showCardPreview(e, card.Image || '', card.name || ''));
     img.addEventListener('mouseleave', hideCardPreview);
     img.addEventListener('mousemove', updateCardPreviewPosition);
     
@@ -1138,8 +1136,8 @@ function showHand(hand, selectable = true) {
   hand.forEach((card, i) => {
     const img = document.createElement('img');
     img.src = card.Image || '';
-    img.alt = card.Name || '(unknown card)';
-    img.title = card.Name || '';
+    img.alt = card.name || '(unknown card)';
+    img.title = card.name || '';
     img.dataset.index = i;
     if (selectedIndices.has(i)) img.classList.add('selected');
     if (selectable) {
@@ -1304,9 +1302,9 @@ function getCardManaCost(card) {
   // First try to get cost from the card data loaded via API
   if (allCardsData && allCardsData.cards) {
     const cardData = allCardsData.cards.find(c => 
-      c.fullName === card.Name || 
-      c.name === card.Name ||
-      (c.fullName && c.fullName.toLowerCase() === card.Name.toLowerCase())
+      c.fullName === card.name || 
+      c.Name === card.name ||
+      (c.fullName && c.fullName.toLowerCase() === card.name.toLowerCase())
     );
     if (cardData && typeof cardData.cost === 'number') {
       return cardData.cost;
@@ -1378,8 +1376,8 @@ const beforeCards = document.createElement('div');
 entry.before.forEach((card, i) => {
   const img = document.createElement('img');
   img.src = card.Image || '';
-  img.alt = card.Name || '';
-  img.title = card.Name || '';
+  img.alt = card.name || '';
+  img.title = card.name || '';
   img.className = 'card-img';
   if (entry.exchanged[i]) img.classList.add('exchanged');
   beforeCards.appendChild(img);
@@ -1397,8 +1395,8 @@ const afterCards = document.createElement('div');
 entry.after.forEach(card => {
   const img = document.createElement('img');
   img.src = card.Image || '';
-  img.alt = card.Name || '';
-  img.title = card.Name || '';
+  img.alt = card.name || '';
+  img.title = card.name || '';
   img.className = 'card-img';
   afterCards.appendChild(img);
 });
@@ -1463,16 +1461,43 @@ importBtn.addEventListener('click', async () => {
     name = nameCorrections[name];
   }
 
-  const imageFile = cardImageMap[name] || cardImageMap[name.toLowerCase()];;
-  const imageUrl = imageFile ? 'assets/images/cards/' + imageFile : '';
+  // Find card data from allCards.json first
+  let cardData = null;
+  if (allCardsData && allCardsData.cards) {
+    cardData = allCardsData.cards.find(c => 
+      c.Name === name || 
+      c.fullName === name ||
+      (c.fullName && c.fullName.toLowerCase() === name.toLowerCase())
+    );
+  }
+
+  // Use cardData.fullName for image mapping if available, otherwise use name
+  const imageKey = cardData ? (cardData.fullName || cardData.Name) : name;
+  const imageFile = cardImageMap[imageKey] || cardImageMap[imageKey.toLowerCase()] || cardImageMap[name] || cardImageMap[name.toLowerCase()];
+  const imageUrl = imageFile ? `assets/images/cards/${imageFile}` : '';
 
   if (!imageFile) {
     error = true;
     await showInfoDialog(`Card not found: ${name}`);
     continue;
   }
+  
+  
+  // Determine if card is inkable
+  let inkable;
+  if (cardData && cardData.inkwell !== undefined) {
+    inkable = cardData.inkwell;
+  } else if (cardData && cardData.cost !== undefined) {
+    inkable = cardData.cost <= 3;
+  } else {
+    inkable = true; // fallback
+  }
 
-  const card = { Name: name, Image: imageUrl };
+  const card = { 
+    name: name, 
+    Image: imageUrl, 
+    inkable: inkable
+  };
   for (let i = 0; i < count; i++) {
     deck.push(card);
     totalCards++;
@@ -1588,7 +1613,7 @@ mulliganBtn.addEventListener('click', () => {
     if (!allCardsData || !allCardsData.cards) return 0;
     let count = 0;
     hand.forEach(card => {
-      const cardData = allCardsData.cards.find(c => c.name === card.Name || c.fullName === card.Name);
+      const cardData = allCardsData.cards.find(c => c.name === card.name || c.fullName === card.name);
       if (cardData && cardData.inkwell === false) count++;
     });
     return count;
@@ -1989,17 +2014,11 @@ checkIfReadyToPlay();
 // SIMPLE LOCAL AUTH FOR MULLIGAN PAGE
 // ============================================
 
-// Simple local auth state
-let localAuthState = {
-    isGuest: false,
-    isLoggedIn: false,
-    user: null
-};
+// Removed - using only global auth system
 
 function handleGuestMode() {
-    // Enable guest mode locally
-    localAuthState.isGuest = true;
-    localAuthState.user = { username: 'Guest', guest: true };
+    console.log('handleGuestMode() is disabled - using global auth system');
+    return;
     
     // Hide auth container overlay
     const authContainer = document.getElementById('authContainer');
@@ -2019,22 +2038,19 @@ function handleGuestMode() {
     // Update button visibility
     updateAuthButtons();
     
-    // Save to localStorage for persistence (separate key for mulligan page)
-    localStorage.setItem('mulligan_guest_mode', 'true');
+    // Use global auth system key
+    localStorage.setItem('drawstep_guest_mode', 'true');
     
     // Mark mulligan trainer as visited for this session
     console.log('DEBUG: Setting mulligan_trainer_visited from handleGuestMode (session)');
     sessionStorage.setItem('mulligan_trainer_visited', 'true');
     
-    // Show message
-    showLocalMessage('Welcome! Using guest mode - progress will not be saved.', 'info');
+    // Message is now handled by global auth system
 }
 
 function handleShowLogin() {
-    const loginOptionsContainer = document.getElementById('loginOptionsContainer');
-    if (loginOptionsContainer) {
-        loginOptionsContainer.style.display = 'block';
-    }
+    console.log('handleShowLogin() is disabled - using global auth system');
+    return;
     
     // Mark mulligan trainer as visited for this session when user chooses to see login options
     console.log('DEBUG: Setting mulligan_trainer_visited from handleShowLogin (session)');
@@ -2068,21 +2084,42 @@ function updateAuthButtons() {
     const logoutBtn = document.getElementById('logoutBtn');
     const upgradeBtn = document.getElementById('upgradeToAccountBtn');
     
+    // Also update hamburger menu buttons
+    const menuUserInfo = document.getElementById('menuUserInfo');
+    const menuLoginOptions = document.getElementById('menuLoginOptions');
+    const menuUsername = document.getElementById('menuUsername');
+    
     if (localAuthState.isGuest) {
         // Guest mode - show upgrade button only
         if (loginBtn) loginBtn.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'none';
         if (upgradeBtn) upgradeBtn.style.display = 'inline';
+        
+        // Update hamburger menu for guest
+        if (menuUserInfo) menuUserInfo.style.display = 'block';
+        if (menuLoginOptions) menuLoginOptions.style.display = 'none';
+        if (menuUsername) menuUsername.textContent = 'Guest';
     } else if (localAuthState.isLoggedIn) {
         // Logged in - show logout button only
         if (loginBtn) loginBtn.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'inline';
         if (upgradeBtn) upgradeBtn.style.display = 'none';
+        
+        // Update hamburger menu for logged in user
+        if (menuUserInfo) menuUserInfo.style.display = 'block';
+        if (menuLoginOptions) menuLoginOptions.style.display = 'none';
+        if (menuUsername && localAuthState.user) {
+            menuUsername.textContent = localAuthState.user.username;
+        }
     } else {
         // Not logged in - show login button only
         if (loginBtn) loginBtn.style.display = 'inline';
         if (logoutBtn) logoutBtn.style.display = 'none';
         if (upgradeBtn) upgradeBtn.style.display = 'none';
+        
+        // Update hamburger menu for not logged in
+        if (menuUserInfo) menuUserInfo.style.display = 'none';
+        if (menuLoginOptions) menuLoginOptions.style.display = 'block';
     }
 }
 
@@ -2123,10 +2160,10 @@ function showLocalMessage(message, type = 'info') {
     }, 3000);
 }
 
-// Check if user has visited mulligan trainer before
+// DISABLED - using only global auth system
 function initLocalAuth() {
-    const hasVisitedBefore = sessionStorage.getItem('mulligan_trainer_visited') === 'true';
-    const wasGuest = localStorage.getItem('mulligan_guest_mode') === 'true';
+    console.log('Local auth disabled - using global auth system only');
+    return;
     
     console.log('DEBUG: initLocalAuth - mulligan_trainer_visited (session):', hasVisitedBefore);
     console.log('DEBUG: initLocalAuth - mulligan_guest_mode:', wasGuest);
@@ -2209,30 +2246,119 @@ function setupLocalAuthEventListeners() {
     const menuLoginBtn = document.getElementById('menuLoginBtn');
     const menuRegisterBtn = document.getElementById('menuRegisterBtn');
     
-    if (menuLoginBtn) {
-        menuLoginBtn.addEventListener('click', () => {
-            menuOverlay.classList.remove('show'); // Close menu
-            resetToWelcomeScreen();
-            handleShowLogin();
+    // Menu login/register buttons are now handled by main.js
+    // Remove local event listeners to prevent conflicts
+}
+
+// RESET AUTH STATE AND USE CLEAN SYSTEM
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        // FORCE RESET of all auth data for clean state
+        localStorage.removeItem('drawstep_guest_mode');
+        localStorage.removeItem('drawstep_token');
+        localStorage.removeItem('mulligan_guest_mode');
+        sessionStorage.removeItem('mulligan_trainer_visited');
+        
+        console.log('Auth state reset to clean slate');
+        
+        // Force refresh the global auth manager if it exists
+        if (window.authManager) {
+            window.authManager.token = null;
+            window.authManager.user = null;
+            window.authManager.guestMode = false;
+            window.authManager.updateUI(); // Force UI update
+            console.log('Global auth manager reset and UI updated');
+        }
+        
+        // Always show welcome screen for first-time experience
+        const authContainer = document.getElementById('authContainer');
+        if (authContainer) {
+            authContainer.style.display = 'flex';
+            console.log('Welcome screen shown');
+        }
+        
+        // Setup welcome screen buttons
+        setupWelcomeScreenButtons();
+    }, 100);
+});
+
+// Setup welcome screen buttons to work with global auth system
+function setupWelcomeScreenButtons() {
+    const continueAsGuestBtn = document.getElementById('continueAsGuest');
+    const showLoginBtn = document.getElementById('showLogin');
+    
+    if (continueAsGuestBtn && !continueAsGuestBtn.hasListener) {
+        console.log('Setting up guest button listener');
+        continueAsGuestBtn.addEventListener('click', () => {
+            console.log('Guest button clicked - enabling guest mode via global auth');
+            // Use only global auth system
+            if (window.authManager) {
+                window.authManager.enableGuestMode();
+            }
+            // Hide welcome screen
+            const authContainer = document.getElementById('authContainer');
+            if (authContainer) authContainer.style.display = 'none';
+            
+            // Mark as visited
+            sessionStorage.setItem('mulligan_trainer_visited', 'true');
         });
+        continueAsGuestBtn.hasListener = true; // Mark to prevent duplicate listeners
     }
     
-    if (menuRegisterBtn) {
-        menuRegisterBtn.addEventListener('click', () => {
-            menuOverlay.classList.remove('show'); // Close menu
-            resetToWelcomeScreen();
-            handleShowLogin();
+    if (showLoginBtn && !showLoginBtn.hasListener) {
+        console.log('Setting up login button listener');
+        showLoginBtn.addEventListener('click', () => {
+            console.log('Login button clicked');
+            // Hide welcome screen
+            const authContainer = document.getElementById('authContainer');
+            if (authContainer) authContainer.style.display = 'none';
+            
+            // Show login modal using global system
+            if (window.authManager) {
+                window.authManager.showLoginModal();
+            }
+            
+            // Mark as visited
+            sessionStorage.setItem('mulligan_trainer_visited', 'true');
         });
+        showLoginBtn.hasListener = true; // Mark to prevent duplicate listeners
     }
 }
 
-// Initialize local auth when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        initLocalAuth();
-        setupLocalAuthEventListeners();
-    }, 50);
-});
+// Sync local auth state with global auth system
+function syncWithGlobalAuth() {
+    if (!window.authManager) return;
+    
+    // Check if user is logged in globally
+    if (window.authManager.isLoggedIn()) {
+        localAuthState.isLoggedIn = true;
+        localAuthState.isGuest = false;
+        localAuthState.user = window.authManager.user;
+        
+        // Update UI to reflect logged in state
+        const authContainer = document.getElementById('authContainer');
+        const userContainer = document.getElementById('userContainer');
+        
+        if (authContainer) authContainer.style.display = 'none';
+        if (userContainer) {
+            userContainer.style.display = 'block';
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            if (usernameDisplay) {
+                usernameDisplay.textContent = window.authManager.user.username;
+                usernameDisplay.style.color = '#3FD0C9';
+            }
+        }
+        
+        updateAuthButtons();
+        console.log('Synced with global auth - user logged in:', window.authManager.user.username);
+    } else if (window.authManager.guestMode) {
+        localAuthState.isGuest = true;
+        localAuthState.isLoggedIn = false;
+        localAuthState.user = { username: 'Guest', guest: true };
+        updateAuthButtons();
+        console.log('Synced with global auth - guest mode');
+    }
+}
 
   
 </script>
@@ -2339,6 +2465,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-
+<script src="../../assets/js/auth.js"></script>
+<!-- <script src="../../assets/js/main.js"></script> -->
 </body>
 </html>

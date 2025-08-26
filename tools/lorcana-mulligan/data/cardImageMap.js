@@ -1629,4 +1629,6 @@ const cardImageMap = {
   "Beyond the Horizon": "008-202.webp",
   "Quick Shot": "008-203.webp",
   "Hamster Ball": "008-204.webp",
+  "Lilo - Best Explorer Ever": "009-174.webp",
+  "Scar - Finally King": "009-175.webp",
 };
