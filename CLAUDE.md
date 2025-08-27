@@ -19,17 +19,23 @@ DRAWSTEP - TCG tools and websites for Trading Card Games, specifically focused o
 - [x] **Database Integration**: SQLite with user accounts, sessions, and statistics
 - [x] **Session Tracking**: Detailed training session and mulligan history storage
 - [x] **Statistics API**: Full backend API for data collection and analysis
+- [x] **Admin Panel**: Complete admin interface with meta deck management
+- [x] **VPS Deployment**: Full production deployment on Netcup VPS
+- [x] **Meta Deck Management**: Add/Edit/Delete/Reorder meta decks via admin panel
+- [x] **Font Fixes**: Corrected Bebas Neue font loading
+- [x] **UI Improvements**: Added Mulli logo, disclaimer page, footer updates
+- [x] **Legal Pages**: Added disclaimer page with proper trademark notices
 
 ## Feature Roadmap
 
 ### High Priority
-- [ ] **Login System & User Accounts** (Foundation for Community Platform):
-  - User registration and authentication
-  - Persistent statistics storage
-  - Cross-device synchronization
-  - User profiles with avatars/badges
-  - Email verification and password reset
-  - Privacy settings and data management
+- [x] **Login System & User Accounts** (Foundation for Community Platform):
+  - [x] User registration and authentication
+  - [x] Persistent statistics storage
+  - [ ] Cross-device synchronization
+  - [ ] User profiles with avatars/badges
+  - [ ] Email verification and password reset
+  - [ ] Privacy settings and data management
 
 - [ ] **Meta Gauntlet Mode**: 
   - Automatically cycle through all current meta decks as opponents
@@ -77,14 +83,20 @@ DRAWSTEP - TCG tools and websites for Trading Card Games, specifically focused o
 
 ## Technical Notes
 - Uses vanilla HTML/CSS/JavaScript (no frameworks)
-- Apache server with .htaccess for clean URLs
+- **Production Server**: Node.js/Express backend on Netcup VPS
+- **Database**: SQLite for user accounts and statistics
+- **Admin Panel**: Complete backend management interface
 - Card data from `allCards.json` 
 - Image mapping via `cardImageMap.js`
+- **Live URL**: http://drawstep.de
 - Git repository: https://github.com/Drogno/drawstep
 
 ## Development Commands
-- **Lint/Build**: (To be determined - ask user for specific commands)
-- **Test**: (To be determined - ask user for specific commands)
+- **Local Development**: `npm run dev` (starts Node.js server)
+- **Production**: `pm2 start server.js --name drawstep-backend`
+- **VPS Setup**: `scripts/vps-setup.sh` (automated VPS deployment)
+- **File Upload**: `scripts/upload-files.sh` (deploy to VPS)
+- **Admin Panel**: http://drawstep.de/admin (production) or http://localhost:3000/admin (local)
 
 ## Important Development Guidelines
 - **NEVER attempt autonomous changes** - Always ask before making modifications
@@ -94,6 +106,7 @@ DRAWSTEP - TCG tools and websites for Trading Card Games, specifically focused o
 - **Consultation over assumption** - If uncertain about any aspect, ask for clarification rather than assuming
 
 ## Current Issues
+- **SSL Certificate**: Let's Encrypt certificate installation pending (manual setup required)
 - **Welcome Window Bug**: Welcome window für Mulligan Trainer zeigt sich nur einmal, dann nie wieder - auch nach Browser-Neustart nicht. localStorage Flag wird permanent gesetzt und verhindert erneute Anzeige. Problem: Ctrl+Shift+R leert nur Cache, nicht localStorage. Verschiedene Lösungsansätze mit localStorage/sessionStorage noch nicht zufriedenstellend.
 
 ## Recently Resolved Issues
