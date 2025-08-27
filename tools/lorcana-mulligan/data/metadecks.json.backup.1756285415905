@@ -1,0 +1,22 @@
+{
+    "RA Evasives": {
+        "name": "Ruby/Amethyst Evasives",
+        "list": "3 A Pirate's Life\n4 Be Prepared\n3 Brawl\n4 Chernabog's Followers - Creatures of Evil\n4 Diablo - Obedient Raven\n1 Dragon Fire\n4 Elsa - The Fifth Spirit\n2 Finders Keepers\n4 Friends on the Other Side\n4 Genie - Wish Fulfilled\n1 Hades - Ruthless Tyrant\n2 Iago - Giant Spectral Parrot\n3 Madam Mim - Fox\n4 Maui - Half-Shark\n2 Maui - Hero to All\n4 Merlin - Crab\n4 Peter Pan - Shadow Finder\n3 The Library - A Gift for Belle\n4 Ursula - Mad Sea Witch"
+    },
+    "PS Brooms": {
+        "name": "Amethyst/Steel Brooms",
+        "list": "4 Chernabog's Followers - Creatures of Evil\n4 Diablo - Obedient Raven\n4 Doc - Bold Knight\n2 Fire the Cannons!\n2 Genie - Wish Fulfilled\n4 Giant Cobra - Ghostly Serpent\n4 Madam Mim - Fox\n3 Madam Mim - Snake\n4 Magic Broom - Aerial Cleaner\n4 Magic Broom - Illuminary Keeper\n3 Merlin - Crab\n4 Merlin - Goat\n4 Mr. Smee - Bumbling Mate\n4 Pete - Games Referee\n4 Strength of a Raging Fire\n2 The Library - A Gift for Belle\n4 Yen Sid - Powerful Sorcerer"
+    },
+    "ES Discard": {
+        "name": "Emerald/Steel Discard",
+        "list": "2 Ba-Boom!\n3 Beast - Tragic Hero\n2 Beyond the Horizon\n2 Chip - Quick Thinker\n4 Diablo - Devoted Herald\n4 Diablo - Maleficent's Spy\n2 Hidden Cove - Tranquil Haven\n2 Hypnotize\n4 Let the Storm Rage On\n3 Morph - Space Goo\n4 Pete - Games Referee\n4 Pete - Space Pirate\n3 Prince John - Greediest of All\n4 Strength of a Raging Fire\n4 Sudden Chill\n3 The Muses - Proclaimers of Heroes\n4 Ursula - Deceiver\n4 Ursula - Deceiver of All\n3 We Don't Talk About Bruno"
+    },
+    "GP Discard": {
+        "name": "Amethyst/Emerald Discard",
+        "list": "1 Belle - Accomplished Mystic\n3 Chip - Quick Thinker\n1 Cri-Kee - Lucky Cricket\n4 Diablo - Devoted Herald\n3 Diablo - Maleficent's Spy\n4 Diablo - Obedient Raven\n3 Diablo - Spiteful Raven\n3 Elsa - The Fifth Spirit\n4 Friends on the Other Side\n3 Genie - Wish Fulfilled\n1 Hidden Cove - Tranquil Haven\n1 Hypnotic Strength\n2 Iago - Giant Spectral Parrot\n3 Merlin - Crab\n2 Peter Pan - Shadow Finder\n3 Prince John - Greediest of All\n4 Pull the Lever!\n4 Sudden Chill\n1 They Never Come Back\n4 Ursula - Deceiver\n4 We Don't Talk About Bruno\n2 Wrong Lever!"
+    },
+    "GP Tempo": {
+        "name": "Amethyst/Emerald Tempo",
+        "list": "4 Cursed Merfolk - Ursula's Handiwork\n4 Diablo - Obedient Raven\n3 Elsa - The Fifth Spirit\n4 Flynn Rider - Charming Rogue\n4 Friends on the Other Side\n4 Genie - Wish Fulfilled\n4 Go Go Tomago - Darting Dynamo\n4 Kit Cloudkicker - Tough Guy\n4 Madam Mim - Fox\n2 Madam Mim - Snake\n4 Merlin - Crab\n4 Merlin - Goat\n4 Pegasus - Gift for Hercules\n2 Peter Pan - Shadow Finder\n3 Pull the Lever!\n4 Ursula - Deceiver\n2 Wrong Lever!"
+    }
+}

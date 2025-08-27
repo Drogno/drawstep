@@ -62,12 +62,12 @@ class AuthManager {
         await this.getCurrentUser();
         return true;
       } else {
-        this.logout();
+        this.silentLogout();
         return false;
       }
     } catch (error) {
       console.error('Token validation error:', error);
-      this.logout();
+      this.silentLogout();
       return false;
     }
   }
@@ -113,6 +113,9 @@ class AuthManager {
         localStorage.setItem('drawstep_token', this.token);
         this.updateUI();
         this.showMessage('Registration successful! Welcome to DRAWSTEP!', 'success');
+        
+        // Trigger auth state change event
+        window.dispatchEvent(new CustomEvent('authStateChanged'));
         return { success: true, data };
       } else {
         this.showMessage(data.error || 'Registration failed', 'error');
@@ -143,6 +146,9 @@ class AuthManager {
         localStorage.setItem('drawstep_token', this.token);
         this.updateUI();
         this.showMessage(`Welcome back, ${data.user.username}!`, 'success');
+        
+        // Trigger auth state change event
+        window.dispatchEvent(new CustomEvent('authStateChanged'));
         return { success: true, data };
       } else {
         this.showMessage(data.error || 'Login failed', 'error');
@@ -176,6 +182,22 @@ class AuthManager {
     localStorage.removeItem('drawstep_guest_mode');
     this.updateUI();
     this.showMessage('Logged out successfully', 'success');
+    
+    // Trigger auth state change event
+    window.dispatchEvent(new CustomEvent('authStateChanged'));
+  }
+
+  // Silent logout without showing message (for token validation failures)
+  silentLogout() {
+    this.token = null;
+    this.user = null;
+    this.guestMode = false;
+    localStorage.removeItem('drawstep_token');
+    localStorage.removeItem('drawstep_guest_mode');
+    this.updateUI();
+    
+    // Trigger auth state change event
+    window.dispatchEvent(new CustomEvent('authStateChanged'));
   }
 
   // Enable guest mode
@@ -185,6 +207,9 @@ class AuthManager {
     localStorage.setItem('drawstep_guest_mode', 'true');
     this.updateUI();
     this.showMessage('Welcome! Using guest mode - progress will not be saved.', 'info');
+    
+    // Trigger auth state change event
+    window.dispatchEvent(new CustomEvent('authStateChanged'));
   }
 
   // ============================================
@@ -210,12 +235,13 @@ class AuthManager {
     console.log('Menu login button found:', !!menuLoginBtn);
     console.log('Menu register button found:', !!menuRegisterBtn);
     
-    if (continueAsGuestBtn) {
-      continueAsGuestBtn.addEventListener('click', () => {
-        console.log('Guest button clicked!');
-        this.enableGuestMode();
-      });
-    }
+    // continueAsGuest is handled by individual pages to avoid conflicts
+    // if (continueAsGuestBtn) {
+    //   continueAsGuestBtn.addEventListener('click', () => {
+    //     console.log('Guest button clicked!');
+    //     this.enableGuestMode();
+    //   });
+    // }
     
     if (showLoginOptionsBtn) {
       showLoginOptionsBtn.addEventListener('click', () => {
@@ -396,20 +422,18 @@ class AuthManager {
     const menuLoginOptions = document.getElementById('menuLoginOptions');
     const menuUsernameSpan = document.getElementById('menuUsername');
 
-    if (this.isLoggedIn() || this.guestMode) {
-      // Show user info, hide login options
+    if (this.isLoggedIn()) {
+      // Only truly logged in users: show user info, hide login options
       if (menuUserInfo) menuUserInfo.style.display = 'block';
       if (menuLoginOptions) menuLoginOptions.style.display = 'none';
       
       // Update username display
       if (menuUsernameSpan && this.user) {
         menuUsernameSpan.textContent = this.user.username;
-        if (this.user.guest) {
-          menuUsernameSpan.textContent += ' (Guest)';
-        }
       }
     } else {
-      // Show login options, hide user info
+      // Not logged in OR guest mode: show login options, hide user info
+      // This allows users to upgrade from guest mode to full account
       if (menuUserInfo) menuUserInfo.style.display = 'none';
       if (menuLoginOptions) menuLoginOptions.style.display = 'block';
     }
@@ -475,28 +499,28 @@ class AuthManager {
   showLoginModal() {
     const modal = document.getElementById('loginOverlay');
     if (modal) {
-      modal.style.display = 'flex';
+      modal.classList.add('show');
     }
   }
 
   hideLoginModal() {
     const modal = document.getElementById('loginOverlay');
     if (modal) {
-      modal.style.display = 'none';
+      modal.classList.remove('show');
     }
   }
 
   showRegisterModal() {
     const modal = document.getElementById('registerOverlay');
     if (modal) {
-      modal.style.display = 'flex';
+      modal.classList.add('show');
     }
   }
 
   hideRegisterModal() {
     const modal = document.getElementById('registerOverlay');
     if (modal) {
-      modal.style.display = 'none';
+      modal.classList.remove('show');
     }
   }
 

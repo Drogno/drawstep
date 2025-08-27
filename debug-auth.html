@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Debug Test</title>
+    
+    <!-- Clear all auth data before anything loads -->
+    <script>
+        console.log('=== AUTH DEBUG TEST ===');
+        console.log('Clearing localStorage...');
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log('Storage cleared');
+    </script>
+    
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+    <div style="padding: 20px; font-family: Arial;">
+        <h1>Auth System Debug</h1>
+        
+        <div style="background: #f0f0f0; padding: 20px; margin: 20px 0; border-radius: 8px;">
+            <h2>Storage Status</h2>
+            <div id="storageStatus"></div>
+        </div>
+        
+        <div style="background: #e8f4f8; padding: 20px; margin: 20px 0; border-radius: 8px;">
+            <h2>Auth Manager Status</h2>
+            <div id="authStatus"></div>
+        </div>
+        
+        <div style="background: #f8e8e8; padding: 20px; margin: 20px 0; border-radius: 8px;">
+            <h2>Hamburger Menu Test</h2>
+            <button id="hamburgerBtn">☰ Open Menu</button>
+            
+            <!-- Copy the exact menu structure from mulligan trainer -->
+            <div class="menu-overlay" id="menuOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999;">
+                <div class="menu-content" style="background: #2a2a2e; width: 300px; height: 100vh; padding: 20px;">
+                    <button class="menu-close" id="menuClose">×</button>
+                    
+                    <!-- Account section -->
+                    <div class="menu-section-title">Account</div>
+                    <div id="menuAuthSection">
+                        <!-- Logged in user display -->
+                        <div id="menuUserInfo" style="display: none;">
+                            <div class="menu-item-static">
+                                <span style="color: #3FD0C9; font-weight: bold;">Welcome, </span>
+                                <span id="menuUsername" style="color: #FFD34E; font-weight: bold;"></span>
+                            </div>
+                            <a href="#" class="menu-item" id="menuLogoutBtn">🚪 Logout</a>
+                        </div>
+                        
+                        <!-- Not logged in options -->
+                        <div id="menuLoginOptions" style="display: block;">
+                            <a href="#" class="menu-item" id="menuLoginBtn">🔐 Login</a>
+                            <a href="#" class="menu-item" id="menuRegisterBtn">👤 Create Account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #f0f8f0; padding: 20px; margin: 20px 0; border-radius: 8px;">
+            <h2>Test Actions</h2>
+            <button id="testGuestMode">Enable Guest Mode</button>
+            <button id="testRefresh">Refresh Status</button>
+            <button id="testClearStorage">Clear Storage</button>
+        </div>
+    </div>
+
+    <!-- Auth modals -->
+    <div class="auth-overlay" id="loginOverlay">
+        <div class="auth-content">
+            <button class="auth-close" id="loginClose">×</button>
+            <div class="auth-header">
+                <h3>Login Test</h3>
+            </div>
+            <form id="mainLoginForm" class="auth-form">
+                <div class="form-group">
+                    <input type="email" id="mainLoginEmail" placeholder="Email Address" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="mainLoginPassword" placeholder="Password" required>
+                </div>
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include the auth system -->
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <script>
+        function updateStatus() {
+            console.log('=== UPDATING STATUS ===');
+            
+            // Storage status
+            const storageDiv = document.getElementById('storageStatus');
+            const authDiv = document.getElementById('authStatus');
+            
+            storageDiv.innerHTML = `
+                <strong>localStorage:</strong><br>
+                drawstep_token: ${localStorage.getItem('drawstep_token') || 'null'}<br>
+                drawstep_guest_mode: ${localStorage.getItem('drawstep_guest_mode') || 'null'}<br><br>
+                <strong>sessionStorage:</strong><br>
+                mulligan_trainer_visited: ${sessionStorage.getItem('mulligan_trainer_visited') || 'null'}
+            `;
+            
+            // Auth manager status
+            if (window.authManager) {
+                authDiv.innerHTML = `
+                    <strong>AuthManager exists:</strong> ✅<br>
+                    <strong>Token:</strong> ${window.authManager.token || 'null'}<br>
+                    <strong>Guest Mode:</strong> ${window.authManager.guestMode}<br>
+                    <strong>User:</strong> ${window.authManager.user ? JSON.stringify(window.authManager.user) : 'null'}<br>
+                    <strong>isLoggedIn():</strong> ${window.authManager.isLoggedIn()}<br>
+                `;
+            } else {
+                authDiv.innerHTML = '<strong>AuthManager:</strong> ❌ Not found';
+            }
+            
+            // Check menu elements
+            const menuUserInfo = document.getElementById('menuUserInfo');
+            const menuLoginOptions = document.getElementById('menuLoginOptions');
+            console.log('Menu elements:', {
+                menuUserInfo: menuUserInfo ? menuUserInfo.style.display : 'not found',
+                menuLoginOptions: menuLoginOptions ? menuLoginOptions.style.display : 'not found'
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== PAGE LOADED ===');
+            
+            setTimeout(() => {
+                updateStatus();
+                
+                // Test buttons
+                document.getElementById('testGuestMode').addEventListener('click', () => {
+                    console.log('Testing guest mode...');
+                    if (window.authManager) {
+                        console.log('Before enableGuestMode:', {
+                            guestMode: window.authManager.guestMode,
+                            user: window.authManager.user
+                        });
+                        window.authManager.enableGuestMode();
+                        console.log('After enableGuestMode:', {
+                            guestMode: window.authManager.guestMode,
+                            user: window.authManager.user
+                        });
+                        
+                        // Check if updateMenuAuthSection exists and call it manually
+                        if (typeof window.authManager.updateMenuAuthSection === 'function') {
+                            console.log('Calling updateMenuAuthSection manually...');
+                            window.authManager.updateMenuAuthSection();
+                        } else {
+                            console.log('updateMenuAuthSection method not found!');
+                        }
+                    }
+                    setTimeout(updateStatus, 100);
+                });
+                
+                document.getElementById('testRefresh').addEventListener('click', updateStatus);
+                
+                document.getElementById('testClearStorage').addEventListener('click', () => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    if (window.authManager) {
+                        window.authManager.token = null;
+                        window.authManager.user = null;
+                        window.authManager.guestMode = false;
+                        window.authManager.updateUI();
+                    }
+                    updateStatus();
+                });
+                
+                // Menu functionality
+                document.getElementById('hamburgerBtn').addEventListener('click', () => {
+                    document.getElementById('menuOverlay').style.display = 'flex';
+                });
+                
+                document.getElementById('menuClose').addEventListener('click', () => {
+                    document.getElementById('menuOverlay').style.display = 'none';
+                });
+                
+            }, 200);
+        });
+    </script>
+</body>
+</html>

@@ -183,72 +183,17 @@ registerOverlay?.addEventListener('click', (e) => {
     }
 });
 
-/**
- * Handle login form submission
- */
-mainLoginForm?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (window.authManager) {
-        const email = document.getElementById('mainLoginEmail').value;
-        const password = document.getElementById('mainLoginPassword').value;
-        
-        const result = await window.authManager.login(email, password);
-        if (result.success) {
-            loginOverlay.classList.remove('show');
-            updateMainMenuAuth();
-        }
-    }
-});
-
-/**
- * Handle register form submission
- */
-mainRegisterForm?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (window.authManager) {
-        const username = document.getElementById('mainRegisterUsername').value;
-        const email = document.getElementById('mainRegisterEmail').value;
-        const password = document.getElementById('mainRegisterPassword').value;
-        
-        const result = await window.authManager.register(username, email, password);
-        if (result.success) {
-            registerOverlay.classList.remove('show');
-            updateMainMenuAuth();
-        }
-    }
-});
+// Form submissions are handled by auth.js to avoid conflicts
+// Removed duplicate event listeners
 
 /**
  * Updates the hamburger menu authentication section
  */
 function updateMainMenuAuth() {
-    const menuUserInfo = document.getElementById('menuUserInfo');
-    const menuLoginOptions = document.getElementById('menuLoginOptions');
-    const menuUsername = document.getElementById('menuUsername');
-
-    if (window.authManager && window.authManager.isActive()) {
-        const user = window.authManager.getUser();
-        if (user) {
-            if (user.guest) {
-                // Guest mode: show login options instead of user info
-                if (menuUserInfo) menuUserInfo.style.display = 'none';
-                if (menuLoginOptions) menuLoginOptions.style.display = 'block';
-            } else {
-                // Logged in user: show user info
-                if (menuUserInfo) menuUserInfo.style.display = 'block';
-                if (menuLoginOptions) menuLoginOptions.style.display = 'none';
-                
-                if (menuUsername) {
-                    menuUsername.textContent = user.username;
-                    menuUsername.style.color = '#FFD34E';
-                }
-            }
-        }
-    } else {
-        // Not logged in: show login options
-        if (menuUserInfo) menuUserInfo.style.display = 'none';
-        if (menuLoginOptions) menuLoginOptions.style.display = 'block';
-    }
+    console.log('updateMainMenuAuth - DISABLED, auth.js handles this');
+    // This function is disabled because auth.js updateMenuAuthSection() already handles menu updates
+    // Having both functions causes conflicts where they override each other
+    return;
 }
 
 // Initialize auth UI when page loads

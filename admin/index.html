@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRAWSTEP Admin Panel</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-sidebar">
+            <div class="admin-logo">
+                <h1>DRAWSTEP</h1>
+                <p>Admin Panel</p>
+            </div>
+            
+            <nav class="admin-nav">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="#metadecks" class="nav-item" data-section="metadecks">
+                    <span>🃏</span> Meta Decks
+                </a>
+                <a href="#users" class="nav-item" data-section="users">
+                    <span>👥</span> Users
+                </a>
+                <a href="#stats" class="nav-item" data-section="stats">
+                    <span>📈</span> Statistics
+                </a>
+            </nav>
+            
+            <div class="admin-footer">
+                <button id="logoutBtn" class="btn btn-danger">Logout</button>
+            </div>
+        </div>
+        
+        <div class="admin-main">
+            <div class="admin-header">
+                <h2 id="sectionTitle">Dashboard</h2>
+                <div class="admin-user">
+                    <span>Admin</span>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Users</h3>
+                            <div class="stat-number" id="totalUsers">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Meta Decks</h3>
+                            <div class="stat-number" id="totalMetaDecks">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Training Sessions</h3>
+                            <div class="stat-number" id="totalSessions">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Server Status</h3>
+                            <div class="stat-number status-online">Online</div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div id="recentActivity" class="activity-list">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Meta Decks Section -->
+                <div id="metadecks-section" class="section">
+                    <div class="section-header">
+                        <h3>Meta Deck Management</h3>
+                        <button id="addDeckBtn" class="btn btn-primary">+ Add Deck</button>
+                    </div>
+                    
+                    <div class="deck-manager">
+                        <div class="deck-list" id="deckList">
+                            <p>Loading meta decks...</p>
+                        </div>
+                        
+                        <div class="deck-editor" id="deckEditor" style="display: none;">
+                            <h4>Edit Deck</h4>
+                            <form id="deckForm">
+                                <div class="form-group">
+                                    <label for="deckId">Deck ID:</label>
+                                    <input type="text" id="deckId" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deckName">Display Name:</label>
+                                    <input type="text" id="deckName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deckList">Deck List:</label>
+                                    <textarea id="deckListInput" rows="20" placeholder="4 A Whole New World&#10;4 And Then Along Came Zeus&#10;1 Ariel - Sonic Warrior&#10;..."></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">Save Deck</button>
+                                    <button type="button" id="cancelEdit" class="btn btn-secondary">Cancel</button>
+                                    <button type="button" id="deleteDeck" class="btn btn-danger">Delete Deck</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Users Section -->
+                <div id="users-section" class="section">
+                    <h3>User Management</h3>
+                    <div id="usersList">
+                        <p>User management will be implemented here...</p>
+                    </div>
+                </div>
+                
+                <!-- Statistics Section -->
+                <div id="stats-section" class="section">
+                    <h3>Statistics Overview</h3>
+                    <div id="statsContent">
+                        <p>Statistics dashboard will be implemented here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="adminPassword">Password:</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <div id="loginError" class="error-message"></div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

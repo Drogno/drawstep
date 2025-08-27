@@ -13,9 +13,15 @@
       "Bash(git pull:*)",
       "WebFetch(domain:fonts.google.com)",
       "Bash(node server.js)",
-      "Bash(npm install)"
+      "Bash(npm install)",
+      "Bash(pip install:*)",
+      "WebFetch(domain:dreamborn.ink)",
+      "WebFetch(domain:lorcast.com)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\c\\dev\\projects\\drawstep\\NEW_SERVER_STRUCTURE"
+    ]
   }
 }

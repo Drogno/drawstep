@@ -86,8 +86,23 @@ DRAWSTEP - TCG tools and websites for Trading Card Games, specifically focused o
 - **Lint/Build**: (To be determined - ask user for specific commands)
 - **Test**: (To be determined - ask user for specific commands)
 
+## Important Development Guidelines
+- **NEVER attempt autonomous changes** - Always ask before making modifications
+- **Ask first, code second** - Better to ask one time too many than too few
+- **No independent problem-solving** - Always confirm approach with user before implementing
+- **Constraint adherence** - When user sets constraints (e.g., "keine attribute verändert werden"), follow them exactly
+- **Consultation over assumption** - If uncertain about any aspect, ask for clarification rather than assuming
+
 ## Current Issues
 - **Welcome Window Bug**: Welcome window für Mulligan Trainer zeigt sich nur einmal, dann nie wieder - auch nach Browser-Neustart nicht. localStorage Flag wird permanent gesetzt und verhindert erneute Anzeige. Problem: Ctrl+Shift+R leert nur Cache, nicht localStorage. Verschiedene Lösungsansätze mit localStorage/sessionStorage noch nicht zufriedenstellend.
+
+## Recently Resolved Issues
+- **✅ RESOLVED - allCards.json Data Issues**: Successfully integrated Set 9 (Fabled) cards and fixed all data consistency problems:
+  - Added 203 Set 9 cards from lorcast.com API with proper field mapping
+  - Fixed inkable detection showing correct counts (12 uninkables for test deck)
+  - Corrected field name inconsistencies (Name/name, Cost/cost, Inkable/inkwell)
+  - Restored ink curve visualization functionality
+  - Updated image mapping system for new cards
 
 ## Notes
 - Tournament tracking will be handled by separate app, not this mulligan trainer

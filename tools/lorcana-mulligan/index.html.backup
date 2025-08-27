@@ -94,9 +94,6 @@
           
           <!-- Legal section -->
           <div class="menu-section-title">Legal</div>
-          <a href="../../disclaimer.html" class="menu-item">
-              ⚖️ Disclaimer
-          </a>
           <a href="../../impressum.html" class="menu-item">
               📄 Imprint
           </a>
@@ -593,15 +590,15 @@ async function loadAllCards() {
     }
     
     const loadedData = await response.json();
-    // Use loaded data directly (already has cards property)
-    allCardsData = loadedData;
+    // Transform array to expected object structure
+    allCardsData = { cards: loadedData };
     console.log('allCards.json loaded successfully', allCardsData.cards.length, 'cards');
     
     // Test: Suche nach "A Whole New World"
     if (allCardsData && allCardsData.cards) {
-      const testCard = allCardsData.cards.find(card => card.name === "A Whole New World");
+      const testCard = allCardsData.cards.find(card => card.Name === "A Whole New World");
       if (testCard) {
-        console.log('Test card found:', testCard.name, 'inkable:', testCard.inkwell);
+        console.log('Test card found:', testCard.Name, 'inkable:', testCard.Inkable);
       } else {
         console.warn('Test card "A Whole New World" not found');
       }
@@ -903,7 +900,7 @@ function calculateDeckStats() {
     // Fallback-Methode: Verwende bekannte Uninkable-Karten
     const grouped = {};
     deck.forEach(card => {
-      const key = card.name || '';
+      const key = card.Name || '';
       if (!grouped[key]) grouped[key] = 0;
       grouped[key]++;
     });
@@ -920,10 +917,16 @@ function calculateDeckStats() {
     return { total: deck.length, uninkables: uninkables };
   }
   
+  console.log('=== DEBUG: All imported deck cards ===');
+  console.log(`Total imported cards: ${deck.length}`);
+  deck.forEach((card, i) => {
+    console.log(`${i+1}. "${card.Name}"`);
+  });
+  console.log('=== END DEBUG ===');
   
   const grouped = {};
-  deck.forEach((card, index) => {
-    const key = card.name || '';
+  deck.forEach(card => {
+    const key = card.Name || '';
     if (!grouped[key]) grouped[key] = 0;
     grouped[key]++;
   });
@@ -932,7 +935,7 @@ function calculateDeckStats() {
   Object.entries(grouped).forEach(([cardName, count]) => {
     // Suche die Karte in allCardsData.cards Array
     const possibleMatches = allCardsData.cards.filter(card => {
-      // Exakter Name-Match hat höchste Priorität  
+      // Exakter Name-Match hat höchste Priorität
       if (card.Name === cardName || card.fullName === cardName) return true;
       
       // Normalisierte Namen vergleichen (aggressivere Normalisierung)
@@ -968,15 +971,23 @@ function calculateDeckStats() {
       return 0;
     })[0];
     
+    if (possibleMatches.length > 1) {
+      console.log(`Multiple matches found for "${cardName}":`, possibleMatches.map(m => `${m.Name} (${m.fullName}) - Set ${m.Set_Num}`));
+    }
     
     // Use Inkable property from imported cards directly
-    const sampleCard = deck.find(card => card.name === cardName);
+    const sampleCard = deck.find(card => card.Name === cardName);
     
-    if (sampleCard && sampleCard.inkable === false) {
+    if (sampleCard && sampleCard.Inkable === false) {
       uninkables += count;
+      console.log(`Found uninkable card: ${cardName} (${count}x) - from imported data, inkable: ${sampleCard.Inkable}`);
+    } else {
+      console.log(`Found inkable card: ${cardName} (${count}x) - from imported data, inkable: ${sampleCard ? sampleCard.Inkable : 'N/A'}`);
     }
   });
   
+  console.log(`Total deck stats: ${deck.length} total, ${uninkables} uninkables`);
+  console.log('Deck contents:', deck.map(card => `${card.Name} x${card.Count || 1}`));
   return { total: deck.length, uninkables: uninkables };
 }
 
@@ -1097,7 +1108,7 @@ function updateDeckDisplay() {
   deckImagesBox.innerHTML = '';
   const grouped = {};
   deck.forEach(card => {
-    const key = (card.name || '') + '|' + (card.Image || '');
+    const key = (card.Name || '') + '|' + (card.Image || '');
     if (!grouped[key]) grouped[key] = { card, count: 0 };
     grouped[key].count++;
   });
@@ -1108,12 +1119,12 @@ function updateDeckDisplay() {
 
     const img = document.createElement('img');
     img.src = card.Image || '';
-    img.alt = card.name || '';
-    img.title = (card.name || '') + (count > 1 ? ` (${count}x)` : '');
+    img.alt = card.Name || '';
+    img.title = (card.Name || '') + (count > 1 ? ` (${count}x)` : '');
     img.className = 'deck-card-img';
     
     // Hover-Effekt für vergrößerte Ansicht hinzufügen
-    img.addEventListener('mouseenter', (e) => showCardPreview(e, card.Image || '', card.name || ''));
+    img.addEventListener('mouseenter', (e) => showCardPreview(e, card.Image || '', card.Name || ''));
     img.addEventListener('mouseleave', hideCardPreview);
     img.addEventListener('mousemove', updateCardPreviewPosition);
     
@@ -1139,8 +1150,8 @@ function showHand(hand, selectable = true) {
   hand.forEach((card, i) => {
     const img = document.createElement('img');
     img.src = card.Image || '';
-    img.alt = card.name || '(unknown card)';
-    img.title = card.name || '';
+    img.alt = card.Name || '(unknown card)';
+    img.title = card.Name || '';
     img.dataset.index = i;
     if (selectedIndices.has(i)) img.classList.add('selected');
     if (selectable) {
@@ -1305,12 +1316,12 @@ function getCardManaCost(card) {
   // First try to get cost from the card data loaded via API
   if (allCardsData && allCardsData.cards) {
     const cardData = allCardsData.cards.find(c => 
-      c.fullName === card.name || 
-      c.Name === card.name ||
-      (c.fullName && c.fullName.toLowerCase() === card.name.toLowerCase())
+      c.fullName === card.Name || 
+      c.Name === card.Name ||
+      (c.fullName && c.fullName.toLowerCase() === card.Name.toLowerCase())
     );
-    if (cardData && typeof cardData.cost === 'number') {
-      return cardData.cost;
+    if (cardData && typeof cardData.Cost === 'number') {
+      return cardData.Cost;
     }
   }
   
@@ -1379,8 +1390,8 @@ const beforeCards = document.createElement('div');
 entry.before.forEach((card, i) => {
   const img = document.createElement('img');
   img.src = card.Image || '';
-  img.alt = card.name || '';
-  img.title = card.name || '';
+  img.alt = card.Name || '';
+  img.title = card.Name || '';
   img.className = 'card-img';
   if (entry.exchanged[i]) img.classList.add('exchanged');
   beforeCards.appendChild(img);
@@ -1398,8 +1409,8 @@ const afterCards = document.createElement('div');
 entry.after.forEach(card => {
   const img = document.createElement('img');
   img.src = card.Image || '';
-  img.alt = card.name || '';
-  img.title = card.name || '';
+  img.alt = card.Name || '';
+  img.title = card.Name || '';
   img.className = 'card-img';
   afterCards.appendChild(img);
 });
@@ -1464,19 +1475,7 @@ importBtn.addEventListener('click', async () => {
     name = nameCorrections[name];
   }
 
-  // Find card data from allCards.json first
-  let cardData = null;
-  if (allCardsData && allCardsData.cards) {
-    cardData = allCardsData.cards.find(c => 
-      c.Name === name || 
-      c.fullName === name ||
-      (c.fullName && c.fullName.toLowerCase() === name.toLowerCase())
-    );
-  }
-
-  // Use cardData.fullName for image mapping if available, otherwise use name
-  const imageKey = cardData ? (cardData.fullName || cardData.Name) : name;
-  const imageFile = cardImageMap[imageKey] || cardImageMap[imageKey.toLowerCase()] || cardImageMap[name] || cardImageMap[name.toLowerCase()];
+  const imageFile = cardImageMap[name] || cardImageMap[name.toLowerCase()];;
   const imageUrl = imageFile ? `assets/images/cards/${imageFile}` : '';
 
   if (!imageFile) {
@@ -1484,22 +1483,32 @@ importBtn.addEventListener('click', async () => {
     await showInfoDialog(`Card not found: ${name}`);
     continue;
   }
+
+  // Find card data from allCards.json to get Inkable property
+  let cardData = null;
+  if (allCardsData && allCardsData.cards) {
+    cardData = allCardsData.cards.find(c => 
+      c.Name === name || 
+      (c.Name && c.Name.toLowerCase() === name.toLowerCase())
+    );
+  }
   
+  console.log(`DEBUG Import: "${name}" -> cardData found: ${!!cardData}, inkable: ${cardData ? cardData.Inkable : 'N/A'}`);
   
   // Determine if card is inkable
   let inkable;
-  if (cardData && cardData.inkwell !== undefined) {
-    inkable = cardData.inkwell;
-  } else if (cardData && cardData.cost !== undefined) {
-    inkable = cardData.cost <= 3;
+  if (cardData && cardData.Inkable !== undefined) {
+    inkable = cardData.Inkable;
+  } else if (cardData && cardData.Cost !== undefined) {
+    inkable = cardData.Cost <= 3;
   } else {
     inkable = true; // fallback
   }
 
   const card = { 
-    name: name, 
+    Name: name, 
     Image: imageUrl, 
-    inkable: inkable
+    Inkable: inkable
   };
   for (let i = 0; i < count; i++) {
     deck.push(card);
@@ -1616,8 +1625,8 @@ mulliganBtn.addEventListener('click', () => {
     if (!allCardsData || !allCardsData.cards) return 0;
     let count = 0;
     hand.forEach(card => {
-      const cardData = allCardsData.cards.find(c => c.name === card.name || c.fullName === card.name);
-      if (cardData && cardData.inkwell === false) count++;
+      const cardData = allCardsData.cards.find(c => c.Name === card.Name || c.fullName === card.Name);
+      if (cardData && cardData.Inkable === false) count++;
     });
     return count;
   }
@@ -2404,12 +2413,9 @@ function syncWithGlobalAuth() {
 
 <!-- Footer section -->
 <footer style="margin-top: 4rem; padding: 2rem 0; border-top: 1px solid rgba(63, 208, 201, 0.2); text-align: center;">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 0 20px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 0 20px;">
         <p style="color: #D0D0D0; margin: 0; font-size: 0.9rem;">© 2025 Drawstep - TCG Strategy Hub</p>
-        <p style="color: #999; margin: 0; font-size: 0.8rem;">Drawstep is an unofficial fan project. Lorcana™ is a trademark of Disney/Ravensburger.</p>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <a href="../../disclaimer.html" style="color: #3FD0C9; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Disclaimer</a>
-            <span style="color: #666;">|</span>
             <a href="../../impressum.html" style="color: #3FD0C9; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Imprint</a>
             <span style="color: #666;">|</span>
             <a href="../../datenschutz.html" style="color: #3FD0C9; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Privacy Policy</a>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic meta information -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disclaimer - Drawstep</title>
+    
+    <!-- Local fonts are loaded via CSS -->
+    
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body>
+    <!-- ============================== -->
+    <!-- NAVIGATION & MENUS -->
+    <!-- ============================== -->
+    
+    <!-- Hamburger Menu Button & Navigation Overlay -->
+    <div class="hamburger-menu">
+        <!-- Hamburger button with three spans for the lines -->
+        <button class="hamburger-btn" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <!-- Full screen overlay containing navigation menu -->
+        <div class="menu-overlay" id="menuOverlay">
+            <div class="menu-content">
+                <!-- Close button for menu -->
+                <button class="menu-close" id="menuClose">×</button>
+                
+                <!-- Navigation sections -->
+                <nav class="menu-nav">
+                    <!-- Main tools navigation -->
+                    <div class="menu-section-title">Navigation</div>
+                    <a href="index.html" class="menu-item">
+                        🏠 Home
+                    </a>
+                    <a href="tools/lorcana-mulligan/" class="menu-item">
+                        🃏 Lorcana Mulligan Trainer
+                    </a>
+                    
+                    <div class="menu-separator"></div>
+                    
+                    <!-- Account section -->
+                    <div class="menu-section-title">Account</div>
+                    <div id="menuAuthSection">
+                        <!-- Auth buttons will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="menu-separator"></div>
+                    
+                    <!-- User tools section - only shows when logged in -->
+                    <div id="menuUserSection" style="display: none;">
+                        <div class="menu-section-title">Tools</div>
+                        <a href="tools/lorcana-mulligan/" class="menu-item">
+                            📊 Training Statistics
+                        </a>
+                        <div class="menu-separator"></div>
+                    </div>
+                    
+                    <!-- Community & support section -->
+                    <div class="menu-section-title">Community</div>
+                    <a href="#" class="menu-item" id="menuSupportBtn">
+                        💝 Support the Project
+                    </a>
+                    <a href="contact.html" class="menu-item">
+                        🐛 Report Bug
+                    </a>
+                    <a href="contact.html" class="menu-item">
+                        💬 Send Feedback
+                    </a>
+                    
+                    <div class="menu-separator"></div>
+                    
+                    <!-- Legal section -->
+                    <div class="menu-section-title">Legal</div>
+                    <a href="disclaimer.html" class="menu-item">
+                        ⚖️ Disclaimer
+                    </a>
+                    <a href="impressum.html" class="menu-item">
+                        📄 Imprint
+                    </a>
+                    <a href="datenschutz.html" class="menu-item">
+                        🔒 Privacy Policy
+                    </a>
+                    <a href="contact.html" class="menu-item">
+                        📧 Contact
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main content wrapper with background and styling -->
+    <div class="main-content">
+        
+        <!-- Header section with logo -->
+        <header>
+            <div class="header-content">
+                <!-- Main logo section -->
+                <div class="logo-section">
+                    <img src="assets/images/logos/drawstep_logo.png" alt="Drawstep Logo" class="header-logo" style="max-height: 100px; width: auto;">
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main content area -->
+        <main>
+            <div class="legal-container">
+                <div class="legal-content">
+                    <h1>Disclaimer</h1>
+                    
+                    <div class="legal-section">
+                        <h2>1. Content of This Website</h2>
+                        <p>The content and tools on drawstep.de are provided solely for informational and training purposes for trading card game players.
+                           This is an unofficial fan project. We make no guarantees regarding the timeliness, accuracy, or completeness of the information provided.
+                           Use of the content is at your own risk.</p>
+                    </div>
+
+                    <div class="legal-section">
+                        <h2>2. No Affiliation with Rights Holders</h2>
+                        <p>Drawstep is not affiliated with Disney or Ravensburger.
+                            Disney Lorcana is a registered trademark of Disney / Ravensburger. 
+                            All mentioned trademarks, product names, and images are the property of their respective rights holders.</p>
+                    </div>
+
+                    <div class="legal-section">
+                        <h2>3. External Links</h2>
+                        <p>Our website contains links to external third-party websites (e.g., Ko-fi, Patreon, PayPal).
+                             We are not responsible for the content of these external websites. 
+                             The operators of the linked pages are solely responsible for their content.</p>
+                    </div>
+
+                    <div class="legal-section">
+                        <h2>4. Liability for Technical Availability</h2>
+                        <p>We make every effort to keep the website available without interruption. However, downtime cannot be completely avoided.
+                           We accept no liability for continuous availability of the website or for technical malfunctions.</p>
+                    </div>
+
+                    <div class="legal-section">
+                        <h2>5. No Legal Advice / No Binding Authority</h2>
+                        <p>The information provided does not constitute binding interpretations of game rules and does not replace the official sources of the rights holders.
+                           For tournaments and events, only the official rulebooks of Disney / Ravensburger apply.
+                    </div>
+                    
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer section -->
+        <footer>
+            <div class="footer-content">
+                <p class="footer-text">© 2025 Drawstep - TCG Strategy Hub</p>
+                <p class="footer-disclaimer">Drawstep is an unofficial fan project. Lorcana™ is a trademark of Disney/Ravensburger.</p>
+                <div class="footer-links">
+                    <a href="disclaimer.html" class="footer-link">Disclaimer</a>
+                    <span class="footer-separator">|</span>
+                    <a href="impressum.html" class="footer-link">Imprint</a>
+                    <span class="footer-separator">|</span>
+                    <a href="datenschutz.html" class="footer-link">Privacy Policy</a>
+                </div>
+            </div>
+        </footer>
+        
+    </div>
+
+    <!-- ============================== -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================== -->
+    
+    <!-- Authentication script -->
+    <script src="assets/js/auth.js"></script>
+    
+    <!-- Main interactive script -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

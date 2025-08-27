@@ -57,19 +57,27 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Admin routes
+const adminRoutes = require('./routes/admin');
+app.use('/admin/api', adminRoutes);
+
+// Authentication routes
+const authModule = require('./routes/auth');
+app.use('/api/auth', authModule.router);
+
+// Statistics routes  
+const statsRoutes = require('./routes/stats');
+app.use('/api/stats', statsRoutes);
+
 // Serve the main application
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ============================================
-// ROUTES SETUP
-// ============================================
-const authRoutes = require('./routes/auth');
-const statsRoutes = require('./routes/stats');
-
-// Use routes
-app.use('/api/auth', authRoutes.router);
+// Serve admin panel
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'index.html'));
+});
 app.use('/api/stats', statsRoutes);
 
 // ============================================
