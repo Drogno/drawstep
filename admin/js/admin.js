@@ -36,6 +36,14 @@ class AdminPanel {
                 body: JSON.stringify({ password })
             });
             
+            // Check if response is JSON before parsing
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('Non-JSON response:', text);
+                throw new Error(`Server returned non-JSON response (${response.status})`);
+            }
+            
             const data = await response.json();
             
             if (data.success) {
@@ -48,6 +56,7 @@ class AdminPanel {
                 throw new Error(data.error || 'Login failed');
             }
         } catch (error) {
+            console.error('Login error:', error);
             document.getElementById('loginError').textContent = error.message;
             return false;
         }

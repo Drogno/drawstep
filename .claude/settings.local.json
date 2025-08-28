@@ -14,9 +14,15 @@
       "WebFetch(domain:fonts.google.com)",
       "Bash(node server.js)",
       "Bash(npm install)",
+<<<<<<< Updated upstream
       "Bash(pip install:*)",
       "WebFetch(domain:dreamborn.ink)",
       "WebFetch(domain:lorcast.com)"
+=======
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:github.com)"
+>>>>>>> Stashed changes
     ],
     "deny": [],
     "ask": [],
