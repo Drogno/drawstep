@@ -3,9 +3,61 @@ class AdminPanel {
         this.authToken = localStorage.getItem('adminToken');
         this.metaDecks = {};
         this.currentEditingDeck = null;
+
+        if (this.authToken && this.isTokenExpired(this.authToken)) {
+            this.clearStoredToken();
+        } else if (this.authToken) {
+            this.rememberTokenExpiry(this.authToken);
+        }
+
         this.init();
     }
-    
+
+    clearStoredToken() {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminTokenExpiresAt');
+        this.authToken = null;
+    }
+
+    decodeToken(token) {
+        try {
+            const parts = token.split('.');
+            if (parts.length < 2) {
+                return null;
+            }
+
+            const normalized = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+            const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+            return JSON.parse(atob(padded));
+        } catch (error) {
+            console.warn('Failed to decode admin token payload:', error);
+            return null;
+        }
+    }
+
+    rememberTokenExpiry(token) {
+        const payload = this.decodeToken(token);
+        if (payload && payload.exp) {
+            localStorage.setItem('adminTokenExpiresAt', String(payload.exp * 1000));
+        } else {
+            localStorage.removeItem('adminTokenExpiresAt');
+        }
+    }
+
+    isTokenExpired(token) {
+        const payload = this.decodeToken(token);
+        if (!payload || !payload.exp) {
+            return false;
+        }
+        return payload.exp * 1000 <= Date.now();
+    }
+
+    storeToken(token) {
+        this.authToken = token;
+        localStorage.setItem('adminToken', token);
+        this.rememberTokenExpiry(token);
+    }
+
     init() {
         if (!this.authToken) {
             this.showLoginModal();
@@ -46,10 +98,13 @@ class AdminPanel {
             
             const data = await response.json();
             
-            if (data.success) {
-                this.authToken = data.token;
-                localStorage.setItem('adminToken', this.authToken);
+            if (data.success && data.token) {
+                this.storeToken(data.token);
                 this.hideLoginModal();
+                const loginError = document.getElementById('loginError');
+                if (loginError) {
+                    loginError.textContent = '';
+                }
                 this.initializePanel();
                 return true;
             } else {
@@ -62,30 +117,61 @@ class AdminPanel {
         }
     }
     
-    logout() {
-        localStorage.removeItem('adminToken');
-        this.authToken = null;
+    logout({ silent = false, message } = {}) {
+        this.clearStoredToken();
+
+        if (silent) {
+            if (message) {
+                const loginError = document.getElementById('loginError');
+                if (loginError) {
+                    loginError.textContent = message;
+                }
+            }
+            this.showLoginModal();
+            return;
+        }
+
         location.reload();
     }
     
     async apiRequest(url, options = {}) {
+        if (this.authToken && this.isTokenExpired(this.authToken)) {
+            this.logout({ silent: true, message: 'Session expired. Please sign in again.' });
+            throw new Error('Session expired');
+        }
+
         const headers = {
-            'Authorization': `Bearer ${this.authToken}`,
             'Content-Type': 'application/json',
             ...options.headers
         };
+
+        if (this.authToken) {
+            headers.Authorization = `Bearer ${this.authToken}`;
+        }
         
         const response = await fetch(url, {
             ...options,
             headers
         });
-        
+
         if (response.status === 401) {
-            this.logout();
+            this.logout({ silent: true, message: 'Authentication failed. Please sign in again.' });
             throw new Error('Authentication failed');
         }
-        
-        return response.json();
+
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (error) {
+            data = null;
+        }
+
+        if (!response.ok) {
+            const errorMessage = (data && data.error) ? data.error : 'Request failed';
+            throw new Error(errorMessage);
+        }
+
+        return data || {};
     }
     
     async initializePanel() {
@@ -128,7 +214,7 @@ class AdminPanel {
             <div class="deck-item" data-deck-id="${id}" data-index="${index}" draggable="true">
                 <div class="deck-info">
                     <h4>${deck.name || id}</h4>
-                    <p>${this.getDeckCardCount(deck.list)} cards • ID: ${id}</p>
+                    <p>${this.getDeckCardCount(deck.list)} cards &bull; ID: ${id}</p>
                 </div>
                 <div class="deck-actions">
                     <button class="btn btn-sm btn-secondary" onclick="admin.editDeck('${id}')">Edit</button>

@@ -6,7 +6,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,7 +78,6 @@ app.get('/', (req, res) => {
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin', 'index.html'));
 });
-app.use('/api/stats', statsRoutes);
 
 // ============================================
 // ERROR HANDLING
@@ -100,7 +99,7 @@ app.use('*', (req, res) => {
 // START SERVER
 // ============================================
 app.listen(PORT, () => {
-  console.log(`🚀 DRAWSTEP Backend running on port ${PORT}`);
-  console.log(`📱 Frontend available at: http://localhost:${PORT}`);
-  console.log(`🔧 API available at: http://localhost:${PORT}/api/health`);
+  console.log(`ðŸš€ DRAWSTEP Backend running on port ${PORT}`);
+  console.log(`ðŸ“± Frontend available at: http://localhost:${PORT}`);
+  console.log(`ðŸ”§ API available at: http://localhost:${PORT}/api/health`);
 });
