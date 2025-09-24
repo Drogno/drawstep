@@ -19,7 +19,6 @@
         localStorage.removeItem('drawstep_guest_mode');
         localStorage.removeItem('drawstep_token');
         localStorage.removeItem('mulligan_guest_mode');
-        sessionStorage.removeItem('mulligan_trainer_visited');
         console.log('Auth state cleared in head');
     </script>
 </head>
@@ -354,41 +353,6 @@
   </div>
 </div>
 
-<div id="statisticsArea" class="control-section" style="display:none!important; margin-top: 25px!important; position:static!important;">
-  <div class="section-title" style="text-align: center; margin-bottom: 15px; color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 1.3rem;">TRAINING STATISTICS</div>
-  <div class="stats-container-vertical">
-    <!-- Single row with all stats -->
-    <div class="stats-row">
-      <div class="stat-item">
-        <div class="stat-number" style="color: #3FD0C9;" id="totalHandsCount">0</div>
-        <div class="stat-label">Hands Practiced</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" style="color: #FFD34E;" id="avgCardsExchanged">0.0</div>
-        <div class="stat-label">⌀ Cards Exchanged</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" style="color: #9B5DE5;" id="avgUninkBefore">0.00</div>
-        <div class="stat-label">⌀ Unink Before</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" style="color: #FFD34E;" id="avgUninkAfter">0.00</div>
-        <div class="stat-label">⌀ Unink After</div>
-      </div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-item">
-        <div class="stat-number" style="color: #22C55E;" id="avgInkCostBefore">0.00</div>
-        <div class="stat-label">⌀ Ink Cost Before</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" style="color: #22C55E;" id="avgInkCostAfter">0.00</div>
-        <div class="stat-label">⌀ Ink Cost After</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div id="currentSituation" style="display: none; margin: 30px 0 20px 0;">
   <div style="
     background: linear-gradient(135deg, rgba(63, 208, 201, 0.2), rgba(155, 93, 229, 0.2));
@@ -437,6 +401,41 @@
     <button id="mulliganBtn">Perform Mulligan</button>
   </div>
   <button id="newHandBtn" style="display: none;">🔄 Draw New Starting Hand</button>
+</div>
+
+<div id="statisticsArea" class="control-section" style="display:none!important; margin-top: 25px!important; position:static!important;">
+  <div class="section-title" style="text-align: center; margin-bottom: 15px; color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 1.3rem;">TRAINING STATISTICS</div>
+  <div class="stats-container-vertical">
+    <!-- Single row with all stats -->
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-number" style="color: #3FD0C9;" id="totalHandsCount">0</div>
+        <div class="stat-label">Hands Practiced</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #FFD34E;" id="avgCardsExchanged">0.0</div>
+        <div class="stat-label">⌀ Cards Exchanged</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #9B5DE5;" id="avgUninkBefore">0.00</div>
+        <div class="stat-label">⌀ Unink Before</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #FFD34E;" id="avgUninkAfter">0.00</div>
+        <div class="stat-label">⌀ Unink After</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-number" style="color: #22C55E;" id="avgInkCostBefore">0.00</div>
+        <div class="stat-label">⌀ Ink Cost Before</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #22C55E;" id="avgInkCostAfter">0.00</div>
+        <div class="stat-label">⌀ Ink Cost After</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <br>
