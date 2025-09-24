@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let deck = [];
       let currentHand = [];
       const selectedIndices = new Set();
+      let currentDeckName = '';
+      let currentDeckList = [];
 
       const deckInput = document.getElementById('deckInput');
       const importBtn = document.getElementById('importDeckBtn');
@@ -72,6 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
         statusDiv.textContent = `${totalCards} Karten importiert.`;
         drawHandBtn.disabled = deck.length < 7;
 
+        // Store deck info for session tracking
+        currentDeckList = [...deck];
+        currentDeckName = extractDeckName(rawText) || 'Imported Deck';
+
         // Reset buttons and state
         mulliganBtn.style.display = 'none';
         newHandBtn.style.display = 'none';
@@ -79,6 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
         handDiv.innerHTML = '';
         currentHand = [];
         selectedIndices.clear();
+        
+        // Start new training session if deck is valid
+        if (deck.length >= 7 && window.sessionTracker) {
+            window.sessionTracker.startSession(currentDeckName, currentDeckList);
+        }
       });
 
       function showHand(hand) {
@@ -118,6 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
         statusDiv.textContent = 'Starthand gezogen. Klicke Karten an, die du mulliganen möchtest.';
         selectedIndices.clear();
 
+        // Track hand draw
+        if (window.sessionTracker) {
+            window.sessionTracker.recordHand(currentHand);
+        }
+
         mulliganBtn.style.display = 'inline-block';
         newHandBtn.style.display = 'none';
         drawHandBtn.style.display = 'none';
@@ -149,8 +165,15 @@ document.addEventListener('DOMContentLoaded', () => {
         deck = shuffle(deck);
 
         const newCards = deck.splice(0, selectedIndices.size);
+        const oldHand = [...currentHand];
         currentHand = keptCards.concat(newCards);
         showHand(currentHand);
+
+        // Track mulligan
+        if (window.sessionTracker) {
+            window.sessionTracker.recordMulligan(mulliganCards, newCards, keptCards);
+        }
+
         selectedIndices.clear();
 
         // Statistik: Uninkable nach Mulligan
@@ -185,8 +208,123 @@ document.addEventListener('DOMContentLoaded', () => {
         showHand(currentHand);
         selectedIndices.clear();
 
+        // Track new hand draw
+        if (window.sessionTracker) {
+            window.sessionTracker.recordHand(currentHand);
+        }
+
         statusDiv.textContent = 'Neue Starthand gezogen. Klicke Karten für Mulligan an.';
         mulliganBtn.style.display = 'inline-block';
         newHandBtn.style.display = 'none';
       });
+
+      // ============================================
+      // HELPER FUNCTIONS FOR SESSION TRACKING
+      // ============================================
+
+      function extractDeckName(deckText) {
+        // Try to extract deck name from common formats
+        const lines = deckText.split('\n');
+        const firstLine = lines[0]?.trim();
+        
+        // Check for common deck name patterns
+        if (firstLine && !firstLine.match(/^\d+\s+/)) {
+          // First line doesn't start with a number, probably deck name
+          return firstLine;
+        }
+        
+        // Look for lines that look like titles
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed && !trimmed.match(/^\d+\s+/) && trimmed.length < 50) {
+            return trimmed;
+          }
+        }
+        
+        return null;
+      }
+
+      // Session management functions
+      window.endCurrentSession = function(notes = '') {
+        if (window.sessionTracker && window.sessionTracker.isSessionActive()) {
+          return window.sessionTracker.endSession(notes);
+        }
+        return null;
+      };
+
+      window.getSessionStats = function() {
+        if (window.sessionTracker) {
+          return window.sessionTracker.getSessionStats();
+        }
+        return null;
+      };
+
+      // Auto-save session when page is about to close
+      window.addEventListener('beforeunload', (event) => {
+        if (window.sessionTracker && window.sessionTracker.isSessionActive()) {
+          // Try to save session
+          window.sessionTracker.endSession('Session ended by page close');
+        }
+      });
+
+      // Update UI with session info if callback exists
+      window.updateSessionInfo = function(sessionData) {
+        console.log('Session update:', sessionData);
+        updateSessionDisplay(sessionData);
+      };
+
+      function updateSessionDisplay(sessionData) {
+        if (!sessionData) return;
+
+        const deckStatsDiv = document.getElementById('deckStats');
+        if (!deckStatsDiv) return;
+
+        // Create session stats HTML
+        const sessionHTML = `
+          <div class="session-tracker-panel" style="
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            border: 2px solid #FFD34E;
+          ">
+            <div style="color: #FFD34E; font-weight: bold; margin-bottom: 0.5rem;">
+              📊 Training Session
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <strong>Deck:</strong> ${sessionData.deck_name}
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <div><strong>Hands:</strong> ${sessionData.total_hands}</div>
+              <div><strong>Mulligans:</strong> ${sessionData.total_mulligans}</div>
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <strong>Cards Exchanged:</strong> ${sessionData.total_cards_exchanged}
+            </div>
+            ${sessionData.total_hands > 0 ? `
+            <div style="font-size: 0.8rem; color: #ccc;">
+              Mulligan Rate: ${Math.round((sessionData.total_mulligans / sessionData.total_hands) * 100)}%
+            </div>
+            ` : ''}
+            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #FFD34E;">
+              ${window.sessionTracker?.isLoggedIn ? '✅ Saving to account' : '⚠️ Guest mode - not saved'}
+            </div>
+          </div>
+        `;
+
+        // Check if session panel already exists
+        let sessionPanel = deckStatsDiv.querySelector('.session-tracker-panel');
+        if (sessionPanel) {
+          sessionPanel.outerHTML = sessionHTML;
+        } else {
+          deckStatsDiv.insertAdjacentHTML('beforeend', sessionHTML);
+        }
+
+        // Make sure the deckStats div is visible if we have session data
+        if (sessionData.total_hands > 0) {
+          deckStatsDiv.style.display = 'flex';
+        }
+      }
     });

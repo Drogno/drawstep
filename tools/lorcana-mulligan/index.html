@@ -13,15 +13,8 @@
     <!-- Include auth modals CSS from main site -->
     <link rel="stylesheet" href="../../assets/css/main.css">
     
-    <!-- FORCE CLEAN AUTH STATE BEFORE ANY SCRIPTS LOAD -->
-    <script>
-        console.log('EMERGENCY AUTH RESET - clearing all auth data before scripts load');
-        localStorage.removeItem('drawstep_guest_mode');
-        localStorage.removeItem('drawstep_token');
-        localStorage.removeItem('mulligan_guest_mode');
-        sessionStorage.removeItem('mulligan_trainer_visited');
-        console.log('Auth state cleared in head');
-    </script>
+    <!-- Session Tracking Script -->
+    <script src="assets/js/session-tracker.js"></script>
 </head>
 
 <body>
@@ -34,6 +27,10 @@
   <div id="deckStats" style="position:absolute; top:450px; right:32px; max-width:500px; z-index:10; display:none; display:flex; justify-content:center; width:500px;">
     <!-- Media Query für kleine Bildschirme wird in JavaScript behandelt -->
   </div>
+
+  <!-- Toggle button for floating elements on small screens -->
+  <button id="floatingElementsToggle">📊 Show Deck Info</button>
+
   </div>
 
     <!-- ============================== -->
@@ -354,43 +351,6 @@
   </div>
 </div>
 
-<div id="statisticsArea" style="display:none;">
-  <div class="section-title" style="text-align: center; margin-bottom: 20px; color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 1.5rem;">TRAINING STATISTICS</div>
-  <div class="stats-container">
-    <div class="stat-box" style="background: rgba(63, 208, 201, 0.15); border-color: rgba(63, 208, 201, 0.4);">
-      <div class="stat-number" style="color: #3FD0C9;" id="totalHandsCount">0</div>
-      <div class="stat-label">Hands Practiced</div>
-    </div>
-    <div class="stat-box" style="background: rgba(255, 211, 78, 0.15); border-color: rgba(255, 211, 78, 0.4);">
-      <div class="stat-number" style="color: #FFD34E;" id="avgCardsExchanged">0.0</div>
-      <div class="stat-label">⌀ Cards Exchanged</div>
-    </div>
-    <div class="stat-box" style="background: rgba(155, 93, 229, 0.15); border-color: rgba(155, 93, 229, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-      <div style="display: flex; gap: 24px; align-items: center;">
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #9B5DE5; font-size: 1.6rem;" id="avgUninkBefore">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>before Mulligan</span></div>
-        </div>
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgUninkAfter">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>after Mulligan</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="stat-box" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-      <div style="display: flex; gap: 24px; align-items: center;">
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #22C55E; font-size: 1.6rem;" id="avgInkCostBefore">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>before Mulligan</span></div>
-        </div>
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgInkCostAfter">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>after Mulligan</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div id="currentSituation" style="display: none; margin: 30px 0 20px 0;">
   <div style="
@@ -442,11 +402,43 @@
   <button id="newHandBtn" style="display: none;">🔄 Draw New Starting Hand</button>
 </div>
 
-<br>
-<br>
-<br>
+<!-- TRAINING STATISTICS SECTION (relocated from top) - VERTICAL COMPACT VERSION -->
+<div id="statisticsArea" class="control-section" style="display:none!important; margin-top: 25px!important; position:static!important;">
+  <div class="section-title" style="text-align: center; margin-bottom: 15px; color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 1.3rem;">TRAINING STATISTICS</div>
+  <div class="stats-container-vertical">
+    <!-- Single row with all stats -->
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-number" style="color: #3FD0C9;" id="totalHandsCount">0</div>
+        <div class="stat-label">Hands Practiced</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #FFD34E;" id="avgCardsExchanged">0.0</div>
+        <div class="stat-label">⌀ Cards Exchanged</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #9B5DE5;" id="avgUninkBefore">0.00</div>
+        <div class="stat-label">⌀ Unink Before</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #FFD34E;" id="avgUninkAfter">0.00</div>
+        <div class="stat-label">⌀ Unink After</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-number" style="color: #22C55E;" id="avgInkCostBefore">0.00</div>
+        <div class="stat-label">⌀ Ink Cost Before</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #22C55E;" id="avgInkCostAfter">0.00</div>
+        <div class="stat-label">⌀ Ink Cost After</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<div id="historyExportArea" class="control-section" style="display:none;">
+<div id="historyExportArea" class="control-section" style="display:none; margin-top: 25px;">
  <button id="exportHistoryUnifiedBtn">Download Mulligan History</button>
  <button id="clearHistoryBtn" style="margin-left:8px; background: linear-gradient(135deg, #666, #444);">Clear Mulligan History</button>
 </div>
@@ -2081,6 +2073,46 @@ function resetToWelcomeScreen() {
 // Add reset function to window for debugging
 window.resetToWelcomeScreen = resetToWelcomeScreen;
 
+// Floating elements toggle functionality for responsive design
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('floatingElementsToggle');
+    const body = document.body;
+    let floatingElementsVisible = false;
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            floatingElementsVisible = !floatingElementsVisible;
+
+            if (floatingElementsVisible) {
+                body.classList.add('show-floating-elements');
+                toggleBtn.textContent = '❌ Hide Deck Info';
+                toggleBtn.style.background = 'rgba(255, 107, 107, 0.9)';
+            } else {
+                body.classList.remove('show-floating-elements');
+                toggleBtn.textContent = '📊 Show Deck Info';
+                toggleBtn.style.background = 'rgba(63, 208, 201, 0.9)';
+            }
+        });
+
+        // Auto-hide when clicking outside floating elements
+        document.addEventListener('click', function(e) {
+            const deckImagesBox = document.getElementById('deckImagesBox');
+            const deckStats = document.getElementById('deckStats');
+
+            if (floatingElementsVisible &&
+                !toggleBtn.contains(e.target) &&
+                !deckImagesBox?.contains(e.target) &&
+                !deckStats?.contains(e.target)) {
+
+                floatingElementsVisible = false;
+                body.classList.remove('show-floating-elements');
+                toggleBtn.textContent = '📊 Show Deck Info';
+                toggleBtn.style.background = 'rgba(63, 208, 201, 0.9)';
+            }
+        });
+    }
+});
+
 // Update auth button visibility based on login state
 function updateAuthButtons() {
     const loginBtn = document.getElementById('loginBtn');
@@ -2256,32 +2288,53 @@ function setupLocalAuthEventListeners() {
 // RESET AUTH STATE AND USE CLEAN SYSTEM
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
-        // FORCE RESET of all auth data for clean state
+        // Check if user has already visited in this session
+        const hasVisitedBefore = sessionStorage.getItem('mulligan_trainer_visited') === 'true';
+
+        // FORCE RESET of GUEST auth data for clean state (but preserve user tokens and session visit flag)
         localStorage.removeItem('drawstep_guest_mode');
-        localStorage.removeItem('drawstep_token');
+        // DON'T remove drawstep_token - that would log out users on refresh!
         localStorage.removeItem('mulligan_guest_mode');
-        sessionStorage.removeItem('mulligan_trainer_visited');
-        
+        // DON'T remove sessionStorage.mulligan_trainer_visited - that's the bug!
+
         console.log('Auth state reset to clean slate');
-        
+        console.log('Has visited before in this session:', hasVisitedBefore);
+
         // Force refresh the global auth manager if it exists
         if (window.authManager) {
-            window.authManager.token = null;
-            window.authManager.user = null;
+            // DON'T reset token and user - that would log out users on refresh!
+            // Only reset guest mode flag to clean state
             window.authManager.guestMode = false;
-            window.authManager.updateUI(); // Force UI update
-            console.log('Global auth manager reset and UI updated');
+            window.authManager.updateUI(); // Force UI update to check current state
+            console.log('Global auth manager refreshed (guest mode reset, user data preserved)');
         }
-        
-        // Always show welcome screen for first-time experience
-        const authContainer = document.getElementById('authContainer');
-        if (authContainer) {
-            authContainer.style.display = 'flex';
-            console.log('Welcome screen shown');
+
+        // Only show welcome screen for first-time visitors in this session
+        if (!hasVisitedBefore) {
+            const authContainer = document.getElementById('authContainer');
+            if (authContainer) {
+                authContainer.style.display = 'flex';
+                console.log('Welcome screen shown - first time visitor');
+            }
+
+            // Setup welcome screen buttons
+            setupWelcomeScreenButtons();
+        } else {
+            console.log('Welcome screen skipped - user has visited before in this session');
+            const authContainer = document.getElementById('authContainer');
+            if (authContainer) {
+                authContainer.style.display = 'none';
+            }
+
+            // For returning visitors, check if they need guest mode enabled
+            if (window.authManager) {
+                // If no user is logged in and no guest mode active, enable guest mode by default
+                if (!window.authManager.user && !window.authManager.guestMode) {
+                    console.log('Returning visitor - enabling guest mode by default');
+                    window.authManager.enableGuestMode();
+                }
+            }
         }
-        
-        // Setup welcome screen buttons
-        setupWelcomeScreenButtons();
     }, 100);
 });
 

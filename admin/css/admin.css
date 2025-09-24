@@ -341,7 +341,7 @@ body {
 
 /* Modal */
 .modal {
-    display: flex;
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -351,6 +351,21 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
+}
+
+/* Login Modal has highest priority */
+#loginModal {
+    z-index: 1100;
+}
+
+/* User Detail Modal */
+#userDetailModal {
+    z-index: 1050;
+}
+
+/* Confirmation Modal */
+#confirmModal {
+    z-index: 1075;
 }
 
 .modal-content {
@@ -404,5 +419,465 @@ body {
     
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================ */
+/* USER MANAGEMENT STYLES */
+/* ============================================ */
+
+/* User Filters */
+.user-filters {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d1d6;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    min-width: 200px;
+    background: white;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.filter-select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d1d6;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #007aff;
+}
+
+/* Users Table */
+.users-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+
+.users-table-container {
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.users-table th {
+    background: #f8f9fa;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #1d1d1f;
+    border-bottom: 1px solid #e5e5e7;
+    white-space: nowrap;
+}
+
+.users-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f2f2f7;
+    vertical-align: middle;
+}
+
+.users-table tbody tr:hover {
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.users-table .loading {
+    text-align: center;
+    padding: 2rem;
+    color: #8e8e93;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.active {
+    background: #e8f5e8;
+    color: #30d158;
+}
+
+.status-badge.inactive {
+    background: #ffeaea;
+    color: #ff4444;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.btn-icon:hover {
+    transform: translateY(-1px);
+}
+
+.btn-icon.view {
+    background: #007aff;
+    color: white;
+}
+
+.btn-icon.view:hover {
+    background: #0056b3;
+}
+
+.btn-icon.toggle {
+    background: #ff9500;
+    color: white;
+}
+
+.btn-icon.toggle:hover {
+    background: #e6850e;
+}
+
+.btn-icon.delete {
+    background: #ff4444;
+    color: white;
+}
+
+.btn-icon.delete:hover {
+    background: #cc3333;
+}
+
+/* Pagination */
+.users-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e5e5e7;
+}
+
+.users-pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d1d6;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.users-pagination button:hover:not(:disabled) {
+    background: #f0f0f0;
+}
+
+.users-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================ */
+/* USER DETAIL MODAL */
+/* ============================================ */
+
+.user-modal {
+    max-width: 800px;
+    width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e5e7;
+    background: #f8f9fa;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1d1d1f;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #8e8e93;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: #e5e5e7;
+    color: #1d1d1f;
+}
+
+.modal-body {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+}
+
+/* Tabs */
+.user-detail-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e5e7;
+    background: #f8f9fa;
+}
+
+.tab-btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #8e8e93;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+    color: #1d1d1f;
+    background: #f0f0f0;
+}
+
+.tab-btn.active {
+    color: #007aff;
+    border-bottom-color: #007aff;
+    background: white;
+}
+
+.tab-content {
+    display: none;
+    padding: 1.5rem;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Form Styles */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #1d1d1f;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid #d1d1d6;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.info-text {
+    color: #8e8e93;
+    font-size: 0.9rem;
+    padding: 0.75rem 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e5e7;
+}
+
+/* User Statistics */
+.user-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    font-weight: 500;
+    color: #1d1d1f;
+}
+
+.stat-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #007aff;
+}
+
+/* Sessions List */
+.sessions-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.session-item {
+    background: white;
+    border: 1px solid #e5e5e7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s;
+}
+
+.session-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.session-deck {
+    font-weight: 600;
+    color: #1d1d1f;
+}
+
+.session-date {
+    font-size: 0.8rem;
+    color: #8e8e93;
+}
+
+.session-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #8e8e93;
+}
+
+.sessions-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem 0;
+}
+
+/* Confirmation Modal */
+.confirm-modal {
+    max-width: 400px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e5e7;
+    background: #f8f9fa;
+}
+
+/* Responsive Design for User Management */
+@media (max-width: 768px) {
+    .user-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+    
+    .search-input {
+        min-width: auto;
+    }
+    
+    .users-table th,
+    .users-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .session-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
     }
 }

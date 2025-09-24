@@ -111,9 +111,45 @@
                 
                 <!-- Users Section -->
                 <div id="users-section" class="section">
-                    <h3>User Management</h3>
-                    <div id="usersList">
-                        <p>User management will be implemented here...</p>
+                    <div class="section-header">
+                        <h3>User Management</h3>
+                        <div class="user-filters">
+                            <input type="text" id="userSearch" placeholder="Search users..." class="search-input">
+                            <select id="userStatusFilter" class="filter-select">
+                                <option value="">All Users</option>
+                                <option value="active">Active Only</option>
+                                <option value="inactive">Inactive Only</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="users-container">
+                        <div class="users-table-container">
+                            <table class="users-table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Last Login</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <tr>
+                                        <td colspan="7" class="loading">Loading users...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="users-pagination" id="usersPagination" style="display: none;">
+                            <button id="prevUsersPage" class="btn btn-sm">Previous</button>
+                            <span id="usersPageInfo">Page 1 of 1</span>
+                            <button id="nextUsersPage" class="btn btn-sm">Next</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -140,6 +176,128 @@
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
             <div id="loginError" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div id="userDetailModal" class="modal">
+        <div class="modal-content user-modal">
+            <div class="modal-header">
+                <h2 id="userModalTitle">User Details</h2>
+                <button class="modal-close" id="closeUserModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="user-detail-tabs">
+                    <button class="tab-btn active" data-tab="info">User Info</button>
+                    <button class="tab-btn" data-tab="stats">Statistics</button>
+                    <button class="tab-btn" data-tab="sessions">Sessions</button>
+                </div>
+                
+                <!-- User Info Tab -->
+                <div id="info-tab" class="tab-content active">
+                    <form id="userEditForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editUsername">Username:</label>
+                                <input type="text" id="editUsername" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmail">Email:</label>
+                                <input type="email" id="editEmail" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editStatus">Status:</label>
+                                <select id="editStatus">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Created:</label>
+                                <span id="userCreatedDate" class="info-text"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Last Login:</label>
+                                <span id="userLastLogin" class="info-text"></span>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">Update User</button>
+                            <button type="button" id="toggleUserStatus" class="btn btn-warning">Toggle Status</button>
+                            <button type="button" id="deleteUser" class="btn btn-danger">Delete User</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Statistics Tab -->
+                <div id="stats-tab" class="tab-content">
+                    <div class="user-stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Sessions:</span>
+                            <span class="stat-value" id="userTotalSessions">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Hands Practiced:</span>
+                            <span class="stat-value" id="userTotalHands">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Total Mulligans:</span>
+                            <span class="stat-value" id="userTotalMulligans">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Avg Session Duration:</span>
+                            <span class="stat-value" id="userAvgDuration">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Last Session:</span>
+                            <span class="stat-value" id="userLastSession">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-sessions">
+                        <h4>Recent Sessions</h4>
+                        <div id="userRecentSessions" class="sessions-list">
+                            <p>Loading sessions...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sessions Tab -->
+                <div id="sessions-tab" class="tab-content">
+                    <div class="sessions-container">
+                        <div id="userAllSessions" class="sessions-list">
+                            <p>Loading all sessions...</p>
+                        </div>
+                        <div class="sessions-pagination" id="sessionsPagination">
+                            <button id="prevSessionsPage" class="btn btn-sm">Previous</button>
+                            <span id="sessionsPageInfo">Page 1 of 1</span>
+                            <button id="nextSessionsPage" class="btn btn-sm">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content confirm-modal">
+            <div class="modal-header">
+                <h2 id="confirmTitle">Confirm Action</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmCancel" class="btn btn-secondary">Cancel</button>
+                <button id="confirmOk" class="btn btn-danger">Confirm</button>
+            </div>
         </div>
     </div>
 
