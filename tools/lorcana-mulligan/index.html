@@ -354,39 +354,36 @@
   </div>
 </div>
 
-<div id="statisticsArea" style="display:none;">
-  <div class="section-title" style="text-align: center; margin-bottom: 20px; color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 1.5rem;">TRAINING STATISTICS</div>
-  <div class="stats-container">
-    <div class="stat-box" style="background: rgba(63, 208, 201, 0.15); border-color: rgba(63, 208, 201, 0.4);">
-      <div class="stat-number" style="color: #3FD0C9;" id="totalHandsCount">0</div>
-      <div class="stat-label">Hands Practiced</div>
-    </div>
-    <div class="stat-box" style="background: rgba(255, 211, 78, 0.15); border-color: rgba(255, 211, 78, 0.4);">
-      <div class="stat-number" style="color: #FFD34E;" id="avgCardsExchanged">0.0</div>
-      <div class="stat-label">⌀ Cards Exchanged</div>
-    </div>
-    <div class="stat-box" style="background: rgba(155, 93, 229, 0.15); border-color: rgba(155, 93, 229, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-      <div style="display: flex; gap: 24px; align-items: center;">
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #9B5DE5; font-size: 1.6rem;" id="avgUninkBefore">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>before Mulligan</span></div>
-        </div>
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgUninkAfter">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>after Mulligan</span></div>
-        </div>
+<div id="statisticsArea" class="control-section" style="display:none!important; margin-top: 25px!important; position:static!important;">
+  <div class="section-title" style="text-align: center; margin-bottom: 15px; color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 1.3rem;">TRAINING STATISTICS</div>
+  <div class="stats-container-vertical">
+    <!-- Single row with all stats -->
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-number" style="color: #3FD0C9;" id="totalHandsCount">0</div>
+        <div class="stat-label">Hands Practiced</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #FFD34E;" id="avgCardsExchanged">0.0</div>
+        <div class="stat-label">⌀ Cards Exchanged</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #9B5DE5;" id="avgUninkBefore">0.00</div>
+        <div class="stat-label">⌀ Unink Before</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #FFD34E;" id="avgUninkAfter">0.00</div>
+        <div class="stat-label">⌀ Unink After</div>
       </div>
     </div>
-    <div class="stat-box" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-      <div style="display: flex; gap: 24px; align-items: center;">
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #22C55E; font-size: 1.6rem;" id="avgInkCostBefore">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>before Mulligan</span></div>
-        </div>
-        <div style="text-align: center;">
-          <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgInkCostAfter">0.00</div>
-          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>after Mulligan</span></div>
-        </div>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-number" style="color: #22C55E;" id="avgInkCostBefore">0.00</div>
+        <div class="stat-label">⌀ Ink Cost Before</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" style="color: #22C55E;" id="avgInkCostAfter">0.00</div>
+        <div class="stat-label">⌀ Ink Cost After</div>
       </div>
     </div>
   </div>
