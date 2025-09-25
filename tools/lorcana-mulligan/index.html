@@ -19,6 +19,164 @@
         localStorage.removeItem('mulligan_guest_mode');
         console.log('Auth state partially cleared in head');
     </script>
+
+    <!-- Welcome Screen Functions - MUST be loaded early -->
+    <script>
+        function handleLoginClick() {
+            console.log('INLINE: Login button clicked!');
+            const loginOptionsContainer = document.getElementById('loginOptionsContainer');
+            if (loginOptionsContainer) {
+                loginOptionsContainer.style.display = 'block';
+            }
+        }
+
+        function handleGuestClick() {
+            console.log('INLINE: Guest button clicked!');
+            if (window.authManager) {
+                window.authManager.enableGuestMode();
+            }
+        }
+
+        // Make functions globally available
+        window.handleLoginClick = handleLoginClick;
+        window.handleGuestClick = handleGuestClick;
+
+        console.log('Welcome screen functions loaded in head');
+
+        // Basic Event Listeners Setup
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀🚀🚀 DOMContentLoaded FIRED - Setting up basic event listeners 🚀🚀🚀');
+
+            // Deck Mode Dropdown
+            const deckMode = document.getElementById('deckMode');
+            if (deckMode) {
+                console.log('✅ deckMode found, adding listener');
+                deckMode.addEventListener('change', () => {
+                    console.log('📋 Deck mode changed to:', deckMode.value);
+                    const customDeckArea = document.getElementById('customDeckArea');
+                    const metaDeckArea = document.getElementById('metaDeckArea');
+
+                    if (deckMode.value === 'custom') {
+                        if (customDeckArea) customDeckArea.style.display = '';
+                        if (metaDeckArea) metaDeckArea.style.display = 'none';
+                    } else if (deckMode.value === 'meta') {
+                        if (customDeckArea) customDeckArea.style.display = 'none';
+                        if (metaDeckArea) metaDeckArea.style.display = '';
+                    } else {
+                        if (customDeckArea) customDeckArea.style.display = 'none';
+                        if (metaDeckArea) metaDeckArea.style.display = 'none';
+                    }
+                });
+            } else {
+                console.error('❌ deckMode not found!');
+            }
+
+            // Load Meta Decks
+            console.log('🃏 Loading meta decks...');
+            fetch('data/metadecks.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(metaDecks => {
+                    console.log('✅ Meta decks loaded:', Object.keys(metaDecks).length);
+                    window.metaDecks = metaDecks;
+
+                    // Populate BOTH meta deck dropdowns
+                    const opponentDeckSelect = document.getElementById('opponentDeckSelect');
+                    const presetDecks = document.getElementById('presetDecks');
+
+                    // First dropdown (for mulligan situation)
+                    if (opponentDeckSelect) {
+                        // Clear existing options except the first one
+                        while (opponentDeckSelect.children.length > 1) {
+                            opponentDeckSelect.removeChild(opponentDeckSelect.lastChild);
+                        }
+
+                        // Add meta deck options
+                        Object.keys(metaDecks).forEach(key => {
+                            const option = document.createElement('option');
+                            option.value = key;
+                            option.textContent = metaDecks[key].name || key;
+                            opponentDeckSelect.appendChild(option);
+                        });
+                        console.log('✅ opponentDeckSelect populated with', Object.keys(metaDecks).length, 'decks');
+                    } else {
+                        console.error('❌ opponentDeckSelect not found!');
+                    }
+
+                    // Second dropdown (for meta deck import)
+                    if (presetDecks) {
+                        // Clear existing options except the first one
+                        while (presetDecks.children.length > 1) {
+                            presetDecks.removeChild(presetDecks.lastChild);
+                        }
+
+                        // Add meta deck options
+                        Object.keys(metaDecks).forEach(key => {
+                            const option = document.createElement('option');
+                            option.value = key;
+                            option.textContent = metaDecks[key].name || key;
+                            presetDecks.appendChild(option);
+                        });
+                        console.log('✅ presetDecks populated with', Object.keys(metaDecks).length, 'decks');
+                    } else {
+                        console.error('❌ presetDecks not found!');
+                    }
+
+                    console.log('🔄 Meta deck loading complete, continuing with import buttons...');
+
+                    // Setup Import Button Event Listeners INSIDE the promise
+                    try {
+                        console.log('🔍 Searching for import buttons...');
+
+                        // Import Button Event Listeners
+                        const importDeckBtn = document.getElementById('importDeckBtn');
+                        const importMetaDeckBtn = document.getElementById('importMetaDeckBtn');
+
+                        console.log('🔍 Import buttons found:', {
+                            custom: !!importDeckBtn,
+                            meta: !!importMetaDeckBtn
+                        });
+
+                        if (importDeckBtn) {
+                            console.log('✅ Custom deck import button found');
+                            importDeckBtn.addEventListener('click', () => {
+                                console.log('🔥 CUSTOM DECK IMPORT BUTTON CLICKED!');
+                            });
+                        } else {
+                            console.error('❌ Custom deck import button not found!');
+                        }
+
+            if (importMetaDeckBtn) {
+              console.log('✅ Meta deck import button found - will be wired by main script');
+            } else {
+                            console.error('❌ Meta deck import button not found!');
+                        }
+
+                        // Add presetDecks change listener to enable/disable import button
+                        if (presetDecks && importMetaDeckBtn) {
+                            presetDecks.addEventListener('change', function() {
+                                const isValidSelection = this.value && window.metaDecks && window.metaDecks[this.value];
+                                importMetaDeckBtn.disabled = !isValidSelection;
+                                console.log('🔄 Meta deck selection changed:', this.value, 'Button enabled:', !importMetaDeckBtn.disabled);
+                            });
+                            console.log('✅ PresetDecks change listener added');
+                        }
+
+                        console.log('🎯 Import button setup complete');
+                    } catch (error) {
+                        console.error('🚨 ERROR in import button setup:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error loading meta decks:', error);
+                    console.log('🔄 Meta deck loading failed, continuing with import buttons...');
+                });
+        });
+    </script>
 </head>
 
 <body>
@@ -1125,7 +1283,13 @@ function updateDeckStatsDisplay() {
         }
         localStorage.setItem('deckDisplayAutoHidden', 'true');
       } else {
-        // Benutzer hat es manuell eingeblendet - zeige Toggle-Button zum Schließen
+        // Benutzer hat es manuell eingeblendet - zeige Elemente und Toggle-Button zum Schließen
+        if (deckStatsContainer) {
+          deckStatsContainer.style.display = 'flex';
+        }
+        if (deckImagesBox) {
+          deckImagesBox.style.display = 'flex';
+        }
         if (globalToggle) {
           globalToggle.style.display = 'flex';
           globalToggle.textContent = '✕';
@@ -1862,6 +2026,10 @@ importBtn.addEventListener('click', async () => {
 }
 
   updateDeckDisplay();
+  // Ensure stats are computed and visible
+  setTimeout(() => {
+    try { updateDeckStatsDisplay(); } catch (e) { console.debug('deck stats update failed', e); }
+  }, 50);
 
   drawHandBtn.disabled = deck.length < 7;
 
@@ -1877,6 +2045,17 @@ importBtn.addEventListener('click', async () => {
   metaDeckArea.style.display = 'none';
   deckModeArea.style.display = 'none';
   chooseOtherDeckBtn.style.display = 'inline-block';
+  // Make deck UI visible even on small screens (user preference)
+  try {
+    localStorage.setItem('deckDisplayVisible', 'true');
+    localStorage.removeItem('deckDisplayAutoHidden');
+    const deckStatsContainer = document.getElementById('deckStatsContainer');
+    const deckImagesBox = document.getElementById('deckImagesBox');
+    const globalToggle = document.getElementById('globalDeckToggle');
+    if (deckStatsContainer) deckStatsContainer.style.display = 'flex';
+    if (deckImagesBox) deckImagesBox.style.display = 'flex';
+    if (globalToggle) { globalToggle.style.display = 'flex'; globalToggle.textContent = '✕'; }
+  } catch(e) {}
   
   // Show mulligan section after successful deck import
   const mulliganModeArea = document.getElementById('mulliganModeArea');
@@ -1979,23 +2158,8 @@ mulliganBtn.addEventListener('click', () => {
     return count;
   }
 
-  // Calculate ink cost average
-  function calculateAvgInkCost(hand) {
-    if (!allCardsData || !allCardsData.cards || hand.length === 0) return 0;
-    let totalCost = 0;
-    let validCards = 0;
-    hand.forEach(card => {
-      const cardData = allCardsData.cards.find(c => c.name === card.name || c.fullName === card.name);
-      if (cardData && cardData.cost !== undefined) {
-        totalCost += cardData.cost;
-        validCards++;
-      }
-    });
-    return validCards > 0 ? totalCost / validCards : 0;
-  }
-
   const uninkBefore = countUnink(currentHand);
-  const inkCostBefore = calculateAvgInkCost(currentHand);
+  const inkCostBefore = calculateAverageInkCost(currentHand);
 
   // Neue Logik: Die neuen Karten ersetzen die getauschten Karten an deren Position
   const exchangeIndices = Array.from(selectedIndices);
@@ -2013,8 +2177,7 @@ mulliganBtn.addEventListener('click', () => {
   // ...nach dem Mulligan
   const uninkAfter = countUnink(newHand);
 
-  // Calculate ink costs before and after mulligan
-  const inkCostBefore = calculateAverageInkCost(currentHand);
+  // Calculate ink costs after mulligan
   const inkCostAfter = calculateAverageInkCost(newHand);
 
   trainingStats.totalUninkBefore += uninkBefore;
@@ -2031,7 +2194,6 @@ mulliganBtn.addEventListener('click', () => {
   updateStatistics();
 
   // Track mulligan for backend statistics
-  const inkCostAfter = calculateAvgInkCost(newHand);
   trackMulligan(
     exchangeIndices.length,      // cards exchanged
     uninkBefore,                 // unink count before
