@@ -83,16 +83,16 @@ router.get('/stats', isAuthenticated, async (req, res) => {
     try {
         const database = require('../database/database');
         
-        const userCount = await database.query('SELECT COUNT(*) as count FROM users');
-        const sessionCount = await database.query('SELECT COUNT(*) as count FROM training_sessions');
+        const userCountResult = await database.all('SELECT COUNT(*) as count FROM users');
+        const sessionCountResult = await database.all('SELECT COUNT(*) as count FROM training_sessions');
         
         const metaDecksData = await fs.readFile(META_DECKS_PATH, 'utf8');
         const metaDecks = JSON.parse(metaDecksData);
         const deckCount = Object.keys(metaDecks).length;
         
         res.json({
-            totalUsers: userCount[0]?.count || 0,
-            totalSessions: sessionCount[0]?.count || 0,
+            totalUsers: userCountResult[0]?.count || 0,
+            totalSessions: sessionCountResult[0]?.count || 0,
             totalMetaDecks: deckCount,
             serverStatus: 'online'
         });
@@ -110,7 +110,7 @@ router.get('/stats', isAuthenticated, async (req, res) => {
 router.get('/users', isAuthenticated, async (req, res) => {
     try {
         const database = require('../database/database');
-        const users = await database.query(
+        const users = await database.all(
             'SELECT id, username, email, created_at, last_login FROM users ORDER BY created_at DESC'
         );
         res.json(users);

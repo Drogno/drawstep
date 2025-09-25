@@ -10,6 +10,39 @@ const { authenticateToken } = require('./auth');
 const router = express.Router();
 
 // ============================================
+// USER STATISTICS ROUTES
+// ============================================
+
+// Get user's overall statistics
+router.get('/user', authenticateToken, async (req, res) => {
+  try {
+    const userStats = await database.getUserStats(req.user.userId);
+
+    if (!userStats) {
+      // Create initial user stats if they don't exist
+      await database.updateUserStats(req.user.userId);
+      const newStats = await database.getUserStats(req.user.userId);
+      return res.json(newStats || {
+        user_id: req.user.userId,
+        total_sessions: 0,
+        total_hands: 0,
+        total_mulligans: 0,
+        total_cards_exchanged: 0,
+        avg_unink_before: 0,
+        avg_unink_after: 0,
+        avg_ink_cost_before: 0,
+        avg_ink_cost_after: 0
+      });
+    }
+
+    res.json(userStats);
+  } catch (error) {
+    console.error('Get user stats error:', error);
+    res.status(500).json({ error: 'Failed to get user statistics' });
+  }
+});
+
+// ============================================
 // SESSION ROUTES
 // ============================================
 

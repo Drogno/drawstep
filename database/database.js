@@ -229,9 +229,16 @@ class Database {
     return stats;
   }
 
+  async getUserStats(userId) {
+    return await this.get(`
+      SELECT * FROM user_stats
+      WHERE user_id = ?
+    `, [userId]);
+  }
+
   async getLeaderboard(limit = 10) {
     return await this.all(`
-      SELECT u.username, us.* 
+      SELECT u.username, us.*
       FROM user_stats us
       JOIN users u ON us.user_id = u.id
       WHERE u.is_active = 1

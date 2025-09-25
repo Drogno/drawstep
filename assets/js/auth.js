@@ -415,6 +415,8 @@ class AuthManager {
     if (typeof updateMulliganMenuAuth === 'function') {
       updateMulliganMenuAuth();
     }
+
+    // Note: User statistics are now displayed on dedicated profile page
   }
 
   updateMenuAuthSection() {
@@ -633,6 +635,96 @@ class AuthManager {
       console.error('API request error:', error);
       throw error;
     }
+  }
+
+  // ============================================
+  // USER STATISTICS METHODS
+  // ============================================
+
+  async loadUserStatistics() {
+    if (!this.isLoggedIn()) {
+      return null;
+    }
+
+    try {
+      const response = await this.apiRequest('/api/stats/user');
+
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        console.error('Failed to load user statistics');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error loading user statistics:', error);
+      return null;
+    }
+  }
+
+  async updateUserStatistics() {
+    const userStatsSection = document.getElementById('userStatsSection');
+    const refreshStatsBtn = document.getElementById('refreshStatsBtn');
+
+    if (this.isLoggedIn() && userStatsSection) {
+      // Show the statistics section
+      userStatsSection.style.display = 'block';
+
+      // Load statistics data
+      const stats = await this.loadUserStatistics();
+
+      if (stats) {
+        this.displayUserStatistics(stats);
+      }
+
+      // Set up refresh button if it exists and hasn't been set up already
+      if (refreshStatsBtn && !refreshStatsBtn.hasAttribute('data-listener-added')) {
+        refreshStatsBtn.setAttribute('data-listener-added', 'true');
+        refreshStatsBtn.addEventListener('click', async () => {
+          refreshStatsBtn.textContent = '🔄 Loading...';
+          const newStats = await this.loadUserStatistics();
+          if (newStats) {
+            this.displayUserStatistics(newStats);
+          }
+          refreshStatsBtn.textContent = '🔄 Refresh Stats';
+        });
+      }
+    } else if (userStatsSection) {
+      // Hide the statistics section for non-logged-in users
+      userStatsSection.style.display = 'none';
+    }
+  }
+
+  displayUserStatistics(stats) {
+    // Update individual stat values
+    const statElements = {
+      statTotalHands: document.getElementById('statTotalHands'),
+      statTotalMulligans: document.getElementById('statTotalMulligans'),
+      statTotalSessions: document.getElementById('statTotalSessions'),
+      statAvgDuration: document.getElementById('statAvgDuration')
+    };
+
+    if (statElements.statTotalHands) {
+      statElements.statTotalHands.textContent = stats.total_hands_practiced || 0;
+    }
+
+    if (statElements.statTotalMulligans) {
+      statElements.statTotalMulligans.textContent = stats.total_mulligans || 0;
+    }
+
+    if (statElements.statTotalSessions) {
+      statElements.statTotalSessions.textContent = stats.total_sessions || 0;
+    }
+
+    if (statElements.statAvgDuration) {
+      const avgMinutes = Math.round((stats.average_session_duration || 0) / 60);
+      statElements.statAvgDuration.textContent = `${avgMinutes}m`;
+    }
+  }
+
+  // Method to manually refresh statistics (can be called from other parts of the app)
+  async refreshStatistics() {
+    await this.updateUserStatistics();
   }
 }
 

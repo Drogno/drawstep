@@ -28,15 +28,12 @@
 
   <div id="deckImagesBox" style="position:absolute; top:20px; right:32px; max-width:500px; display:flex; flex-wrap:wrap; gap:8px; z-index:10;"></div>
 
-  <!-- Global Toggle Button für Deck-Anzeige (sichtbar wenn beide Elemente ausgeblendet sind) -->
-  <button id="globalDeckToggle" style="position: fixed; top: 20px; right: 10px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 16px; z-index: 1000; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">👁</button>
-
   <div id="deckStatsContainer" style="position:absolute; top:450px; right:32px; max-width:500px; z-index:10; display:flex; flex-direction:column;">
-    <div id="deckStatsHeader" style="display:flex; justify-content:flex-start; align-items:center; margin-bottom:5px; width:100%;">
+    <div id="deckStatsHeader" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
       <div style="color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 0.9rem; letter-spacing: 1px;">DECK STATISTICS</div>
-      <button id="toggleDeckStats" style="display: none !important;">-</button>
+      <button id="toggleDeckStats" style="background: none; border: 1px solid #3FD0C9; color: #3FD0C9; cursor: pointer; width: 24px; height: 24px; border-radius: 4px; display: none; align-items: center; justify-content: center; font-size: 14px;">-</button>
     </div>
-    <div id="deckStats" style="display:flex; justify-content:flex-start; width:100%;">
+    <div id="deckStats" style="display:flex; justify-content:center; width:500px;">
       <!-- Media Query für kleine Bildschirme wird in JavaScript behandelt -->
     </div>
   </div>
@@ -71,9 +68,6 @@
                       <span style="color: #3FD0C9; font-weight: bold;">Welcome, </span>
                       <span id="menuUsername" style="color: #FFD34E; font-weight: bold;"></span>
                   </div>
-                  <a href="../../profile.html" class="menu-item">
-                      👤 Profile & Stats
-                  </a>
                   <a href="#" class="menu-item" id="menuLogoutBtn">
                       🚪 Logout
                   </a>
@@ -193,7 +187,7 @@
             
             <!-- Mode Selection -->
             <div style="margin-bottom: 30px;">
-                <button id="continueAsGuest" onclick="handleGuestClick()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #666, #444); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1.1rem;">
+                <button id="continueAsGuest" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #666, #444); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1.1rem;">
                     🚀 CONTINUE AS GUEST
                 </button>
                 <div style="background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 6px; padding: 12px; margin-bottom: 20px;">
@@ -202,7 +196,7 @@
                     </p>
                 </div>
                 
-                <button id="showLogin" onclick="handleLoginClick()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
+                <button id="showLogin" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
                     📊 LOGIN FOR ADVANCED FEATURES
                 </button>
                 <div style="background: rgba(63, 208, 201, 0.1); border: 1px solid rgba(63, 208, 201, 0.3); border-radius: 6px; padding: 15px; margin-top: 15px;">
@@ -285,9 +279,7 @@
     <div id="userContainer" style="display: none; position: absolute; top: 80px; left: 20px; z-index: 100;">
         <div style="background: rgba(63, 208, 201, 0.1); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.3); display: inline-block;">
             <span style="color: #3FD0C9; font-weight: bold; font-size: 0.9rem;">Welcome, </span>
-            <a href="../../profile.html" id="usernameDisplay" style="color: #FFD34E; font-weight: bold; font-size: 0.9rem; text-decoration: none; cursor: pointer; border-bottom: 1px dotted transparent; transition: border-bottom 0.2s;"
-               onmouseover="this.style.borderBottom = '1px dotted #FFD34E'"
-               onmouseout="this.style.borderBottom = '1px dotted transparent'"></a>
+            <span id="usernameDisplay" style="color: #FFD34E; font-weight: bold; font-size: 0.9rem;"></span>
             <span style="color: #D0D0D0; margin-left: 8px;">|</span>
             <button id="upgradeToAccountBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Create Account</button>
             <button id="loginBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Login</button>
@@ -466,42 +458,11 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="data/cardImageMap.js"></script>
 <script>
-// Direct onclick handlers as fallback - MUST be defined early
-function handleGuestClick() {
-    console.log('INLINE: Guest button clicked!');
-    if (window.authManager) {
-        window.authManager.enableGuestMode();
-    }
-    const authContainer = document.getElementById('authContainer');
-    if (authContainer) authContainer.style.display = 'none';
-    sessionStorage.setItem('mulligan_trainer_visited', 'true');
-}
-
-function handleLoginClick() {
-    console.log('INLINE: Login button clicked!');
-    const loginOptionsContainer = document.getElementById('loginOptionsContainer');
-    if (loginOptionsContainer) {
-        loginOptionsContainer.style.display = 'block';
-    }
-}
-
-// Also add to window object to ensure global availability
-window.handleGuestClick = handleGuestClick;
-window.handleLoginClick = handleLoginClick;
-
-// Debug confirmation that functions are loaded
-console.log('Welcome screen functions loaded:', {
-    handleGuestClick: typeof handleGuestClick,
-    handleLoginClick: typeof handleLoginClick,
-    windowGuestClick: typeof window.handleGuestClick,
-    windowLoginClick: typeof window.handleLoginClick
-});
-
 /**
  * ============================================
  * LORCANA MULLIGAN TRAINER - MAIN SCRIPT
  * ============================================
- *
+ * 
  * This script handles the core functionality of the Lorcana Mulligan Trainer:
  * - Deck import and management
  * - Hand drawing and mulligan simulation
@@ -525,20 +486,6 @@ let currentHand = [];             // Current drawn hand
 const selectedIndices = new Set(); // Selected cards for mulligan
 let mulliganHistory = [];         // History of all mulligans
 let allCardsData = null;          // Cache of all card data
-
-// Statistics tracking variables
-let currentSession = {
-  startTime: null,
-  deckName: null,
-  deckList: null,
-  totalHands: 0,
-  totalMulligans: 0,
-  totalCardsExchanged: 0,
-  totalUninkBefore: 0,
-  totalUninkAfter: 0,
-  totalInkCostBefore: 0,
-  totalInkCostAfter: 0
-};
 
 // DOM element references
 const deckLoading = document.getElementById('deckLoading');
@@ -1093,62 +1040,24 @@ function updateDeckStatsDisplay() {
     }
   };
   
-  // Responsive Deck-Display Management
-  const manageDeckDisplayResponsiveness = () => {
+  // Zusätzliche Funktion: Prüfe, ob das Fenster ausgeblendet werden muss, basierend auf der Bildschirmgröße
+  const checkHideOnSmallScreen = () => {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-
-    const deckStatsContainer = document.getElementById('deckStatsContainer');
-    const deckImagesBox = document.getElementById('deckImagesBox');
-    const toggleButton = document.getElementById('toggleDeckStats');
-    const globalToggle = document.getElementById('globalDeckToggle');
-
-    // Schwellenwerte für das Ausblenden der Deck-Anzeige
-    const hideThreshold = 1200; // Breite unter der ausgeblendet wird
-    const heightThreshold = 700; // Höhe unter der ausgeblendet wird
-
-    if (viewportWidth < hideThreshold || viewportHeight < heightThreshold) {
-      // Bei kleinen Bildschirmen: Nur ausblenden wenn nicht manuell eingeblendet
-      const userPreference = localStorage.getItem('deckDisplayVisible');
-
-      if (userPreference !== 'true') {
-        // Nur automatisch ausblenden wenn Benutzer es nicht manuell eingeblendet hat
-        if (deckStatsContainer) {
-          deckStatsContainer.style.display = 'none';
-        }
-        if (deckImagesBox) {
-          deckImagesBox.style.display = 'none';
-        }
-        if (globalToggle) {
-          globalToggle.style.display = 'flex';
-          globalToggle.textContent = '👁';
-        }
-        localStorage.setItem('deckDisplayAutoHidden', 'true');
-      } else {
-        // Benutzer hat es manuell eingeblendet - zeige Toggle-Button zum Schließen
-        if (globalToggle) {
-          globalToggle.style.display = 'flex';
-          globalToggle.textContent = '✕';
-        }
+    
+    // Wenn der Bildschirm zu klein ist, blende das Fenster aus
+    if (viewportWidth < 768) {
+      const toggleButton = document.getElementById('toggleDeckStats');
+      const deckStatsContainer = document.getElementById('deckStatsContainer');
+      if (deckStatsContainer && toggleButton) {
+        deckStatsContainer.style.display = 'none';
+        toggleButton.style.display = 'flex';
+        toggleButton.textContent = '+';
+        // Speichere, dass es aufgrund von Bildschirmgröße ausgeblendet wurde
+        localStorage.setItem('deckStatsAutoHidden', 'true');
       }
     } else {
-      // Bei großen Bildschirmen: Prüfen ob wieder anzeigen
-      const wasAutoHidden = localStorage.getItem('deckDisplayAutoHidden');
-      const userPreference = localStorage.getItem('deckDisplayVisible');
-
-      if (wasAutoHidden === 'true' && userPreference !== 'false') {
-        if (deckStatsContainer) {
-          deckStatsContainer.style.display = 'flex';
-        }
-        if (deckImagesBox) {
-          deckImagesBox.style.display = 'flex';
-        }
-        if (globalToggle) {
-          globalToggle.style.display = 'none';
-        }
-        localStorage.removeItem('deckDisplayAutoHidden');
-      }
-      // Dann normale Überlappungsprüfung
+      // Prüfe auf Überlappung nur, wenn der Bildschirm groß genug ist
       setTimeout(checkForOverlaps, 100);
     }
   };
@@ -1169,20 +1078,86 @@ function updateDeckStatsDisplay() {
   
   // Sofort versuchen
   tryCalculatePosition();
-
+  
   // Zusätzliche Versuche zu verschiedenen Zeiten
   setTimeout(tryCalculatePosition, 100);
   setTimeout(tryCalculatePosition, 250);
-
-  // Prüfe Responsive Verhalten
-  setTimeout(manageDeckDisplayResponsiveness, 100);
+  
+    // Zusätzliche Funktion: Prüfe, ob das Fenster ausgeblendet werden muss, basierend auf der Bildschirmgröße
+  const checkHideOnSmallScreen = () => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Wenn der Bildschirm zu klein ist, blende das Fenster aus
+    if (viewportWidth < 768) {
+      const toggleButton = document.getElementById('toggleDeckStats');
+      const deckStatsContainer = document.getElementById('deckStatsContainer');
+      if (deckStatsContainer && toggleButton) {
+        deckStatsContainer.style.display = 'none';
+        toggleButton.style.display = 'flex';
+        toggleButton.textContent = '+';
+        // Speichere, dass es aufgrund von Bildschirmgröße ausgeblendet wurde
+        localStorage.setItem('deckStatsAutoHidden', 'true');
+      }
+    } else {
+      // Wenn der Bildschirm groß genug ist, prüfe auf Überlappung
+      const autoHidden = localStorage.getItem('deckStatsAutoHidden');
+      const savedState = localStorage.getItem('deckStatsVisible');
+      
+      // Nur wenn es aufgrund von Bildschirmgröße ausgeblendet wurde (nicht manuell)
+      if (autoHidden === 'true' && savedState !== 'false') {
+        // Zeige das Fenster wieder an und prüfe auf Überlappungen
+        const deckStatsContainer = document.getElementById('deckStatsContainer');
+        const toggleButton = document.getElementById('toggleDeckStats');
+        if (deckStatsContainer && toggleButton) {
+          deckStatsContainer.style.display = 'flex';
+          toggleButton.style.display = 'none';
+          // Entferne das Auto-Hide-Flag
+          localStorage.removeItem('deckStatsAutoHidden');
+        }
+        // Führe die Überlappungsprüfung durch
+        setTimeout(checkForOverlaps, 100);
+      }
+    }
+  };
   
   // Resize-Event-Listener für responsive Anpassung
   // Nur einmal hinzufügen, wenn er noch nicht existiert
   if (!window.deckStatsResizeHandler) {
     window.deckStatsResizeHandler = () => {
       setTimeout(calculatePosition, 100);
-      setTimeout(manageDeckDisplayResponsiveness, 150);
+      
+      // Prüfe direkt auf kleine Bildschirme
+      const viewportWidth = window.innerWidth;
+      if (viewportWidth < 768) {
+        const toggleButton = document.getElementById('toggleDeckStats');
+        const deckStatsContainer = document.getElementById('deckStatsContainer');
+        if (deckStatsContainer && toggleButton) {
+          deckStatsContainer.style.display = 'none';
+          toggleButton.style.display = 'flex';
+          toggleButton.textContent = '+';
+          localStorage.setItem('deckStatsAutoHidden', 'true');
+        }
+      } else {
+        // Wenn der Bildschirm groß genug ist, prüfe auf Überlappung
+        const autoHidden = localStorage.getItem('deckStatsAutoHidden');
+        const savedState = localStorage.getItem('deckStatsVisible');
+        
+        // Nur wenn es aufgrund von Bildschirmgröße ausgeblendet wurde (nicht manuell)
+        if (autoHidden === 'true' && savedState !== 'false') {
+          // Zeige das Fenster wieder an und prüfe auf Überlappungen
+          const deckStatsContainer = document.getElementById('deckStatsContainer');
+          const toggleButton = document.getElementById('toggleDeckStats');
+          if (deckStatsContainer && toggleButton) {
+            deckStatsContainer.style.display = 'flex';
+            toggleButton.style.display = 'none';
+            localStorage.removeItem('deckStatsAutoHidden');
+          }
+          setTimeout(checkForOverlaps, 100);
+        } else {
+          setTimeout(checkForOverlaps, 100);
+        }
+      }
     };
     window.addEventListener('resize', window.deckStatsResizeHandler);
   }
@@ -1214,23 +1189,33 @@ function updateDeckStatsDisplay() {
   const savedState = localStorage.getItem('deckStatsVisible');
   const autoHidden = localStorage.getItem('deckStatsAutoHidden');
   
-  // Vereinfachte Zustandsverwaltung - kein interner Toggle-Button mehr
-  const globalDisplayState = localStorage.getItem('deckDisplayVisible');
-
-  if (globalDisplayState === 'false') {
-    // Benutzer hat über globalen Button ausgeblendet
+  if (savedState === 'false') {
+    // Benutzer hat das Fenster manuell ausgeblendet
     deckStatsContainer.style.display = 'none';
+    if (toggleButton) {
+      toggleButton.style.display = 'flex';
+      toggleButton.textContent = '+';
+    }
+  } else if (autoHidden === 'true') {
+    // Fenster wurde automatisch ausgeblendet (z.B. wegen kleinem Bildschirm)
+    deckStatsContainer.style.display = 'none';
+    if (toggleButton) {
+      toggleButton.style.display = 'flex';
+      toggleButton.textContent = '+';
+    }
   } else {
-    // Standardmäßig anzeigen oder Benutzer hat über globalen Button eingeblendet
-    deckStatsContainer.style.display = 'flex';
+    // Standardmäßig anzeigen
+    deckStatsContainer.style.display = 'flex'; // Nutze flex, da der Container jetzt flex-direction: column hat
+    if (toggleButton) {
+      toggleButton.style.display = 'none';
+    }
     // Prüfe auf Überlappung nach kurzer Verzögerung
     setTimeout(checkForOverlaps, 500);
   }
 }
 
-// DEAKTIVIERT - Überlappungsprüfung wird durch das neue responsive System gesteuert
+// Funktion, um zu prüfen, ob das Deck-Statistik-Fenster andere Elemente überlappt
 function checkForOverlaps() {
-  return; // Deaktiviert
   const deckStatsContainer = document.getElementById('deckStatsContainer');
   const deckImagesBox = document.getElementById('deckImagesBox');
   const toggleButton = document.getElementById('toggleDeckStats');
@@ -1243,9 +1228,17 @@ function checkForOverlaps() {
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
   
-  // Responsive Verhalten wird jetzt über manageDeckDisplayResponsiveness gesteuert
+  // Wenn der Bildschirm zu klein ist, blende das Fenster aus
   if (viewportWidth < 768) {
-    return; // Keine Überlappungsprüfung bei kleinen Bildschirmen
+    // Blende die Statistik aus wegen kleinem Bildschirm
+    deckStatsContainer.style.display = 'none';
+    // Zeige den Toggle-Button an, da das Fenster ausgeblendet ist
+    toggleButton.style.display = 'flex';
+    // Aktualisiere den Button-Text auf '+' um anzuzeigen, dass das Fenster ausgeblendet ist
+    toggleButton.textContent = '+';
+    // Speichere, dass es automatisch ausgeblendet wurde
+    localStorage.setItem('deckStatsAutoHidden', 'true');
+    return;
   }
   
   // Nur prüfen, ob das Deck-Statistik-Fenster sichtbar ist und der Bildschirm groß genug ist
@@ -1316,133 +1309,33 @@ function checkForOverlaps() {
 }
 
 // Funktion, um Deck-Statistik-Fenster ein- und auszublenden
-function toggleDeckDisplay() {
-  const deckStatsContainer = document.getElementById('deckStatsContainer');
-  const deckImagesBox = document.getElementById('deckImagesBox');
-  const globalToggle = document.getElementById('globalDeckToggle');
-
-  if (!deckStatsContainer) return;
-
-  const isCurrentlyVisible = deckStatsContainer.style.display !== 'none';
-
-  if (!isCurrentlyVisible) {
-    // Zeige beide Deck-Elemente an
-    deckStatsContainer.style.display = 'flex';
-    if (deckImagesBox) deckImagesBox.style.display = 'flex';
-
-    // Update global toggle button
-    setTimeout(() => {
-      const globalToggle = document.getElementById('globalDeckToggle'); // Fresh reference
-      if (globalToggle) {
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        if (viewportWidth < 1200 || viewportHeight < 700) {
-          globalToggle.style.display = 'flex';
-          globalToggle.textContent = '✕';
-        } else {
-          globalToggle.style.display = 'none';
-        }
-      }
-    }, 50);
-
-    // Neupositionierung nach dem Einblenden
-    setTimeout(() => {
-      // Stelle sicher, dass Container korrekt positioniert ist
-      const deckHeight = deckImagesBox ? deckImagesBox.offsetHeight : 0;
-      const viewportWidth = window.innerWidth;
-
-      if (deckHeight > 50) {
-        let dynamicTop = 20 + deckHeight + 30;
-
-        if (viewportWidth < 768) {
-          deckStatsContainer.style.right = '10px';
-          deckStatsContainer.style.width = 'calc(100vw - 20px)';
-          deckStatsContainer.style.maxWidth = '400px';
-        } else {
-          deckStatsContainer.style.right = '32px';
-          deckStatsContainer.style.width = '500px';
-          deckStatsContainer.style.maxWidth = '500px';
-        }
-
-        // Stelle sicher, dass der Header korrekt ausgerichtet ist
-        const deckStatsHeader = document.getElementById('deckStatsHeader');
-        if (deckStatsHeader) {
-          deckStatsHeader.style.width = '100%';
-          deckStatsHeader.style.marginBottom = '5px';
-        }
-
-        deckStatsContainer.style.top = dynamicTop + 'px';
-      }
-
-      // Sichere Stats-Berechnung mit Fehlerbehandlung
-      if (deck && deck.length > 0 && typeof calculateDeckStats === 'function') {
-        const stats = calculateDeckStats();
-        if (stats && typeof stats.total !== 'undefined' && typeof stats.uninkables !== 'undefined' && typeof stats.averageCost !== 'undefined') {
-          const inkables = stats.total - stats.uninkables;
-
-          const deckStatsDiv = document.getElementById('deckStats');
-          if (deckStatsDiv) {
-            deckStatsDiv.innerHTML = `
-              <div style="
-                background: linear-gradient(145deg, rgba(63, 208, 201, 0.1), rgba(155, 93, 229, 0.1));
-                border: 2px solid rgba(63, 208, 201, 0.3);
-                border-radius: 12px;
-                padding: 10px 15px;
-                backdrop-filter: blur(10px);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                display: inline-block;
-                font-size: 0.9rem;
-              ">
-                <div style="display: flex; gap: 15px; align-items: center;">
-                  <div style="text-align: center;">
-                    <div style="color: #3FD0C9; font-weight: bold;">${stats.total}</div>
-                    <div style="color: #999; font-size: 0.8rem;">Cards</div>
-                  </div>
-                  <div style="text-align: center;">
-                    <div style="color: #22C55E; font-weight: bold;">${inkables}</div>
-                    <div style="color: #999; font-size: 0.8rem;">Inkable</div>
-                  </div>
-                  <div style="text-align: center;">
-                    <div style="color: #F59E0B; font-weight: bold;">${stats.uninkables}</div>
-                    <div style="color: #999; font-size: 0.8rem;">Uninkable</div>
-                  </div>
-                  <div style="text-align: center;">
-                    <div style="color: #FFD34E; font-weight: bold;">${stats.averageCost.toFixed(1)}</div>
-                    <div style="color: #999; font-size: 0.8rem;">Avg Cost</div>
-                  </div>
-                </div>
-              </div>
-            `;
-          }
-        }
-      }
-    }, 100);
-
-    // Speichere Zustand in localStorage
-    localStorage.setItem('deckDisplayVisible', 'true');
-    localStorage.removeItem('deckDisplayAutoHidden');
-  } else {
-    // Blende beide Deck-Elemente aus
-    deckStatsContainer.style.display = 'none';
-    if (deckImagesBox) deckImagesBox.style.display = 'none';
-
-    // Global toggle zeigt wieder "Auge" zum Öffnen
-    setTimeout(() => {
-      const globalToggle = document.getElementById('globalDeckToggle'); // Fresh reference
-      if (globalToggle) {
-        globalToggle.style.display = 'flex';
-        globalToggle.textContent = '👁';
-      }
-    }, 50);
-
-    // Speichere Zustand in localStorage
-    localStorage.setItem('deckDisplayVisible', 'false');
-  }
-}
-
-// Für Rückwärtskompatibilität
 function toggleDeckStats() {
-  toggleDeckDisplay();
+  const deckStatsContainer = document.getElementById('deckStatsContainer');
+  const toggleButton = document.getElementById('toggleDeckStats');
+  
+  if (!deckStatsContainer || !toggleButton) return;
+  
+  const isCurrentlyVisible = deckStatsContainer.style.display !== 'none';
+  
+  if (!isCurrentlyVisible) {
+    // Zeige Statistik an - verwende flex, da Container flex-direction: column hat
+    deckStatsContainer.style.display = 'flex';
+    toggleButton.textContent = '-';
+    toggleButton.style.display = 'none'; // Verstecke den Button, wenn das Fenster sichtbar ist
+    
+    // Speichere Zustand in localStorage
+    localStorage.setItem('deckStatsVisible', 'true');
+    // Entferne das Auto-Hide-Flag, da der Benutzer es manuell eingeblendet hat
+    localStorage.removeItem('deckStatsAutoHidden');
+  } else {
+    // Blende Statistik aus
+    deckStatsContainer.style.display = 'none';
+    toggleButton.textContent = '+';
+    toggleButton.style.display = 'flex'; // Zeige den Button an, da das Fenster ausgeblendet ist
+    
+    // Speichere Zustand in localStorage
+    localStorage.setItem('deckStatsVisible', 'false');
+  }
 }
 
 function updateDeckDisplay() {
@@ -1962,9 +1855,6 @@ drawHandBtn.addEventListener('click', () => {
   mulliganBtn.style.display = 'inline-block';
   newHandBtn.style.display = 'none';
   drawHandBtn.style.display = 'none';
-
-  // Track first hand for statistics
-  trackHandDrawn();
 });
 
 mulliganBtn.addEventListener('click', () => {
@@ -1979,24 +1869,8 @@ mulliganBtn.addEventListener('click', () => {
     return count;
   }
 
-  // Calculate ink cost average
-  function calculateAvgInkCost(hand) {
-    if (!allCardsData || !allCardsData.cards || hand.length === 0) return 0;
-    let totalCost = 0;
-    let validCards = 0;
-    hand.forEach(card => {
-      const cardData = allCardsData.cards.find(c => c.name === card.name || c.fullName === card.name);
-      if (cardData && cardData.cost !== undefined) {
-        totalCost += cardData.cost;
-        validCards++;
-      }
-    });
-    return validCards > 0 ? totalCost / validCards : 0;
-  }
 
   const uninkBefore = countUnink(currentHand);
-  const inkCostBefore = calculateAvgInkCost(currentHand);
-
   // Neue Logik: Die neuen Karten ersetzen die getauschten Karten an deren Position
   const exchangeIndices = Array.from(selectedIndices);
   const mulliganCards = exchangeIndices.map(i => currentHand[i]);
@@ -2030,16 +1904,6 @@ mulliganBtn.addEventListener('click', () => {
   }
   updateStatistics();
 
-  // Track mulligan for backend statistics
-  const inkCostAfter = calculateAvgInkCost(newHand);
-  trackMulligan(
-    exchangeIndices.length,      // cards exchanged
-    uninkBefore,                 // unink count before
-    uninkAfter,                  // unink count after
-    inkCostBefore,               // average ink cost before
-    inkCostAfter                 // average ink cost after
-  );
-
   mulliganHistory.push({
     before: [...currentHand],
     exchanged: currentHand.map((c, i) => selectedIndices.has(i)),
@@ -2058,10 +1922,10 @@ mulliganBtn.addEventListener('click', () => {
 });
 
 newHandBtn.addEventListener('click', () => {
-  determineMulliganSituation();
-  updateSituationInfo();
+  determineMulliganSituation();        
+  updateSituationInfo();  
   if (deck.length < 7) {
-
+    
     return;
   }
   deck = deck.concat(currentHand);
@@ -2069,7 +1933,7 @@ newHandBtn.addEventListener('click', () => {
 
   currentHand = deck.splice(0, 7);
   showHand(currentHand, true);
-
+  
   selectedIndices.clear();
   updateMulliganButtonText();
 
@@ -2077,9 +1941,6 @@ newHandBtn.addEventListener('click', () => {
   newHandBtn.style.display = 'none';
   drawHandBtn.style.display = 'none';
   updateMulliganHistory();
-
-  // Track new hand for statistics
-  trackHandDrawn();
 });
 
 
@@ -2421,8 +2282,6 @@ function handleGuestMode() {
         if (usernameDisplay) {
             usernameDisplay.textContent = 'Guest (Practice Mode)';
             usernameDisplay.style.color = '#FFD34E';
-            usernameDisplay.href = '#'; // Disable link for guest mode
-            usernameDisplay.style.cursor = 'default';
         }
     }
     
@@ -2575,8 +2434,6 @@ function initLocalAuth() {
                 if (usernameDisplay) {
                     usernameDisplay.textContent = 'Guest (Practice Mode)';
                     usernameDisplay.style.color = '#FFD34E';
-                    usernameDisplay.href = '#'; // Disable link for guest mode
-                    usernameDisplay.style.cursor = 'default';
                 }
             }
         }
@@ -2654,16 +2511,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Let the global auth manager initialize naturally
         console.log('Skipping aggressive auth manager reset');
         
-        // Check if user has visited before in this session AND is not already authenticated
+        // Check if user has visited before in this session
         const hasVisitedBefore = sessionStorage.getItem('mulligan_trainer_visited') === 'true';
         const authContainer = document.getElementById('authContainer');
-        const isAuthenticated = window.authManager && (window.authManager.isLoggedIn() || window.authManager.guestMode);
 
-        if (!hasVisitedBefore || !isAuthenticated) {
-            // Show welcome screen if first visit OR not authenticated
+        if (!hasVisitedBefore) {
+            // First time visitor this session - show welcome screen
             if (authContainer) {
                 authContainer.style.display = 'flex';
-                console.log('Welcome screen shown - first visit or not authenticated');
+                console.log('Welcome screen shown - first visit');
             }
         } else {
             // User has visited before in this session - hide welcome screen
@@ -2684,11 +2540,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Setup welcome screen buttons (with delay for authManager to load)
-        setTimeout(() => {
-            setupWelcomeScreenButtons();
-        }, 200);
-
+        // Setup welcome screen buttons
+        setupWelcomeScreenButtons();
+        
         // Setup deck stats toggle
         setupDeckStatsToggle();
     }, 100);
@@ -2696,13 +2550,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Setup welcome screen buttons to work with global auth system
 function setupWelcomeScreenButtons() {
-    console.log('Setting up welcome screen buttons...');
     const continueAsGuestBtn = document.getElementById('continueAsGuest');
     const showLoginBtn = document.getElementById('showLogin');
-
-    console.log('Guest button found:', !!continueAsGuestBtn);
-    console.log('Login button found:', !!showLoginBtn);
-    console.log('AuthManager exists:', !!window.authManager);
     
     if (continueAsGuestBtn && !continueAsGuestBtn.hasListener) {
         console.log('Setting up guest button listener');
@@ -2745,16 +2594,10 @@ function setupWelcomeScreenButtons() {
 // Setup toggle button for deck stats
 function setupDeckStatsToggle() {
     const toggleButton = document.getElementById('toggleDeckStats');
-    const globalToggle = document.getElementById('globalDeckToggle');
-
+    
     if (toggleButton) {
         // Add click event listener
         toggleButton.addEventListener('click', toggleDeckStats);
-    }
-
-    if (globalToggle) {
-        // Add click event listener für den globalen Toggle-Button
-        globalToggle.addEventListener('click', toggleDeckDisplay);
     }
     
     // Initial check for overlaps after a short delay to ensure all elements are rendered
@@ -2799,8 +2642,6 @@ function syncWithGlobalAuth() {
             if (usernameDisplay) {
                 usernameDisplay.textContent = window.authManager.user.username;
                 usernameDisplay.style.color = '#3FD0C9';
-                usernameDisplay.href = '../../profile.html'; // Enable link for logged in users
-                usernameDisplay.style.cursor = 'pointer';
             }
         }
         
@@ -2817,38 +2658,6 @@ function syncWithGlobalAuth() {
 
 // Initialisiere Deck-Statistik-Anzeige korrekt nach vollständigem Laden der Seite
 window.addEventListener('load', function() {
-    // Setup welcome screen buttons immediately when page loads
-    setTimeout(() => {
-        console.log('Page load: Setting up welcome screen buttons directly...');
-        const continueAsGuestBtn = document.getElementById('continueAsGuest');
-        const showLoginBtn = document.getElementById('showLogin');
-
-        console.log('Page load: Guest button found:', !!continueAsGuestBtn);
-        console.log('Page load: Login button found:', !!showLoginBtn);
-
-        if (continueAsGuestBtn) {
-            continueAsGuestBtn.addEventListener('click', function() {
-                console.log('Page load: Guest button clicked!');
-                if (window.authManager) {
-                    window.authManager.enableGuestMode();
-                }
-                const authContainer = document.getElementById('authContainer');
-                if (authContainer) authContainer.style.display = 'none';
-                sessionStorage.setItem('mulligan_trainer_visited', 'true');
-            });
-        }
-
-        if (showLoginBtn) {
-            showLoginBtn.addEventListener('click', function() {
-                console.log('Page load: Login button clicked!');
-                const loginOptionsContainer = document.getElementById('loginOptionsContainer');
-                if (loginOptionsContainer) {
-                    loginOptionsContainer.style.display = 'block';
-                }
-            });
-        }
-    }, 500);
-
     // Stelle sicher, dass die Deck-Statistik korrekt positioniert und angezeigt wird
     setTimeout(() => {
         if (typeof updateDeckStatsDisplay === 'function') {
@@ -2879,117 +2688,7 @@ window.addEventListener('load', function() {
     }, 1200);
 });
 
-// ============================================
-// STATISTICS TRACKING FUNCTIONS
-// ============================================
-
-function initializeSession() {
-  if (currentSession.startTime === null) {
-    currentSession.startTime = Date.now();
-    currentSession.deckName = getDeckName();
-    currentSession.deckList = deck.slice(); // Copy of current deck
-  }
-}
-
-function getDeckName() {
-  // Try to get deck name from selected meta deck or use default
-  const presetSelect = document.getElementById('presetDecks');
-  if (presetSelect && presetSelect.value) {
-    const selectedOption = presetSelect.options[presetSelect.selectedIndex];
-    return selectedOption.text || 'Custom Deck';
-  }
-  return 'Custom Deck';
-}
-
-function trackHandDrawn() {
-  initializeSession();
-  currentSession.totalHands++;
-  console.log('Stats: Hand drawn. Total hands:', currentSession.totalHands);
-}
-
-function trackMulligan(cardsExchanged, uninkBefore, uninkAfter, inkCostBefore, inkCostAfter) {
-  initializeSession();
-  currentSession.totalMulligans++;
-  currentSession.totalCardsExchanged += cardsExchanged;
-  currentSession.totalUninkBefore += uninkBefore;
-  currentSession.totalUninkAfter += uninkAfter;
-  currentSession.totalInkCostBefore += inkCostBefore;
-  currentSession.totalInkCostAfter += inkCostAfter;
-
-  console.log('Stats: Mulligan performed.', {
-    totalMulligans: currentSession.totalMulligans,
-    cardsExchanged,
-    uninkBefore,
-    uninkAfter
-  });
-}
-
-async function saveSessionToBackend() {
-  // Only save if user is logged in and we have data to save
-  if (!window.authManager || !window.authManager.isLoggedIn() || currentSession.totalHands === 0) {
-    console.log('Stats: Not saving - not logged in or no data');
-    return;
-  }
-
-  const sessionDuration = Math.round((Date.now() - currentSession.startTime) / 1000);
-
-  const sessionData = {
-    deck_name: currentSession.deckName,
-    deck_list: currentSession.deckList,
-    total_hands: currentSession.totalHands,
-    total_mulligans: currentSession.totalMulligans,
-    total_cards_exchanged: currentSession.totalCardsExchanged,
-    total_unink_before: currentSession.totalUninkBefore,
-    total_unink_after: currentSession.totalUninkAfter,
-    total_ink_cost_before: currentSession.totalInkCostBefore,
-    total_ink_cost_after: currentSession.totalInkCostAfter,
-    session_duration: sessionDuration,
-    notes: `Training session with ${currentSession.deckName}`
-  };
-
-  try {
-    const response = await window.authManager.apiRequest('/api/stats/session', {
-      method: 'POST',
-      body: JSON.stringify(sessionData)
-    });
-
-    if (response.ok) {
-      console.log('Stats: Session saved successfully');
-    } else {
-      console.error('Stats: Failed to save session');
-    }
-  } catch (error) {
-    console.error('Stats: Error saving session:', error);
-  }
-}
-
-function resetSession() {
-  currentSession = {
-    startTime: null,
-    deckName: null,
-    deckList: null,
-    totalHands: 0,
-    totalMulligans: 0,
-    totalCardsExchanged: 0,
-    totalUninkBefore: 0,
-    totalUninkAfter: 0,
-    totalInkCostBefore: 0,
-    totalInkCostAfter: 0
-  };
-}
-
-// Save session when page unloads
-window.addEventListener('beforeunload', () => {
-  saveSessionToBackend();
-});
-
-// Also save session periodically
-setInterval(() => {
-  if (currentSession.totalHands > 0) {
-    saveSessionToBackend();
-  }
-}, 30000); // Every 30 seconds
-
+  
 </script>
 
 <div id="historyExportDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
