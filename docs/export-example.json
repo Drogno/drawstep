@@ -1,0 +1,104 @@
+{
+  "user_id": "550e8400-e29b-41d4-a716-446655440000",
+  "username": "ExampleUser",
+  "export_date": "2024-01-15T14:30:00.000Z",
+  "total_sessions": 2,
+  "total_events": 8,
+  "total_training_time_ms": 1800000,
+  "sessions": [
+    {
+      "id": "session-123",
+      "started_at": "2024-01-15T10:00:00.000Z",
+      "ended_at": "2024-01-15T10:15:00.000Z",
+      "deck_name": "Ruby Sapphire Aggro",
+      "device": "WEB",
+      "client_version": "1.0.0",
+      "duration_ms": 900000,
+      "events": [
+        {
+          "id": "event-1",
+          "type": "START_HAND",
+          "hand_size": 7,
+          "kept_cards": null,
+          "mulliganed_cards": null,
+          "duration_ms": 0,
+          "created_at": "2024-01-15T10:00:00.000Z"
+        },
+        {
+          "id": "event-2",
+          "type": "MULLIGAN",
+          "hand_size": 7,
+          "kept_cards": ["Mickey Mouse - Brave Little Tailor", "Elsa - Snow Queen"],
+          "mulliganed_cards": ["Ruby", "Sapphire", "Be Prepared"],
+          "duration_ms": 45000,
+          "created_at": "2024-01-15T10:00:45.000Z"
+        },
+        {
+          "id": "event-3",
+          "type": "NEW_HAND",
+          "hand_size": 7,
+          "kept_cards": null,
+          "mulliganed_cards": null,
+          "duration_ms": 15000,
+          "created_at": "2024-01-15T10:01:00.000Z"
+        },
+        {
+          "id": "event-4",
+          "type": "END_SESSION",
+          "hand_size": null,
+          "kept_cards": null,
+          "mulliganed_cards": null,
+          "duration_ms": 900000,
+          "created_at": "2024-01-15T10:15:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "session-456",
+      "started_at": "2024-01-14T16:30:00.000Z",
+      "ended_at": "2024-01-14T16:45:00.000Z",
+      "deck_name": "Amber Steel Control",
+      "device": "MOBILE",
+      "client_version": "1.0.0",
+      "duration_ms": 900000,
+      "events": [
+        {
+          "id": "event-5",
+          "type": "START_HAND",
+          "hand_size": 7,
+          "kept_cards": null,
+          "mulliganed_cards": null,
+          "duration_ms": 0,
+          "created_at": "2024-01-14T16:30:00.000Z"
+        },
+        {
+          "id": "event-6",
+          "type": "MULLIGAN",
+          "hand_size": 7,
+          "kept_cards": ["Anna - Heir to Arendelle"],
+          "mulliganed_cards": ["Amber", "Steel", "Freeze", "Let It Go", "Development", "Fire Ruby"],
+          "duration_ms": 60000,
+          "created_at": "2024-01-14T16:31:00.000Z"
+        },
+        {
+          "id": "event-7",
+          "type": "NEW_HAND",
+          "hand_size": 7,
+          "kept_cards": null,
+          "mulliganed_cards": null,
+          "duration_ms": 30000,
+          "created_at": "2024-01-14T16:31:30.000Z"
+        },
+        {
+          "id": "event-8",
+          "type": "END_SESSION",
+          "hand_size": null,
+          "kept_cards": null,
+          "mulliganed_cards": null,
+          "duration_ms": 900000,
+          "created_at": "2024-01-14T16:45:00.000Z"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+    "AS Steelsong": {
+        "name": "Amber/Steel Steelsong",
+        "list": "4 A Whole New World\n4 And Then Along Came Zeus\n1 Ariel - Sonic Warrior\n4 Ariel - Spectacular Singer\n3 Beast - Tragic Hero\n4 Cinderella - Ballroom Sensation\n1 Daisy Duck - Donald's Date\n2 Lawrence - Jealous Manservant\n4 Let the Storm Rage On\n4 Mr. Smee - Bumbling Mate\n4 Pete - Games Referee\n1 Prince Naveen - Ukulele Player\n4 Rapunzel - Gifted with Healing\n3 Rhino - One-Sixteenth Wolf\n4 Rhino - Power Hamster\n2 Robin Hood - Beloved Outlaw\n3 Robin Hood - Champion of Sherwood\n4 Strength of a Raging Fire\n4 Ursula - Vanessa\n"
+    },
+
+    "AS Aggro": {
+        "name": "Amber/Steel Aggro",
+        "list": "4 And Then Along Came Zeus\n4 Cinderella - Ballroom Sensation\n4 Daisy Duck - Donald's Date\n4 Doc - Bold Knight\n4 Lady - Family Dog\n4 Lawrence - Jealous Manservant\n4 Let the Storm Rage On\n4 Mr. Smee - Bumbling Mate\n4 Pete - Games Referee\n4 Piglet - Pooh Pirate Captain\n4 Rapunzel - Gifted with Healing\n4 Rhino - One-Sixteenth Wolf\n4 Rhino - Power Hamster\n4 Strength of a Raging Fire\n4 Ursula - Vanessa\n"
+    },
+
+    "Blurple": {
+        "name": "Amethyst/Sapphire Blurple",
+        "list": "4 Belle - Accomplished Mystic\n4 Belle - Apprentice Inventor\n4 Elsa - The Fifth Spirit\n4 Finders Keepers\n4 Friends on the Other Side\n4 Genie - Wish Fulfilled\n4 Hades - Infernal Schemer\n4 Iago - Giant Spectral Parrot\n4 Madam Mim - Fox\n4 Merlin - Goat\n4 Monstro - Infamous Whale\n4 Pawpsicle\n4 Sail the Azurite Sea\n4 Tamatoa - Happy as a Clam\n4 Tipo - Growing Son\n"
+    
+    },
+
+    "RB Items": {
+        "name": "Ruby/Sapphire Items",
+        "list": "2 Be Prepared\n4 Belle - Apprentice Inventor\n4 Brawl\n2 Fishbone Quill\n1 Great Stone Dragon\n1 Hide Away\n1 Lucky Dime\n3 Maui - Hero to All\n1 Maui's Fish Hook\n4 Maurice's Workshop\n4 Pawpsicle\n4 Sail the Azurite Sea\n4 Sapphire Coil\n4 Scrooge McDuck - Resourceful Miser\n2 Shield of Virtue\n3 Sisu - Daring Visitor\n4 Sisu - Empowered Sibling\n4 Tamatoa - Happy as a Clam\n3 Tamatoa - So Shiny!\n3 Tipo - Growing Son\n2 Vitalisphere\n"
+    },
+
+    "RB DKP":{
+        "name": "Ruby/Sapphire DKP",
+        "list": "4 A Pirate's Life\n4 Be Prepared\n2 Brawl\n4 Develop Your Brain\n4 Gramma Tala - Keeper of Ancient Stories\n1 Hades - Infernal Schemer\n2 Hide Away\n4 How Far I'll Go\n4 Maui - Half-Shark\n4 Maui - Hero to All\n4 McDuck Manor - Scrooge's Mansion\n1 Merlin's Carpetbag\n4 Pawpsicle\n4 Sail the Azurite Sea\n2 Sisu - Empowered Sibling\n4 Tamatoa - Happy as a Clam\n4 Tipo - Growing Son\n4 Vision of the Future"
+
+    },
+
+    "RA Evasives": {
+        "name": "Ruby/Amethyst Evasives",
+        "list": "3 A Pirate's Life\n4 Be Prepared\n3 Brawl\n4 Chernabog's Followers - Creatures of Evil\n4 Diablo - Obedient Raven\n1 Dragon Fire\n4 Elsa - The Fifth Spirit\n2 Finders Keepers\n4 Friends on the Other Side\n4 Genie - Wish Fulfilled\n1 Hades - Ruthless Tyrant\n2 Iago - Giant Spectral Parrot\n3 Madam Mim - Fox\n4 Maui - Half-Shark\n2 Maui - Hero to All\n4 Merlin - Crab\n4 Peter Pan - Shadow Finder\n3 The Library - A Gift for Belle\n4 Ursula - Mad Sea Witch"
+
+    },
+
+    "PS Brooms": {
+        "name": "Amethyst/Steel Brooms",
+        "list": "4 Chernabog's Followers - Creatures of Evil\n4 Diablo - Obedient Raven\n4 Doc - Bold Knight\n2 Fire the Cannons!\n2 Genie - Wish Fulfilled\n4 Giant Cobra - Ghostly Serpent\n4 Madam Mim - Fox\n3 Madam Mim - Snake\n4 Magic Broom - Aerial Cleaner\n4 Magic Broom - Illuminary Keeper\n3 Merlin - Crab\n4 Merlin - Goat\n4 Mr. Smee - Bumbling Mate\n4 Pete - Games Referee\n4 Strength of a Raging Fire\n2 The Library - A Gift for Belle\n4 Yen Sid - Powerful Sorcerer"
+    },
+
+    "ES Discard": {
+        "name": "Emerald/Steel Discard",
+        "list": "2 Ba-Boom!\n3 Beast - Tragic Hero\n2 Beyond the Horizon\n2 Chip - Quick Thinker\n4 Diablo - Devoted Herald\n4 Diablo - Maleficent's Spy\n2 Hidden Cove - Tranquil Haven\n2 Hypnotize\n4 Let the Storm Rage On\n3 Morph - Space Goo\n4 Pete - Games Referee\n4 Pete - Space Pirate\n3 Prince John - Greediest of All\n4 Strength of a Raging Fire\n4 Sudden Chill\n3 The Muses - Proclaimers of Heroes\n4 Ursula - Deceiver\n4 Ursula - Deceiver of All\n3 We Don't Talk About Bruno"
+    },
+
+    "GP Discard": {
+        "name": "Amethyst/Emerald Discard",
+        "list": "1 Belle - Accomplished Mystic\n3 Chip - Quick Thinker\n1 Cri-Kee - Lucky Cricket\n4 Diablo - Devoted Herald\n3 Diablo - Maleficent's Spy\n4 Diablo - Obedient Raven\n3 Diablo - Spiteful Raven\n3 Elsa - The Fifth Spirit\n4 Friends on the Other Side\n3 Genie - Wish Fulfilled\n1 Hidden Cove - Tranquil Haven\n1 Hypnotic Strength\n2 Iago - Giant Spectral Parrot\n3 Merlin - Crab\n2 Peter Pan - Shadow Finder\n3 Prince John - Greediest of All\n4 Pull the Lever!\n4 Sudden Chill\n1 They Never Come Back\n4 Ursula - Deceiver\n4 We Don't Talk About Bruno\n2 Wrong Lever!"
+    },
+
+    "GP Tempo": {
+        "name": "Amethyst/Emerald Tempo",
+        "list": "4 Cursed Merfolk - Ursula's Handiwork\n4 Diablo - Obedient Raven\n3 Elsa - The Fifth Spirit\n4 Flynn Rider - Charming Rogue\n4 Friends on the Other Side\n4 Genie - Wish Fulfilled\n4 Go Go Tomago - Darting Dynamo\n4 Kit Cloudkicker - Tough Guy\n4 Madam Mim - Fox\n2 Madam Mim - Snake\n4 Merlin - Crab\n4 Merlin - Goat\n4 Pegasus - Gift for Hercules\n2 Peter Pan - Shadow Finder\n3 Pull the Lever!\n4 Ursula - Deceiver\n2 Wrong Lever!"
+    }
+
+}

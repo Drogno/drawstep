@@ -1460,12 +1460,20 @@ importBtn.addEventListener('click', async () => {
     name = nameCorrections[name];
   }
 
+  // Normalize apostrophes for search
+  const normalizeApostrophes = (str) => str.replace(/[''`]/g, "'");
+
   // Find card data from allCards.json first
   let cardData = null;
   if (allCardsData && allCardsData.cards) {
-    cardData = allCardsData.cards.find(c => 
-      c.Name === name || 
+    const normalizedName = normalizeApostrophes(name);
+    cardData = allCardsData.cards.find(c =>
+      c.Name === name ||
       c.fullName === name ||
+      c.Name === normalizedName ||
+      c.fullName === normalizedName ||
+      normalizeApostrophes(c.Name || '') === normalizedName ||
+      normalizeApostrophes(c.fullName || '') === normalizedName ||
       (c.fullName && c.fullName.toLowerCase() === name.toLowerCase())
     );
   }

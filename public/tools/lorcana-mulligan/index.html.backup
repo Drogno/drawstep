@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- Basic meta information -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorcana Mulli-Trainer - Drawstep</title>
+    
+    <!-- Local fonts are loaded via CSS -->
+    
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="assets/css/mulligan.css?v=1.3">
+    <!-- Include auth modals CSS from main site -->
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    
+    <!-- FORCE CLEAN AUTH STATE BEFORE ANY SCRIPTS LOAD -->
+    <script>
+        console.log('EMERGENCY AUTH RESET - clearing all auth data before scripts load');
+        localStorage.removeItem('drawstep_guest_mode');
+        localStorage.removeItem('drawstep_token');
+        localStorage.removeItem('mulligan_guest_mode');
+        sessionStorage.removeItem('mulligan_trainer_visited');
+        console.log('Auth state cleared in head');
+    </script>
+</head>
+
+<body>
+    <!-- ============================== -->
+    <!-- FLOATING UI ELEMENTS -->
+    <!-- ============================== -->
+
+  <div id="deckImagesBox" style="position:absolute; top:20px; right:32px; max-width:500px; display:flex; flex-wrap:wrap; gap:8px; z-index:10;"></div>
+
+  <div id="deckStats" style="position:absolute; top:450px; right:32px; max-width:500px; z-index:10; display:none; display:flex; justify-content:center; width:500px;">
+    <!-- Media Query für kleine Bildschirme wird in JavaScript behandelt -->
+  </div>
+  </div>
+
+    <!-- ============================== -->
+    <!-- NAVIGATION MENU -->
+    <!-- ============================== -->
+    
+    <!-- Hamburger Menu Button & Navigation Overlay -->
+  <div class="hamburger-menu">
+    <button class="hamburger-btn" id="hamburgerBtn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="menu-overlay" id="menuOverlay">
+      <div class="menu-content">
+        <button class="menu-close" id="menuClose">×</button>
+        <nav class="menu-nav">
+          <!-- Main navigation -->
+          <div class="menu-section-title">Navigation</div>
+          <a href="../../" class="menu-item">🏠 Back to Main Page</a>
+          
+          <div class="menu-separator"></div>
+          
+          <!-- Account section -->
+          <div class="menu-section-title">Account</div>
+          <div id="menuAuthSection">
+              <!-- Logged in user display -->
+              <div id="menuUserInfo" style="display: none;">
+                  <div class="menu-item-static">
+                      <span style="color: #3FD0C9; font-weight: bold;">Welcome, </span>
+                      <span id="menuUsername" style="color: #FFD34E; font-weight: bold;"></span>
+                  </div>
+                  <a href="#" class="menu-item" id="menuLogoutBtn">
+                      🚪 Logout
+                  </a>
+              </div>
+              
+              <!-- Not logged in options -->
+              <div id="menuLoginOptions" style="display: block;">
+                  <a href="#" class="menu-item" id="menuLoginBtn">
+                      🔐 Login
+                  </a>
+                  <a href="#" class="menu-item" id="menuRegisterBtn">
+                      👤 Create Account
+                  </a>
+              </div>
+          </div>
+          
+          <div class="menu-separator"></div>
+          
+          <!-- Community section -->
+          <div class="menu-section-title">Community</div>
+          <a href="#" class="menu-item" id="menuSupportBtn">💝 Support the Project</a>
+          <a href="contact.html" class="menu-item">🐛 Report Bug</a>
+          <a href="contact.html" class="menu-item">💬 Send Feedback</a>
+          
+          <div class="menu-separator"></div>
+          
+          <!-- Legal section -->
+          <div class="menu-section-title">Legal</div>
+          <a href="../../impressum.html" class="menu-item">
+              📄 Imprint
+          </a>
+          <a href="../../datenschutz.html" class="menu-item">
+              🔒 Privacy Policy
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+    <!-- ============================== -->
+    <!-- SUPPORT OVERLAY -->
+    <!-- ============================== -->
+    
+    <!-- Support Me Area -->
+  <div class="support-area">
+    <button class="support-btn" id="supportBtn">
+      <span class="support-icon">💝</span>
+      <span class="support-text">Support</span>
+    </button>
+    <div class="support-overlay" id="supportOverlay">
+      <div class="support-content">
+        <button class="support-close" id="supportClose">×</button>
+        <div class="support-header">
+          <span class="support-emoji">💖</span>
+          <h3>Support the Project</h3>
+          <p>Help keep this project alive and growing!</p>
+        </div>
+        <div class="support-options">
+          <a href="https://ko-fi.com/" target="_blank" class="support-option kofi">
+            <span class="support-option-icon">☕</span>
+            <div class="support-option-text">
+              <strong>Ko-fi</strong>
+              <small>Buy me a coffee</small>
+            </div>
+          </a>
+          <a href="https://patreon.com/" target="_blank" class="support-option patreon">
+            <span class="support-option-icon">🎯</span>
+            <div class="support-option-text">
+              <strong>Patreon</strong>
+              <small>Monthly support</small>
+            </div>
+          </a>
+          <a href="https://paypal.com/" target="_blank" class="support-option paypal">
+            <span class="support-option-icon">💳</span>
+            <div class="support-option-text">
+              <strong>PayPal</strong>
+              <small>One-time donation</small>
+            </div>
+          </a>
+          <div class="support-separator"></div>
+          <div class="support-other">
+            <span class="support-option-icon">⭐</span>
+            <div class="support-option-text">
+              <strong>Free Support</strong>
+              <small>Share with friends • Leave feedback • Report bugs</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- ============================== -->
+    <!-- MAIN CONTENT AREA -->
+    <!-- ============================== -->
+    
+    <!-- Page Header with Logo and User Info -->
+    <div class="header-section">
+        <img src="assets/images/logo.png" 
+             alt="Mulli Logo" 
+             class="logo-img" 
+             style="max-width: 400px; height: auto;">
+        
+    </div>
+
+    <!-- ============================== -->
+    <!-- AUTHENTICATION SECTION -->
+    <!-- ============================== -->
+    
+    <div id="authContainer" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.8); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        <div style="background: linear-gradient(145deg, #252629, #1f2022); padding: 30px; border-radius: 12px; border: 1px solid rgba(63, 208, 201, 0.3);">
+            <h2 style="color: #FFD34E; margin-bottom: 20px; font-family: 'Bebas Neue', cursive; font-size: 1.8rem;">WELCOME TO LORCANA MULLIGAN TRAINER</h2>
+            <p style="color: #D0D0D0; margin-bottom: 25px;">Choose how you want to use the trainer:</p>
+            
+            <!-- Mode Selection -->
+            <div style="margin-bottom: 30px;">
+                <button id="continueAsGuest" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #666, #444); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px; font-size: 1.1rem;">
+                    🚀 CONTINUE AS GUEST
+                </button>
+                <div style="background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 6px; padding: 12px; margin-bottom: 20px;">
+                    <p style="color: #FFA500; font-size: 0.85rem; margin: 0; text-align: center;">
+                        ⚠️ Guest Mode: Training progress will not be saved
+                    </p>
+                </div>
+                
+                <button id="showLogin" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
+                    📊 LOGIN FOR ADVANCED FEATURES
+                </button>
+                <div style="background: rgba(63, 208, 201, 0.1); border: 1px solid rgba(63, 208, 201, 0.3); border-radius: 6px; padding: 15px; margin-top: 15px;">
+                    <p style="color: #3FD0C9; font-weight: bold; margin: 0 0 8px 0; font-size: 0.9rem;">Account Benefits:</p>
+                    <ul style="color: #D0D0D0; font-size: 0.85rem; margin: 0; padding-left: 20px; list-style-type: none; text-align: left;">
+                        <li style="margin-bottom: 4px;">💾 <strong>Persistent Statistics</strong> - Track your improvement over time</li>
+                        <li style="margin-bottom: 4px;">📈 <strong>Advanced Analytics</strong> - Detailed performance metrics</li>
+                        <li style="margin-bottom: 4px;">🏆 <strong>Leaderboards</strong> - Compete with the community</li>
+                        <li style="margin-bottom: 4px;">📱 <strong>Cross-Device Sync</strong> - Access your data anywhere</li>
+                        <li style="margin-bottom: 4px;">🎯 <strong>Training Goals</strong> - Set and achieve personal targets</li>
+                        <li>🌟 <strong>Exclusive Features</strong> - Early access to new tools</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Login Options (initially hidden) -->
+            <div id="loginOptionsContainer" style="display: none;">
+            
+            <!-- Login Form -->
+            <div id="loginContainer" style="display: block;">
+                <form id="loginForm" style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <input type="email" id="loginEmail" placeholder="Email Address" required
+                               style="width: 100%; padding: 12px; border: 1px solid rgba(63, 208, 201, 0.3); background: rgba(63, 208, 201, 0.1); color: #D0D0D0; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <input type="password" id="loginPassword" placeholder="Password" required
+                               style="width: 100%; padding: 12px; border: 1px solid rgba(63, 208, 201, 0.3); background: rgba(63, 208, 201, 0.1); color: #D0D0D0; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px;">
+                        LOGIN
+                    </button>
+                </form>
+                <p style="color: #D0D0D0;">
+                    Don't have an account? 
+                    <button id="showRegister" style="background: none; border: none; color: #3FD0C9; cursor: pointer; text-decoration: underline;">Sign up here</button>
+                </p>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerContainer" style="display: none;">
+                <form id="registerForm" style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <input type="text" id="registerUsername" placeholder="Username" required
+                               style="width: 100%; padding: 12px; border: 1px solid rgba(63, 208, 201, 0.3); background: rgba(63, 208, 201, 0.1); color: #D0D0D0; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <input type="email" id="registerEmail" placeholder="Email Address" required
+                               style="width: 100%; padding: 12px; border: 1px solid rgba(63, 208, 201, 0.3); background: rgba(63, 208, 201, 0.1); color: #D0D0D0; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <input type="password" id="registerPassword" placeholder="Password (min. 6 characters)" required minlength="6"
+                               style="width: 100%; padding: 12px; border: 1px solid rgba(63, 208, 201, 0.3); background: rgba(63, 208, 201, 0.1); color: #D0D0D0; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <button type="submit" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #3FD0C9, #9B5DE5); border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 15px;">
+                        CREATE ACCOUNT
+                    </button>
+                </form>
+                <p style="color: #D0D0D0;">
+                    Already have an account? 
+                    <button id="showLogin" style="background: none; border: none; color: #3FD0C9; cursor: pointer; text-decoration: underline;">Sign in here</button>
+                </p>
+            </div>
+            
+            </div> <!-- End loginOptionsContainer -->
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!-- MAIN CONTENT (hidden until logged in) -->
+    <!-- ============================== -->
+    
+    <div id="mainContent" style="display: block;">
+
+    <!-- ============================== -->
+    <!-- USER INFO SECTION -->
+    <!-- ============================== -->
+    
+    <!-- User Info (shown when logged in or in guest mode) -->
+    <div id="userContainer" style="display: none; position: absolute; top: 80px; left: 20px; z-index: 100;">
+        <div style="background: rgba(63, 208, 201, 0.1); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.3); display: inline-block;">
+            <span style="color: #3FD0C9; font-weight: bold; font-size: 0.9rem;">Welcome, </span>
+            <span id="usernameDisplay" style="color: #FFD34E; font-weight: bold; font-size: 0.9rem;"></span>
+            <span style="color: #D0D0D0; margin-left: 8px;">|</span>
+            <button id="upgradeToAccountBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Create Account</button>
+            <button id="loginBtn" style="background: none; border: none; color: #3FD0C9; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Login</button>
+            <button id="logoutBtn" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.8rem; margin-left: 8px; display: none;">Logout</button>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!-- DECK MANAGEMENT SECTION -->
+    <!-- ============================== -->
+    
+    <!-- Deck Selection Controls -->
+    <div id="deckModeArea" class="control-section">
+        <div class="section-title">Deck Selection</div>
+  <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+    <select id="deckMode" style="min-width: 260px;">
+      <option value="">-- Please Choose --</option>
+      <option value="custom">Import Custom Deck</option>
+      <option value="meta">Choose Meta Deck</option>
+    </select>
+  </div>
+</div>
+
+<div id="customDeckArea" class="control-section" style="display:none;">
+    <h2>Import Decklist</h2>
+  <p style="color: #D0D0D0; margin-bottom: 15px;">e.g. from dreamborn.ink</p>
+  <textarea id="deckInput" rows="10" placeholder="4 Elsa - Snow Queen&#10;2 Friends on the Other Side"></textarea><br />
+  <button id="importDeckBtn">Import Deck</button>
+  <span id="deckLoading" style="display:none; margin-left:12px; color:#FFD34E;">Loading deck…</span>
+</div>
+
+<div id="metaDeckArea" class="control-section" style="display:none;">
+  <div style="display:flex;align-items:center;gap:12px; flex-wrap: wrap;">
+    <h2 style="margin:0;">Choose Meta Deck</h2>
+    <select id="presetDecks" style="min-width: 260px; padding: 8px 12px;">
+      <option value="">-- Please Choose --</option>
+      <option value="starter-amber-amethyst">Starter Deck Amber/Amethyst</option>
+      <option value="starter-emerald-ruby">Starter Deck Emerald/Ruby</option>
+      <option value="starter-steel-sapphire">Starter Deck Steel/Sapphire</option>
+    </select>
+    <button id="importMetaDeckBtn" disabled style="padding: 12px 16px; margin: 0; box-sizing: border-box;">Import Deck</button>
+  </div>
+</div>
+
+<button id="chooseOtherDeckBtn" style="display:none;">Choose Other Deck</button>
+
+
+    
+
+<div id="mulliganModeArea" class="control-section" style="display:none;">
+  <div class="section-title">Choose Mulligan Situation</div>
+  <div style="display:flex; flex-wrap:wrap; gap:18px; align-items:center;">
+    <div>
+      <label for="mulliganRole" style="font-weight:bold;">Situation:</label>
+      <select id="mulliganRole" style="margin-left:8px; padding:8px 12px;">
+        <option value="">-- Please Choose --</option>
+        <option value="otp-unknown">On the Play – Unknown Opponent</option>
+        <option value="otd-unknown">On the Draw – Unknown Opponent</option>
+        <option value="otp-meta">On the Play – Choose Meta Deck</option>
+        <option value="otd-meta">On the Draw – Choose Meta Deck</option>
+        <option value="random-role">Random OTP/OTD – Unknown Opponent</option>
+        <option value="random-meta">Random OTP/OTD – Random Meta Deck</option>
+      </select>
+    </div>
+    <div id="opponentDeckArea" style="display:flex; align-items:center;">
+      <label for="opponentDeckSelect" style="font-weight:bold; margin-right:6px;">Meta Deck:</label>
+      <select id="opponentDeckSelect" style="padding:8px 12px;">
+        <option value="">-- Choose Meta Deck --</option>
+        <option value="starter-amber-amethyst">Starter Deck Amber/Amethyst</option>
+        <option value="starter-emerald-ruby">Starter Deck Emerald/Ruby</option>
+        <option value="starter-steel-sapphire">Starter Deck Steel/Sapphire</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div id="statisticsArea" style="display:none;">
+  <div class="section-title" style="text-align: center; margin-bottom: 20px; color: #FFD34E; font-family: 'Bebas Neue', cursive; font-size: 1.5rem;">TRAINING STATISTICS</div>
+  <div class="stats-container">
+    <div class="stat-box" style="background: rgba(63, 208, 201, 0.15); border-color: rgba(63, 208, 201, 0.4);">
+      <div class="stat-number" style="color: #3FD0C9;" id="totalHandsCount">0</div>
+      <div class="stat-label">Hands Practiced</div>
+    </div>
+    <div class="stat-box" style="background: rgba(255, 211, 78, 0.15); border-color: rgba(255, 211, 78, 0.4);">
+      <div class="stat-number" style="color: #FFD34E;" id="avgCardsExchanged">0.0</div>
+      <div class="stat-label">⌀ Cards Exchanged</div>
+    </div>
+    <div class="stat-box" style="background: rgba(155, 93, 229, 0.15); border-color: rgba(155, 93, 229, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+      <div style="display: flex; gap: 24px; align-items: center;">
+        <div style="text-align: center;">
+          <div class="stat-number" style="color: #9B5DE5; font-size: 1.6rem;" id="avgUninkBefore">0.00</div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>before Mulligan</span></div>
+        </div>
+        <div style="text-align: center;">
+          <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgUninkAfter">0.00</div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Unink <span style='opacity:0.7;'>after Mulligan</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="stat-box" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+      <div style="display: flex; gap: 24px; align-items: center;">
+        <div style="text-align: center;">
+          <div class="stat-number" style="color: #22C55E; font-size: 1.6rem;" id="avgInkCostBefore">0.00</div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>before Mulligan</span></div>
+        </div>
+        <div style="text-align: center;">
+          <div class="stat-number" style="color: #FFD34E; font-size: 1.6rem;" id="avgInkCostAfter">0.00</div>
+          <div class="stat-label" style="font-size: 0.95rem;">⌀ Ink Cost <span style='opacity:0.7;'>after Mulligan</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="currentSituation" style="display: none; margin: 30px 0 20px 0;">
+  <div style="
+    background: linear-gradient(135deg, rgba(63, 208, 201, 0.2), rgba(155, 93, 229, 0.2));
+    border: 2px solid rgba(63, 208, 201, 0.6);
+    border-radius: 12px;
+    padding: 15px 25px;
+    width: fit-content;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    text-align: center;
+  ">
+    <div style="
+      font-family: 'Bebas Neue', cursive;
+      font-size: 1.1rem;
+      color: #D0D0D0;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    ">CURRENT SITUATION</div>
+    <div id="situationDisplay" style="
+      font-family: 'Inter', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #FFD34E;
+      text-shadow: 0 2px 10px rgba(255, 211, 78, 0.3);
+    "></div>
+  </div>
+</div>
+
+<!-- Ink curve of the current hand -->
+<div id="manaCurveArea" style="margin: 12px 0; display: none;">
+    <div style="background: linear-gradient(145deg, #252629, #1f2022); padding: 15px 20px; border-radius: 8px; border: 1px solid rgba(63, 208, 201, 0.2); max-width: 600px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <h4 style="color: #FFD34E; margin: 0; font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 0.5px;">INK CURVE</h4>
+            <span id="manaCurveStats" style="color: #D0D0D0; font-size: 0.9rem;"></span>
+        </div>
+        <div id="manaCurveChart" style="display: flex; align-items: flex-end; gap: 8px; height: 60px; margin-top: 20px;">
+        </div>
+    </div>
+</div>
+
+<div id="hand" style="margin: 18px 0 18px 0;"></div>
+
+<div id="gameControlsArea" style="margin: 20px 0; display: none;">
+  <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+    <button id="drawHandBtn" disabled>Draw Hand (7 Cards)</button>
+    <button id="mulliganBtn">Perform Mulligan</button>
+  </div>
+  <button id="newHandBtn" style="display: none;">🔄 Draw New Starting Hand</button>
+</div>
+
+<br>
+<br>
+<br>
+
+<div id="historyExportArea" class="control-section" style="display:none;">
+ <button id="exportHistoryUnifiedBtn">Download Mulligan History</button>
+ <button id="clearHistoryBtn" style="margin-left:8px; background: linear-gradient(135deg, #666, #444);">Clear Mulligan History</button>
+</div>
+
+<h3 id="mulliganHistoryTitle" style="margin: 20px 0 10px 0; display: none;">Mulligan History:</h3>
+<div id="mulliganHistory"></div>
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="data/cardImageMap.js"></script>
+<script>
+/**
+ * ============================================
+ * LORCANA MULLIGAN TRAINER - MAIN SCRIPT
+ * ============================================
+ * 
+ * This script handles the core functionality of the Lorcana Mulligan Trainer:
+ * - Deck import and management
+ * - Hand drawing and mulligan simulation
+ * - Card hover previews
+ * - Statistics tracking
+ * - History export functionality
+ * 
+ * @author Drawstep Project
+ * @version 1.0
+ */
+
+// ============================================
+// GLOBAL VARIABLES & CONSTANTS
+// ============================================
+// API endpoint for card data
+const proxyUrl = 'https://monstersink.team/proxy.php?name=';
+
+// Game state variables
+let deck = [];                    // Current imported deck
+let currentHand = [];             // Current drawn hand
+const selectedIndices = new Set(); // Selected cards for mulligan
+let mulliganHistory = [];         // History of all mulligans
+let allCardsData = null;          // Cache of all card data
+
+// DOM element references
+const deckLoading = document.getElementById('deckLoading');
+const importBtn = document.getElementById('importDeckBtn');
+const drawHandBtn = document.getElementById('drawHandBtn');
+const mulliganBtn = document.getElementById('mulliganBtn');
+const newHandBtn = document.getElementById('newHandBtn');
+const exportHistoryBtn = document.getElementById('exportHistoryBtn');
+const handDiv = document.getElementById('hand');
+
+// ============================================
+// CARD HOVER PREVIEW SYSTEM
+// ============================================
+let cardPreviewElement = null;
+
+/**
+ * Creates or returns the card preview element for hover functionality
+ * @returns {HTMLImageElement} The preview image element
+ */
+function createCardPreview() {
+  if (!cardPreviewElement) {
+    cardPreviewElement = document.createElement('img');
+    cardPreviewElement.className = 'card-hover-preview';
+    document.body.appendChild(cardPreviewElement);
+  }
+  return cardPreviewElement;
+}
+
+function showCardPreview(event, imageSrc, cardName) {
+  const preview = createCardPreview();
+  preview.src = imageSrc;
+  preview.alt = cardName;
+  updateCardPreviewPosition(event);
+  setTimeout(() => preview.classList.add('show'), 10);
+}
+
+function hideCardPreview() {
+  if (cardPreviewElement) {
+    cardPreviewElement.classList.remove('show');
+  }
+}
+
+function updateCardPreviewPosition(event) {
+  if (!cardPreviewElement) return;
+  
+  const preview = cardPreviewElement;
+  const margin = 8; // Smaller distance
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  
+  // Get actual dimensions of the preview
+  const rect = preview.getBoundingClientRect();
+  const previewWidth = rect.width || 400; // Fallback to 400px (enlarged)
+  const previewHeight = rect.height || 500; // Fallback to 500px (enlarged)
+  
+  let x, y;
+  
+  // Horizontal position: Check if there's enough space on the right
+  if (event.clientX + margin + previewWidth <= viewportWidth) {
+    // Enough space on the right
+    x = event.clientX + margin;
+  } else {
+    // Not enough space on the right, show on the left with smaller distance
+    x = event.clientX - margin - previewWidth;
+  }
+  
+  // Vertical position: Check if there's enough space below
+  if (event.clientY + margin + previewHeight <= viewportHeight) {
+    // Enough space below
+    y = event.clientY + margin;
+  } else {
+    // Not enough space below, show above
+    y = event.clientY - margin - previewHeight;
+  }
+  
+  preview.style.left = x + 'px';
+  preview.style.top = y + 'px';
+}
+
+
+const deckModeArea = document.getElementById('deckModeArea');
+
+const mulliganHistoryDiv = document.getElementById('mulliganHistory');
+const presetDecksSelect = document.getElementById('presetDecks');
+const chooseOtherDeckBtn = document.getElementById('chooseOtherDeckBtn');
+const deckMode = document.getElementById('deckMode');
+const customDeckArea = document.getElementById('customDeckArea');
+const metaDeckArea = document.getElementById('metaDeckArea');
+const importMetaDeckBtn = document.getElementById('importMetaDeckBtn');
+const mulliganRole = document.getElementById('mulliganRole');
+const opponentDeckSelect = document.getElementById('opponentDeckSelect');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+const deckInput = document.getElementById('deckInput');
+// --- Vorgefertigte Decks ---
+let presetDecks = {};
+
+async function loadAllCards() {
+  try {
+    console.log('Attempting to load allCards.json...');
+    const response = await fetch('data/allCards.json');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const loadedData = await response.json();
+    // Transform array to expected object structure
+    allCardsData = { cards: loadedData };
+    console.log('allCards.json loaded successfully', allCardsData.cards.length, 'cards');
+    
+    // Test: Suche nach "A Whole New World"
+    if (allCardsData && allCardsData.cards) {
+      const testCard = allCardsData.cards.find(card => card.Name === "A Whole New World");
+      if (testCard) {
+        console.log('Test card found:', testCard.Name, 'inkable:', testCard.Inkable);
+      } else {
+        console.warn('Test card "A Whole New World" not found');
+      }
+    }
+  } catch (e) {
+    console.error('Error loading allCards.json:', e);
+    console.log('Fallback mode is used for deck statistics');
+    allCardsData = null;
+  }
+}
+
+async function loadMetaDecks() {
+  try {
+    console.log('Loading meta decks from data/metadecks.json...');
+    const response = await fetch('data/metadecks.json');
+    presetDecks = await response.json();
+    console.log('Meta decks loaded successfully:', Object.keys(presetDecks));
+
+    // Select-Optionen dynamisch füllen
+    const presetDecksSelect = document.getElementById('presetDecks');
+    const opponentDeckSelect = document.getElementById('opponentDeckSelect');
+    [presetDecksSelect, opponentDeckSelect].forEach(select => {
+      if (!select) return;
+      // Entferne alte Optionen (außer die erste)
+      while (select.options.length > 1) select.remove(1);
+      Object.entries(presetDecks).forEach(([key, deck]) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = deck.name || key;
+        select.appendChild(opt);
+      });
+    });
+  } catch (e) {
+    console.error('Error loading metadecks.json:', e);
+    await showInfoDialog('Meta decks could not be loaded: ' + e.message);
+  }
+}
+
+// Direkt beim Laden aufrufen:
+
+loadAllCards();
+loadMetaDecks();
+
+
+let deckOpen = false;
+
+const nameCorrections = {
+  "Snow White - Fair-hearted": "Snow White - Fair-haired",
+  "Seven Dwarfs' Mine - Secure Fortress": "Seven Dwarfs' Mine"
+};
+
+
+
+clearHistoryBtn.addEventListener('click', () => {
+  showDeleteHistoryDialog().then(confirmed => {
+    if (confirmed) {
+      mulliganHistory = [];
+      // Statistiken zurücksetzen
+      trainingStats = {
+        totalHands: 0,
+        totalCardsExchanged: 0,
+        totalMulligans: 0,
+        totalUninkBefore: 0,
+        totalUninkAfter: 0,
+        totalInkCostBefore: 0,
+        totalInkCostAfter: 0
+      };
+      updateStatistics();
+      updateMulliganHistory();
+      
+      // Statistik-Bereich ausblenden wenn keine Daten vorhanden
+      const statisticsArea = document.getElementById('statisticsArea');
+      if (statisticsArea) {
+        statisticsArea.style.display = 'none';
+      }
+    }
+  });
+});
+
+function showDeleteHistoryDialog() {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('historyDeleteDialog');
+    dialog.style.display = 'flex';
+    const yesBtn = document.getElementById('deleteDialogYesBtn');
+    const noBtn = document.getElementById('deleteDialogNoBtn');
+
+    function cleanup(result) {
+      dialog.style.display = 'none';
+      yesBtn.removeEventListener('click', onYes);
+      noBtn.removeEventListener('click', onNo);
+      resolve(result);
+    }
+    function onYes() { cleanup(true); }
+    function onNo() { cleanup(false); }
+
+    yesBtn.addEventListener('click', onYes);
+    noBtn.addEventListener('click', onNo);
+  });
+}
+
+// --- Hilfsfunktionen ---
+
+function promptFilename(defaultName) {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('filenameDialog');
+    const input = document.getElementById('filenameInput');
+    const okBtn = document.getElementById('filenameOkBtn');
+    const cancelBtn = document.getElementById('filenameCancelBtn');
+    input.value = defaultName || '';
+    dialog.style.display = 'flex';
+    input.focus();
+
+    function cleanup(result) {
+      dialog.style.display = 'none';
+      okBtn.removeEventListener('click', onOk);
+      cancelBtn.removeEventListener('click', onCancel);
+      input.removeEventListener('keydown', onKey);
+      resolve(result);
+    }
+    function onOk() {
+      let val = input.value.trim();
+      if (!val) val = defaultName;
+      cleanup(val);
+    }
+    function onCancel() { cleanup(null); }
+    function onKey(e) {
+      if (e.key === 'Enter') onOk();
+      if (e.key === 'Escape') onCancel();
+    }
+    okBtn.addEventListener('click', onOk);
+    cancelBtn.addEventListener('click', onCancel);
+    input.addEventListener('keydown', onKey);
+  });
+}
+
+function showInfoDialog(msg) {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('infoDialog');
+    const msgDiv = document.getElementById('infoDialogMsg');
+    const okBtn = document.getElementById('infoDialogOkBtn');
+    msgDiv.textContent = msg;
+    dialog.style.display = 'flex';
+    function cleanup() {
+      dialog.style.display = 'none';
+      okBtn.removeEventListener('click', onOk);
+      resolve();
+    }
+    function onOk() { cleanup(); }
+    okBtn.addEventListener('click', onOk);
+  });
+}
+function promptHistoryExport() {
+  if (!mulliganHistory.length) return Promise.resolve('discard');
+  return new Promise(resolve => {
+    const dialog = document.getElementById('historyExportDialog');
+    dialog.style.display = 'flex';
+    const htmlBtn = document.getElementById('exportDialogHtmlBtn');
+    const txtBtn = document.getElementById('exportDialogTxtBtn');
+    const cancelBtn = document.getElementById('exportDialogCancelBtn');
+
+    function cleanup(result) {
+      dialog.style.display = 'none';
+      htmlBtn.removeEventListener('click', onHtml);
+      txtBtn.removeEventListener('click', onTxt);
+      cancelBtn.removeEventListener('click', onCancel);
+      resolve(result);
+    }
+    function onHtml() { cleanup('html'); }
+    function onTxt() { cleanup('txt'); }
+    function onCancel() { cleanup('discard'); }
+
+    htmlBtn.addEventListener('click', onHtml);
+    txtBtn.addEventListener('click', onTxt);
+    cancelBtn.addEventListener('click', onCancel);
+  });
+}
+
+function shuffle(array) {
+  for (let i = array.length -1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let currentMulliganSituation = {
+  role: 'otp', // 'otp' oder 'otd'
+  opponent: 'unknown', // 'unknown' oder Deck-Name
+};
+
+let deckImported = false;
+let situationSelected = false;
+
+// Statistiken-Variablen
+let trainingStats = {
+  totalHands: 0,
+  totalCardsExchanged: 0,
+  totalMulligans: 0,
+  totalUninkBefore: 0,
+  totalUninkAfter: 0,
+  totalInkCostBefore: 0,
+  totalInkCostAfter: 0
+};
+
+function updateStatistics() {
+  const totalHandsElement = document.getElementById('totalHandsCount');
+  const avgCardsElement = document.getElementById('avgCardsExchanged');
+  const avgUninkBeforeElement = document.getElementById('avgUninkBefore');
+  const avgUninkAfterElement = document.getElementById('avgUninkAfter');
+  const avgInkCostBeforeElement = document.getElementById('avgInkCostBefore');
+  const avgInkCostAfterElement = document.getElementById('avgInkCostAfter');
+
+  if (totalHandsElement && avgCardsElement && avgUninkBeforeElement && avgUninkAfterElement && avgInkCostBeforeElement && avgInkCostAfterElement) {
+    totalHandsElement.textContent = trainingStats.totalHands;
+    const avgCards = trainingStats.totalHands > 0 ? 
+      (trainingStats.totalCardsExchanged / trainingStats.totalHands).toFixed(1) : '0.0';
+    avgCardsElement.textContent = avgCards;
+
+    // Calculate average unink cards before and after mulligan
+    const avgUninkBefore = trainingStats.totalHands > 0 ? (trainingStats.totalUninkBefore / trainingStats.totalHands).toFixed(2) : '0.00';
+    const avgUninkAfter = trainingStats.totalHands > 0 ? (trainingStats.totalUninkAfter / trainingStats.totalHands).toFixed(2) : '0.00';
+    avgUninkBeforeElement.textContent = avgUninkBefore;
+    avgUninkAfterElement.textContent = avgUninkAfter;
+
+    // Calculate average ink cost before and after mulligan
+    const avgInkCostBefore = trainingStats.totalHands > 0 ? (trainingStats.totalInkCostBefore / trainingStats.totalHands).toFixed(2) : '0.00';
+    const avgInkCostAfter = trainingStats.totalHands > 0 ? (trainingStats.totalInkCostAfter / trainingStats.totalHands).toFixed(2) : '0.00';
+    avgInkCostBeforeElement.textContent = avgInkCostBefore;
+    avgInkCostAfterElement.textContent = avgInkCostAfter;
+  }
+  
+  // Statistik-Bereich anzeigen, wenn mindestens eine Hand geübt wurde
+  const statisticsArea = document.getElementById('statisticsArea');
+  if (statisticsArea && trainingStats.totalHands > 0) {
+    statisticsArea.style.display = '';
+  }
+}
+
+function checkIfReadyToPlay() {
+  const gameControlsArea = document.getElementById('gameControlsArea');
+  
+  if (deckImported && situationSelected) {
+    gameControlsArea.style.display = '';
+    drawHandBtn.disabled = deck.length < 7;
+  } else {
+    gameControlsArea.style.display = 'none';
+  }
+}
+
+function determineMulliganSituation() {
+  const val = mulliganRole.value;
+  if (val === 'otp-unknown') {
+    currentMulliganSituation = { role: 'otp', opponent: 'unknown' };
+  } else if (val === 'otd-unknown') {
+    currentMulliganSituation = { role: 'otd', opponent: 'unknown' };
+  } else if (val === 'otp-meta') {
+    currentMulliganSituation = { role: 'otp', opponent: opponentDeckSelect.value || 'unknown' };
+  } else if (val === 'otd-meta') {
+    currentMulliganSituation = { role: 'otd', opponent: opponentDeckSelect.value || 'unknown' };
+  } else if (val === 'random-role') {
+    currentMulliganSituation = { role: Math.random() < 0.5 ? 'otp' : 'otd', opponent: 'unknown' };
+  } else if (val === 'random-meta') {
+    const metaDecks = Object.keys(presetDecks);
+    const randomDeck = metaDecks[Math.floor(Math.random() * metaDecks.length)];
+    currentMulliganSituation = { role: Math.random() < 0.5 ? 'otp' : 'otd', opponent: randomDeck };
+  }
+}
+
+function updateSituationInfo() {
+  let text = (currentMulliganSituation.role === 'otp' ? 'On the Play (OTP)' : 'On the Draw (OTD)');
+  if (currentMulliganSituation.opponent && currentMulliganSituation.opponent !== 'unknown') {
+    text += ' vs. ' + (presetDecks[currentMulliganSituation.opponent] ? document.querySelector(`#opponentDeckSelect option[value="${currentMulliganSituation.opponent}"], #presetDecks option[value="${currentMulliganSituation.opponent}"]`)?.textContent || currentMulliganSituation.opponent : currentMulliganSituation.opponent);
+  } else {
+    text += ' vs. unknown';
+  }
+  
+  // Update the prominent situation display
+  const situationDisplay = document.getElementById('situationDisplay');
+  const currentSituation = document.getElementById('currentSituation');
+  if (situationDisplay && currentSituation) {
+    situationDisplay.textContent = text;
+    currentSituation.style.display = '';
+  }
+}
+
+function calculateDeckStats() {
+  // Fallback: Verwende eine einfache Liste bekannter Uninkable-Karten
+  const knownUninkables = [
+    "A Whole New World", "Be Prepared", "Brawl", "Friends on the Other Side",
+    "Let the Storm Rage On", "Strength of a Raging Fire", "And Then Along Came Zeus",
+    "How Far I'll Go", "Develop Your Brain", "A Pirate's Life", "Hide Away",
+    "Vision of the Future", "Finders Keepers", "Pawpsicle", "Sail the Azurite Sea",
+    "Peter Pan - Shadow Finder", "Peter Pan Shadow Finder"
+  ];
+  
+  if (!allCardsData || !allCardsData.cards || !Array.isArray(allCardsData.cards)) {
+    console.warn('allCardsData not loaded, using fallback method');
+    
+    // Fallback-Methode: Verwende bekannte Uninkable-Karten
+    const grouped = {};
+    deck.forEach(card => {
+      const key = card.Name || '';
+      if (!grouped[key]) grouped[key] = 0;
+      grouped[key]++;
+    });
+    
+    let uninkables = 0;
+    Object.entries(grouped).forEach(([cardName, count]) => {
+      if (knownUninkables.includes(cardName)) {
+        uninkables += count;
+        console.log(`Fallback: Found uninkable card: ${cardName} (${count}x)`);
+      }
+    });
+    
+    console.log(`Fallback deck stats: ${deck.length} total, ${uninkables} uninkables`);
+    return { total: deck.length, uninkables: uninkables };
+  }
+  
+  console.log('=== DEBUG: All imported deck cards ===');
+  console.log(`Total imported cards: ${deck.length}`);
+  deck.forEach((card, i) => {
+    console.log(`${i+1}. "${card.Name}"`);
+  });
+  console.log('=== END DEBUG ===');
+  
+  const grouped = {};
+  deck.forEach(card => {
+    const key = card.Name || '';
+    if (!grouped[key]) grouped[key] = 0;
+    grouped[key]++;
+  });
+  
+  let uninkables = 0;
+  Object.entries(grouped).forEach(([cardName, count]) => {
+    // Suche die Karte in allCardsData.cards Array
+    const possibleMatches = allCardsData.cards.filter(card => {
+      // Exakter Name-Match hat höchste Priorität
+      if (card.Name === cardName || card.fullName === cardName) return true;
+      
+      // Normalisierte Namen vergleichen (aggressivere Normalisierung)
+      const normalizeString = (str) => (str || '').toLowerCase()
+        .replace(/[''`]/g, '')      // Apostrophe komplett entfernen
+        .replace(/[""]/g, '')       // Anführungszeichen entfernen
+        .replace(/[-–—]/g, ' ')     // Bindestriche durch Leerzeichen ersetzen
+        .replace(/[^\w\s]/g, '')    // Alle anderen Sonderzeichen entfernen
+        .replace(/\s+/g, ' ')       // Mehrfache Leerzeichen zu einem
+        .trim();
+      
+      const normalizedCardName = normalizeString(cardName);
+      const normalizedDbName = normalizeString(card.Name);
+      const normalizedFullName = normalizeString(card.fullName || '');
+      const normalizedSimpleName = normalizeString(card.simpleName || '');
+      
+      // Nur exakte Matches zulassen - includes ist zu aggressiv
+      const matches = [
+        normalizedDbName === normalizedCardName,
+        normalizedFullName === normalizedCardName,
+        normalizedSimpleName === normalizedCardName
+      ];
+      
+      return matches.some(match => match);
+    });
+    
+    // Sortiere Matches nach Priorität (exakte Matches zuerst)
+    const cardData = possibleMatches.sort((a, b) => {
+      const aExact = a.Name === cardName || a.fullName === cardName;
+      const bExact = b.Name === cardName || b.fullName === cardName;
+      if (aExact && !bExact) return -1;
+      if (!aExact && bExact) return 1;
+      return 0;
+    })[0];
+    
+    if (possibleMatches.length > 1) {
+      console.log(`Multiple matches found for "${cardName}":`, possibleMatches.map(m => `${m.Name} (${m.fullName}) - Set ${m.Set_Num}`));
+    }
+    
+    // Use Inkable property from imported cards directly
+    const sampleCard = deck.find(card => card.Name === cardName);
+    
+    if (sampleCard && sampleCard.Inkable === false) {
+      uninkables += count;
+      console.log(`Found uninkable card: ${cardName} (${count}x) - from imported data, inkable: ${sampleCard.Inkable}`);
+    } else {
+      console.log(`Found inkable card: ${cardName} (${count}x) - from imported data, inkable: ${sampleCard ? sampleCard.Inkable : 'N/A'}`);
+    }
+  });
+  
+  console.log(`Total deck stats: ${deck.length} total, ${uninkables} uninkables`);
+  console.log('Deck contents:', deck.map(card => `${card.Name} x${card.Count || 1}`));
+  return { total: deck.length, uninkables: uninkables };
+}
+
+function updateDeckStatsDisplay() {
+  const deckStatsDiv = document.getElementById('deckStats');
+  const deckImagesBox = document.getElementById('deckImagesBox');
+  if (!deckStatsDiv) return;
+  
+  if (deck.length === 0) {
+    deckStatsDiv.style.display = 'none';
+    return;
+  }
+  
+  // Berechne dynamische Position basierend auf Deck-Höhe mit mehreren Versuchen
+  const calculatePosition = () => {
+    const deckHeight = deckImagesBox ? deckImagesBox.offsetHeight : 0;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    console.log('Deck height:', deckHeight, 'Viewport:', viewportWidth, 'x', viewportHeight); // Debug-Info
+    
+    if (deckHeight > 50) { // Mindesthöhe um sicherzustellen, dass das Deck geladen ist
+      let dynamicTop = 20 + deckHeight + 30; // 30px Abstand
+      
+      // Für kleinere Bildschirme: Alternative Positionierung
+      if (viewportWidth < 768) {
+        // Bei schmalen Bildschirmen: Statistik unter das Deck-Bereich verschieben
+        deckStatsDiv.style.right = '10px';
+        deckStatsDiv.style.width = 'calc(100vw - 20px)';
+        deckStatsDiv.style.maxWidth = '400px';
+        dynamicTop += 20; // Extra Abstand
+      } else {
+        // Normale Desktop-Positionierung
+        deckStatsDiv.style.right = '32px';
+        deckStatsDiv.style.width = '500px';
+        deckStatsDiv.style.maxWidth = '500px';
+      }
+      
+      // Für kleinere Bildschirme: Zusätzlichen Abstand hinzufügen
+      if (viewportHeight < 800) {
+        dynamicTop += 50; // Extra Abstand für kleine Monitore
+      }
+      if (viewportHeight < 600) {
+        dynamicTop += 100; // Noch mehr Abstand für sehr kleine Monitore
+      }
+      
+      // Verhindere Überlappung am unteren Bildschirmrand
+      const statsHeight = 100; // Geschätzte Höhe der Statistik
+      if (dynamicTop + statsHeight > viewportHeight - 50) {
+        dynamicTop = viewportHeight - statsHeight - 50;
+      }
+      
+      deckStatsDiv.style.top = dynamicTop + 'px';
+      console.log('Setting stats position to:', dynamicTop + 'px', 'for viewport:', viewportWidth + 'x' + viewportHeight);
+      return true; // Erfolgreiche Positionierung
+    } else {
+      // Fallback: Viewport-abhängige sichere Position
+      const fallbackTop = Math.max(500, viewportHeight - 200);
+      deckStatsDiv.style.top = fallbackTop + 'px';
+      console.log('Using fallback position:', fallbackTop + 'px');
+      return false; // Fallback verwendet
+    }
+  };
+  
+  // Mehrere Versuche mit verschiedenen Timings
+  let attempts = 0;
+  const maxAttempts = 5;
+  
+  const tryCalculatePosition = () => {
+    attempts++;
+    const success = calculatePosition();
+    
+    if (!success && attempts < maxAttempts) {
+      // Weiterer Versuch mit längerem Timeout
+      setTimeout(tryCalculatePosition, attempts * 50);
+    }
+  };
+  
+  // Sofort versuchen
+  tryCalculatePosition();
+  
+  // Zusätzliche Versuche zu verschiedenen Zeiten
+  setTimeout(tryCalculatePosition, 100);
+  setTimeout(tryCalculatePosition, 250);
+  
+  // Resize-Event-Listener für responsive Anpassung
+  const resizeHandler = () => {
+    setTimeout(calculatePosition, 100);
+  };
+  window.addEventListener('resize', resizeHandler);
+  
+  const stats = calculateDeckStats();
+  const inkables = stats.total - stats.uninkables;
+  
+  deckStatsDiv.innerHTML = `
+    <div style="
+      background: linear-gradient(145deg, rgba(63, 208, 201, 0.1), rgba(155, 93, 229, 0.1));
+      border: 2px solid rgba(63, 208, 201, 0.3);
+      border-radius: 12px;
+      padding: 10px 15px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      display: inline-block;
+      font-size: 0.9rem;
+    ">
+      <div style="font-size: 0.9rem; color: #D0D0D0; margin-bottom: 6px; font-family: 'Bebas Neue', cursive; letter-spacing: 1px; text-align: center;">DECK STATISTICS</div>
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <span style="color: #3FD0C9; font-weight: bold;">${stats.total} total</span>
+        <span style="color: #9B5DE5; font-weight: bold;">${inkables} ink</span>
+        <span style="color: #FFD34E; font-weight: bold;">${stats.uninkables} unink</span>
+      </div>
+    </div>
+  `;
+  deckStatsDiv.style.display = '';
+}
+
+function updateDeckDisplay() {
+  const deckImagesBox = document.getElementById('deckImagesBox');
+  deckImagesBox.innerHTML = '';
+  const grouped = {};
+  deck.forEach(card => {
+    const key = (card.Name || '') + '|' + (card.Image || '');
+    if (!grouped[key]) grouped[key] = { card, count: 0 };
+    grouped[key].count++;
+  });
+  Object.values(grouped).forEach(({card, count}) => {
+    const wrap = document.createElement('div');
+    wrap.style.position = 'relative';
+    wrap.style.display = 'inline-block';
+
+    const img = document.createElement('img');
+    img.src = card.Image || '';
+    img.alt = card.Name || '';
+    img.title = (card.Name || '') + (count > 1 ? ` (${count}x)` : '');
+    img.className = 'deck-card-img';
+    
+    // Hover-Effekt für vergrößerte Ansicht hinzufügen
+    img.addEventListener('mouseenter', (e) => showCardPreview(e, card.Image || '', card.Name || ''));
+    img.addEventListener('mouseleave', hideCardPreview);
+    img.addEventListener('mousemove', updateCardPreviewPosition);
+    
+    wrap.appendChild(img);
+
+    if (count > 1) {
+      const badge = document.createElement('span');
+      badge.textContent = count;
+      badge.className = 'deck-card-badge';
+      wrap.appendChild(badge);
+    }
+    deckImagesBox.appendChild(wrap);
+  });
+  
+  // Update deck statistics after DOM has updated - mehrere Versuche
+  setTimeout(() => updateDeckStatsDisplay(), 50);
+  setTimeout(() => updateDeckStatsDisplay(), 150);
+  setTimeout(() => updateDeckStatsDisplay(), 300);
+}
+
+function showHand(hand, selectable = true) {
+  handDiv.innerHTML = '';
+  hand.forEach((card, i) => {
+    const img = document.createElement('img');
+    img.src = card.Image || '';
+    img.alt = card.Name || '(unknown card)';
+    img.title = card.Name || '';
+    img.dataset.index = i;
+    if (selectedIndices.has(i)) img.classList.add('selected');
+    if (selectable) {
+      img.addEventListener('click', () => {
+        if (selectedIndices.has(i)) {
+          selectedIndices.delete(i);
+          img.classList.remove('selected');
+        } else {
+          selectedIndices.add(i);
+          img.classList.add('selected');
+        }
+        updateMulliganButtonText();
+        
+      });
+      img.style.pointerEvents = '';
+      img.style.cursor = '';
+    } else {
+      img.style.pointerEvents = 'none';
+      img.style.cursor = 'not-allowed';
+    }
+    handDiv.appendChild(img);
+  });
+  
+  // Update mana curve display
+  updateManaCurve(hand);
+}
+
+// ============================================
+// MANA CURVE FUNCTIONALITY
+// ============================================
+
+/**
+ * Updates the mana curve visualization for the current hand
+ * @param {Array} hand - Array of card objects in current hand
+ */
+function updateManaCurve(hand) {
+  const manaCurveArea = document.getElementById('manaCurveArea');
+  const manaCurveChart = document.getElementById('manaCurveChart');
+  const manaCurveStats = document.getElementById('manaCurveStats');
+  
+  if (!hand || hand.length === 0) {
+    manaCurveArea.style.display = 'none';
+    return;
+  }
+  
+  // Show the mana curve area
+  manaCurveArea.style.display = '';
+  
+  // Extract mana costs from cards
+  const manaCosts = hand.map(card => getCardManaCost(card)).filter(cost => cost !== null);
+  
+  if (manaCosts.length === 0) {
+    manaCurveArea.style.display = 'none';
+    return;
+  }
+  
+  // Calculate mana curve distribution (0-7+)
+  const curve = new Array(8).fill(0); // [0, 1, 2, 3, 4, 5, 6, 7+]
+  manaCosts.forEach(cost => {
+    if (cost >= 7) {
+      curve[7]++; // 7+ bucket
+    } else {
+      curve[cost]++;
+    }
+  });
+  
+  // Calculate statistics
+  const totalCards = manaCosts.length;
+  const avgCost = totalCards > 0 ? (manaCosts.reduce((sum, cost) => sum + cost, 0) / totalCards).toFixed(1) : 0;
+  
+  // Update stats display
+  manaCurveStats.textContent = `${totalCards} cards • Ø ${avgCost} ink`;
+  
+  // Create bar chart visualization
+  manaCurveChart.innerHTML = '';
+  const maxCount = Math.max(...curve);
+  
+  curve.forEach((count, manaValue) => {
+    const bar = document.createElement('div');
+    bar.style.cssText = `
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 32px;
+    `;
+    
+    // Mana cost label
+    const label = document.createElement('div');
+    label.textContent = manaValue === 7 ? '7+' : manaValue.toString();
+    label.style.cssText = `
+      color: #D0D0D0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      min-height: 12px;
+    `;
+    
+    // Bar visualization
+    const barHeight = maxCount > 0 ? Math.max(4, (count / maxCount) * 40) : 4;
+    const barElement = document.createElement('div');
+    barElement.style.cssText = `
+      width: 24px;
+      height: ${barHeight}px;
+      background: ${count > 0 ? 'linear-gradient(180deg, #3FD0C9, #9B5DE5)' : 'rgba(63, 208, 201, 0.2)'};
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(63, 208, 201, 0.3);
+    `;
+    
+    // Count number on top of bar
+    const countLabel = document.createElement('div');
+    countLabel.textContent = count > 0 ? count.toString() : '';
+    countLabel.style.cssText = `
+      color: #FFD34E;
+      font-size: 0.8rem;
+      font-weight: bold;
+      text-align: center;
+      min-height: 12px;
+      line-height: 12px;
+    `;
+    
+    // Add hover effect
+    if (count > 0) {
+      barElement.addEventListener('mouseenter', () => {
+        barElement.style.transform = 'scale(1.1)';
+        barElement.style.boxShadow = '0 4px 8px rgba(63, 208, 201, 0.4)';
+      });
+      barElement.addEventListener('mouseleave', () => {
+        barElement.style.transform = 'scale(1)';
+        barElement.style.boxShadow = 'none';
+      });
+    }
+    
+    bar.appendChild(countLabel);
+    bar.appendChild(barElement);
+    bar.appendChild(label);
+    manaCurveChart.appendChild(bar);
+  });
+}
+
+/**
+ * Updates the mulligan button text based on selected cards
+ */
+function updateMulliganButtonText() {
+  const selectedCount = selectedIndices.size;
+  if (selectedCount === 0) {
+    mulliganBtn.textContent = 'Perform Mulligan';
+  } else if (selectedCount === 1) {
+    mulliganBtn.textContent = 'Mulligan 1 card';
+  } else {
+    mulliganBtn.textContent = `Mulligan ${selectedCount} cards`;
+  }
+}
+
+/**
+ * Extracts ink cost from card data
+ * @param {Object} card - Card object
+ * @returns {number|null} - Ink cost or null if not found
+ */
+function getCardManaCost(card) {
+  // First try to get cost from the card data loaded via API
+  if (allCardsData && allCardsData.cards) {
+    const cardData = allCardsData.cards.find(c => 
+      c.fullName === card.Name || 
+      c.Name === card.Name ||
+      (c.fullName && c.fullName.toLowerCase() === card.Name.toLowerCase())
+    );
+    if (cardData && typeof cardData.Cost === 'number') {
+      return cardData.Cost;
+    }
+  }
+  
+  // Fallback: Try to extract from card name patterns (some meta decks might have costs)
+  if (card.cost !== undefined && typeof card.cost === 'number') {
+    return card.cost;
+  }
+  
+  // Default fallback for unknown cards
+  return null;
+}
+
+/**
+ * Calculates the average ink cost of a hand
+ * @param {Array} hand - Array of card objects
+ * @returns {number} - Average ink cost of the hand
+ */
+function calculateAverageInkCost(hand) {
+  const inkCosts = hand.map(card => getCardManaCost(card)).filter(cost => cost !== null);
+  if (inkCosts.length === 0) return 0;
+  return inkCosts.reduce((sum, cost) => sum + cost, 0) / inkCosts.length;
+}
+
+function updateMulliganHistory() {
+  mulliganHistoryDiv.innerHTML = '';
+  mulliganHistory.forEach((entry, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'mulligan-history-entry';
+
+    // Situation-Zeile (alleinstehend oben)
+    const situationDiv = document.createElement('div');
+    situationDiv.style.fontWeight = 'bold';
+    situationDiv.style.color = '#ffcb05';
+    situationDiv.style.marginBottom = '6px';
+    let sitText = (entry.situation.role === 'otp' ? 'On the Play (OTP)' : 'On the Draw (OTD)');
+    if (entry.situation.opponent && entry.situation.opponent !== 'unknown') {
+      const deckName = presetDecks[entry.situation.opponent]
+        ? document.querySelector(`#opponentDeckSelect option[value="${entry.situation.opponent}"], #presetDecks option[value="${entry.situation.opponent}"]`)?.textContent || entry.situation.opponent
+        : entry.situation.opponent;
+      sitText += ' vs. ' + deckName;
+    } else {
+      sitText += ' vs. unknown';
+    }
+
+  // Bereich nur anzeigen, wenn mindestens ein Eintrag vorhanden ist
+  const historyExportArea = document.getElementById('historyExportArea');
+  if (historyExportArea) {
+    historyExportArea.style.display = mulliganHistory.length > 0 ? '' : 'none';
+  }
+  
+  // Überschrift nur anzeigen, wenn mindestens ein Eintrag vorhanden ist
+  const historyTitle = document.getElementById('mulliganHistoryTitle');
+  if (historyTitle) {
+    historyTitle.style.display = mulliganHistory.length > 0 ? '' : 'none';
+  }
+    situationDiv.textContent = sitText;
+    wrap.appendChild(situationDiv);
+
+    // Vorherige Hand
+  const beforeDiv = document.createElement('div');
+beforeDiv.style.marginBottom = '2px';
+const beforeLabel = document.createElement('div');
+beforeLabel.innerHTML = `<b>Hand before Mulligan:</b>`;
+beforeDiv.appendChild(beforeLabel);
+const beforeCards = document.createElement('div');
+entry.before.forEach((card, i) => {
+  const img = document.createElement('img');
+  img.src = card.Image || '';
+  img.alt = card.Name || '';
+  img.title = card.Name || '';
+  img.className = 'card-img';
+  if (entry.exchanged[i]) img.classList.add('exchanged');
+  beforeCards.appendChild(img);
+});
+beforeDiv.appendChild(beforeCards);
+wrap.appendChild(beforeDiv);
+
+// Nachherige Hand
+const afterDiv = document.createElement('div');
+afterDiv.style.marginTop = '6px';
+const afterLabel = document.createElement('div');
+afterLabel.innerHTML = `<b>New Hand:</b>`;
+afterDiv.appendChild(afterLabel);
+const afterCards = document.createElement('div');
+entry.after.forEach(card => {
+  const img = document.createElement('img');
+  img.src = card.Image || '';
+  img.alt = card.Name || '';
+  img.title = card.Name || '';
+  img.className = 'card-img';
+  afterCards.appendChild(img);
+});
+afterDiv.appendChild(afterCards);
+wrap.appendChild(afterDiv);
+
+    mulliganHistoryDiv.appendChild(wrap);
+  });
+}
+
+// --- Event-Handler ---
+
+deckMode.addEventListener('change', () => {
+  if (deckMode.value === 'custom') {
+    customDeckArea.style.display = '';
+    metaDeckArea.style.display = 'none';
+  } else if (deckMode.value === 'meta') {
+    customDeckArea.style.display = 'none';
+    metaDeckArea.style.display = '';
+  } else {
+    // No valid option selected - hide both areas
+    customDeckArea.style.display = 'none';
+    metaDeckArea.style.display = 'none';
+  }
+});
+
+presetDecksSelect.addEventListener('change', function() {
+  importMetaDeckBtn.disabled = !presetDecks[this.value];
+});
+
+importMetaDeckBtn.addEventListener('click', () => {
+  const key = presetDecksSelect.value;
+  const deckKey = Object.keys(presetDecks).find(k => k.toLowerCase() === key.toLowerCase());
+  if (deckKey && presetDecks[deckKey]) {
+    deckInput.value = presetDecks[deckKey].list;
+    importBtn.click();
+  }
+});
+
+importBtn.addEventListener('click', async () => {
+  const rawText = deckInput.value.trim();
+  if (!rawText) {
+    await showInfoDialog('Please paste a deck.');
+    return;
+  }
+
+  let error = false;
+  deckLoading.style.display = ''; // Ladeanzeige EIN
+
+  const lines = rawText.split('\n').filter(line => line.trim() !== '');
+  deck = [];
+  let totalCards = 0;
+
+  for (const line of lines) {
+  const match = line.match(/^(\d+)\s+(.+)$/);
+  if (!match) continue;
+
+  const count = parseInt(match[1]);
+  let name = match[2];
+
+  if (nameCorrections[name]) {
+    name = nameCorrections[name];
+  }
+
+  const imageFile = cardImageMap[name] || cardImageMap[name.toLowerCase()];;
+  const imageUrl = imageFile ? `assets/images/cards/${imageFile}` : '';
+
+  if (!imageFile) {
+    error = true;
+    await showInfoDialog(`Card not found: ${name}`);
+    continue;
+  }
+
+  // Find card data from allCards.json to get Inkable property
+  let cardData = null;
+  if (allCardsData && allCardsData.cards) {
+    cardData = allCardsData.cards.find(c => 
+      c.Name === name || 
+      (c.Name && c.Name.toLowerCase() === name.toLowerCase())
+    );
+  }
+  
+  console.log(`DEBUG Import: "${name}" -> cardData found: ${!!cardData}, inkable: ${cardData ? cardData.Inkable : 'N/A'}`);
+  
+  // Determine if card is inkable
+  let inkable;
+  if (cardData && cardData.Inkable !== undefined) {
+    inkable = cardData.Inkable;
+  } else if (cardData && cardData.Cost !== undefined) {
+    inkable = cardData.Cost <= 3;
+  } else {
+    inkable = true; // fallback
+  }
+
+  const card = { 
+    Name: name, 
+    Image: imageUrl, 
+    Inkable: inkable
+  };
+  for (let i = 0; i < count; i++) {
+    deck.push(card);
+    totalCards++;
+  }
+}
+
+  updateDeckDisplay();
+
+  drawHandBtn.disabled = deck.length < 7;
+
+  mulliganBtn.style.display = 'none';
+  newHandBtn.style.display = 'none';
+  drawHandBtn.style.display = 'inline-block';
+  handDiv.innerHTML = '';
+  currentHand = [];
+  selectedIndices.clear();
+  updateMulliganButtonText();
+
+  customDeckArea.style.display = 'none';
+  metaDeckArea.style.display = 'none';
+  deckModeArea.style.display = 'none';
+  chooseOtherDeckBtn.style.display = 'inline-block';
+  
+  // Show mulligan section after successful deck import
+  const mulliganModeArea = document.getElementById('mulliganModeArea');
+  mulliganModeArea.style.display = '';
+  
+  // Set deck imported flag and check if ready to play
+  deckImported = true;
+  
+  // Ensure situation is properly checked
+  if (mulliganRole.value === '') {
+    situationSelected = false;
+  }
+  
+  checkIfReadyToPlay();
+  
+
+  deckLoading.style.display = 'none'; // Ladeanzeige AUS
+
+  if (!error && deck.length > 0) {
+    await showInfoDialog(`Deck successfully loaded (${totalCards} cards)!`);
+  } else if (!error && deck.length === 0) {
+    error = true;
+    await showInfoDialog('No cards were imported.');
+  }
+});
+
+ 
+
+
+mulliganRole.addEventListener('change', () => {
+  const opponentDeckArea = document.getElementById('opponentDeckArea');
+  if (mulliganRole.value === 'otp-meta' || mulliganRole.value === 'otd-meta') {
+    opponentDeckArea.style.display = 'flex';
+    // For meta situations, we need opponent deck selected too
+    situationSelected = !!opponentDeckSelect.value;
+  } else if (mulliganRole.value === '') {
+    // "Please Choose" selected - no situation selected
+    opponentDeckArea.style.display = 'none';
+    opponentDeckSelect.value = '';
+    situationSelected = false;
+  } else {
+    opponentDeckArea.style.display = 'none';
+    opponentDeckSelect.value = '';
+    // For non-meta situations, just selecting role is enough
+    situationSelected = true;
+  }
+  
+  checkIfReadyToPlay();
+});
+
+// Initialize with correct state
+mulliganRole.value = ''; // Ensure "Please Choose" is selected
+mulliganRole.dispatchEvent(new Event('change'));
+
+// Also check when opponent deck is selected for meta situations
+opponentDeckSelect.addEventListener('change', () => {
+  // For meta situations, we need both role and opponent deck selected
+  if (mulliganRole.value === 'otp-meta' || mulliganRole.value === 'otd-meta') {
+    situationSelected = !!opponentDeckSelect.value;
+  } else {
+    situationSelected = true; // For non-meta situations, just selecting role is enough
+  }
+  checkIfReadyToPlay();
+});
+
+
+drawHandBtn.addEventListener('click', () => {
+  determineMulliganSituation();
+  updateSituationInfo();
+  if (deck.length < 7) {
+    
+    return;
+  }
+  deck = shuffle(deck);
+  currentHand = deck.splice(0,7);
+  showHand(currentHand, true);
+  
+  selectedIndices.clear();
+  updateMulliganButtonText();
+
+  
+
+  mulliganBtn.style.display = 'inline-block';
+  newHandBtn.style.display = 'none';
+  drawHandBtn.style.display = 'none';
+});
+
+mulliganBtn.addEventListener('click', () => {
+  // Unink-Zählung vor und nach dem Mulligan
+  function countUnink(hand) {
+    if (!allCardsData || !allCardsData.cards) return 0;
+    let count = 0;
+    hand.forEach(card => {
+      const cardData = allCardsData.cards.find(c => c.Name === card.Name || c.fullName === card.Name);
+      if (cardData && cardData.Inkable === false) count++;
+    });
+    return count;
+  }
+
+
+  const uninkBefore = countUnink(currentHand);
+  // Neue Logik: Die neuen Karten ersetzen die getauschten Karten an deren Position
+  const exchangeIndices = Array.from(selectedIndices);
+  const mulliganCards = exchangeIndices.map(i => currentHand[i]);
+  deck = deck.concat(mulliganCards);
+  deck = shuffle(deck);
+  const newCards = deck.splice(0, exchangeIndices.length);
+
+  // Erzeuge die neue Hand, indem die neuen Karten an die Positionen der getauschten Karten gesetzt werden
+  let newHand = [...currentHand];
+  exchangeIndices.forEach((idx, i) => {
+    newHand[idx] = newCards[i];
+  });
+
+  // ...nach dem Mulligan
+  const uninkAfter = countUnink(newHand);
+
+  // Calculate ink costs before and after mulligan
+  const inkCostBefore = calculateAverageInkCost(currentHand);
+  const inkCostAfter = calculateAverageInkCost(newHand);
+
+  trainingStats.totalUninkBefore += uninkBefore;
+  trainingStats.totalUninkAfter += uninkAfter;
+  trainingStats.totalInkCostBefore += inkCostBefore;
+  trainingStats.totalInkCostAfter += inkCostAfter;
+
+  // Statistiken aktualisieren
+  trainingStats.totalHands++;
+  trainingStats.totalCardsExchanged += exchangeIndices.length;
+  if (exchangeIndices.length > 0) {
+    trainingStats.totalMulligans++;
+  }
+  updateStatistics();
+
+  mulliganHistory.push({
+    before: [...currentHand],
+    exchanged: currentHand.map((c, i) => selectedIndices.has(i)),
+    after: newHand,
+    situation: { ...currentMulliganSituation }
+  });
+
+  currentHand = newHand;
+  showHand(currentHand, false);
+  selectedIndices.clear();
+  updateMulliganButtonText();
+  mulliganBtn.style.display = 'none';
+  newHandBtn.style.display = 'block';
+  drawHandBtn.style.display = 'none';
+  updateMulliganHistory();
+});
+
+newHandBtn.addEventListener('click', () => {
+  determineMulliganSituation();        
+  updateSituationInfo();  
+  if (deck.length < 7) {
+    
+    return;
+  }
+  deck = deck.concat(currentHand);
+  deck = shuffle(deck);
+
+  currentHand = deck.splice(0, 7);
+  showHand(currentHand, true);
+  
+  selectedIndices.clear();
+  updateMulliganButtonText();
+
+  mulliganBtn.style.display = 'inline-block';
+  newHandBtn.style.display = 'none';
+  drawHandBtn.style.display = 'none';
+  updateMulliganHistory();
+});
+
+
+  const css = `
+    <style>
+      body { background: #181818; color: #fff; font-family: sans-serif; }
+      .mulligan-history-entry {
+        background: #181818;
+        border-radius: 8px;
+        border: 1px solid #333;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        box-shadow: 0 2px 8px #0004;
+      }
+      .mulligan-history-entry b { color: #ffcb05; }
+      .card-img {
+        height: 96px;
+        margin: 2px 4px 2px 0;
+        border-radius: 6px;
+        border: 2px solid transparent;
+        vertical-align: middle;
+        transition: border 0.2s, opacity 0.2s;
+      }
+      .card-img.exchanged {
+        opacity: 0.35;
+        border: 2px solid #ff4e4e;
+        filter: grayscale(0.7);
+        position: relative;
+      }
+      .card-img.exchanged::after {
+        content: "✗";
+        color: #ff4e4e;
+        font-size: 2.5em;
+        position: absolute;
+        left: 18px;
+        top: 0;
+        pointer-events: none;
+      }
+    </style>
+  `;
+  
+
+presetDecksSelect.addEventListener('change', function() {
+  const val = this.value;
+  if (presetDecks[val]) {
+    deckInput.value = presetDecks[val];
+  }
+});
+
+chooseOtherDeckBtn.addEventListener('click', async () => {
+  // Prüfe, ob Historie vorhanden ist und frage nach Export
+  const exportChoice = await promptHistoryExport();
+  if (exportChoice === 'html' || exportChoice === 'txt') {
+    exportHistoryUnifiedBtn.click();
+  }
+  // Historie zurücksetzen
+  mulliganHistory = [];
+  
+  // Statistiken zurücksetzen
+  trainingStats = {
+    totalHands: 0,
+    totalCardsExchanged: 0,
+    totalMulligans: 0,
+    totalUninkBefore: 0,
+    totalUninkAfter: 0,
+    totalInkCostBefore: 0,
+    totalInkCostAfter: 0
+  };
+  updateStatistics();
+  updateMulliganHistory();
+
+  deckMode.value = ''; // Back to "Please Choose" 
+  deckMode.dispatchEvent(new Event('change')); // Trigger change event
+
+  deckModeArea.style.display = '';          // Deck-Auswahl Dropdown wieder anzeigen
+  customDeckArea.style.display = 'none';   // Eigenes Deck-Bereich verstecken (wird durch deckMode change event gezeigt)
+  metaDeckArea.style.display = 'none';     // Meta-Deck-Bereich ausblenden
+  chooseOtherDeckBtn.style.display = 'none';
+  
+  // Reset mulligan situation selection
+  mulliganRole.value = '';
+  opponentDeckSelect.value = '';
+  situationSelected = false;
+  
+  // Hide mulligan section when choosing other deck
+  const mulliganModeArea = document.getElementById('mulliganModeArea');
+  mulliganModeArea.style.display = 'none';
+  
+  // Hide statistics area
+  const statisticsArea = document.getElementById('statisticsArea');
+  if (statisticsArea) {
+    statisticsArea.style.display = 'none';
+  }
+  
+  // Hide current situation display
+  const currentSituation = document.getElementById('currentSituation');
+  if (currentSituation) {
+    currentSituation.style.display = 'none';
+  }
+  
+  // Hide mulligan history elements
+  const mulliganHistoryTitle = document.getElementById('mulliganHistoryTitle');
+  if (mulliganHistoryTitle) {
+    mulliganHistoryTitle.style.display = 'none';
+  }
+  
+  const mulliganHistoryDiv = document.getElementById('mulliganHistory');
+  if (mulliganHistoryDiv) {
+    mulliganHistoryDiv.style.display = 'none';
+  }
+  
+  // Hide history export area
+  const historyExportArea = document.getElementById('historyExportArea');
+  if (historyExportArea) {
+    historyExportArea.style.display = 'none';
+  }
+  
+  // Hide deck stats
+  const deckStats = document.getElementById('deckStats');
+  if (deckStats) {
+    deckStats.style.display = 'none';
+  }
+  
+  // Reset flags
+  deckImported = false;
+  situationSelected = false;
+  checkIfReadyToPlay();
+  
+  deckInput.value = '';
+  
+  drawHandBtn.disabled = true;
+  handDiv.innerHTML = '';
+  deck = [];
+  currentHand = [];
+  selectedIndices.clear();
+  updateMulliganButtonText();
+  updateDeckDisplay();
+});
+
+const exportHistoryUnifiedBtn = document.getElementById('exportHistoryUnifiedBtn');
+const exportHistoryFormat = document.getElementById('exportHistoryFormat');
+
+exportHistoryUnifiedBtn.addEventListener('click', async () => {
+  if (!mulliganHistory.length) {
+    alert('Keine Mulligan-Historie vorhanden.');
+    return;
+  }
+  // Dialog anzeigen und auf Auswahl warten
+  const format = await promptHistoryExport();
+  if (format === 'discard') return;
+
+  // Dateinamen abfragen
+  let defaultName = format === 'html' ? 'mulligan-historie.html' : 'mulligan-historie.txt';
+  const filename = await promptFilename(defaultName);
+  if (!filename) return;
+
+  if (format === 'html') {
+    // HTML-Export (wie gehabt)
+    const histDiv = document.getElementById('mulliganHistory');
+    const clone = histDiv.cloneNode(true);
+    const imgElements = clone.querySelectorAll('img');
+    for (const img of imgElements){
+      if (img.src && !img.src.startsWith('data:')) {
+        try {
+          const response = await fetch(img.src);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          await new Promise(resolve => {
+            reader.onload = () => {
+              img.src = reader.result;
+              resolve();
+            };
+            reader.readAsDataURL(blob);
+          });
+        } catch (e) {
+          // Bild konnte nicht geladen werden, lasse src wie es ist
+        }
+      }
+    }
+    const css = `
+      <style>
+        body { background: #181818; color: #fff; font-family: sans-serif; }
+        .mulligan-history-entry {
+          background: #181818;
+          border-radius: 8px;
+          border: 1px solid #333;
+          padding: 10px 12px;
+          margin-bottom: 18px;
+          box-shadow: 0 2px 8px #0004;
+        }
+        .mulligan-history-entry b { color: #ffcb05; }
+        .card-img {
+          height: 96px;
+          margin: 2px 4px 2px 0;
+          border-radius: 6px;
+          border: 2px solid transparent;
+          vertical-align: middle;
+          transition: border 0.2s, opacity 0.2s;
+        }
+        .card-img.exchanged {
+          opacity: 0.35;
+          border: 2px solid #ff4e4e;
+          filter: grayscale(0.7);
+          position: relative;
+        }
+        .card-img.exchanged::after {
+          content: "✗";
+          color: #ff4e4e;
+          font-size: 2.5em;
+          position: absolute;
+          left: 18px;
+          top: 0;
+          pointer-events: none;
+        }
+      </style>
+    `;
+    const html = `
+      <html><head><meta charset="UTF-8"><title>Mulligan-Historie</title>${css}</head>
+      <body>${clone.innerHTML}</body></html>
+    `;
+    const blob = new Blob([html], {type: 'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename.endsWith('.html') ? filename : filename + '.html';
+    a.click();
+    URL.revokeObjectURL(url);
+  } else if (format === 'txt') {
+    // TXT-Export
+    let txt = '';
+    mulliganHistory.forEach((entry, idx) => {
+      let sitText = (entry.situation.role === 'otp' ? 'On the Play (OTP)' : 'On the Draw (OTD)');
+      if (entry.situation.opponent && entry.situation.opponent !== 'unknown') {
+        const deckName = presetDecks[entry.situation.opponent]
+          ? document.querySelector(`#opponentDeckSelect option[value="${entry.situation.opponent}"], #presetDecks option[value="${entry.situation.opponent}"]`)?.textContent || entry.situation.opponent
+          : entry.situation.opponent;
+        sitText += ' vs. ' + deckName;
+      } else {
+        sitText += ' vs. unknown';
+      }
+      txt += `#${idx + 1}: ${sitText}\n`;
+      txt += 'Hand before Mulligan: ' + entry.before.map((c, i) =>
+        `${c.Name}${entry.exchanged[i] ? ' (exchanged)' : ''}`
+      ).join(', ') + '\n';
+      txt += 'New Hand: ' + entry.after.map(c => c.Name).join(', ') + '\n\n';
+    });
+
+    const blob = new Blob([txt], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename.endsWith('.txt') ? filename : filename + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+});
+
+// Hamburger Menu Functionality
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuClose = document.getElementById('menuClose');
+
+hamburgerBtn.addEventListener('click', () => {
+  menuOverlay.classList.add('show');
+});
+
+menuClose.addEventListener('click', () => {
+  menuOverlay.classList.remove('show');
+});
+
+// Close menu when clicking outside
+menuOverlay.addEventListener('click', (e) => {
+  if (e.target === menuOverlay) {
+    menuOverlay.classList.remove('show');
+  }
+});
+
+// Support Me Functionality
+const supportBtn = document.getElementById('supportBtn');
+const supportOverlay = document.getElementById('supportOverlay');
+const supportClose = document.getElementById('supportClose');
+
+supportBtn.addEventListener('click', () => {
+  supportOverlay.classList.add('show');
+});
+
+supportClose.addEventListener('click', () => {
+  supportOverlay.classList.remove('show');
+});
+
+// Support button in hamburger menu
+const menuSupportBtn = document.getElementById('menuSupportBtn');
+menuSupportBtn.addEventListener('click', () => {
+  menuOverlay.classList.remove('show'); // Close hamburger menu first
+  supportOverlay.classList.add('show'); // Open support overlay
+});
+
+// Close support overlay when clicking outside
+supportOverlay.addEventListener('click', (e) => {
+  if (e.target === supportOverlay) {
+    supportOverlay.classList.remove('show');
+  }
+});
+
+// Close support overlay on ESC key (update existing ESC handler)
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (menuOverlay.classList.contains('show')) {
+      menuOverlay.classList.remove('show');
+    }
+    if (supportOverlay.classList.contains('show')) {
+      supportOverlay.classList.remove('show');
+    }
+  }
+});
+
+// Initialize app state on load
+checkIfReadyToPlay();
+
+// ============================================
+// SIMPLE LOCAL AUTH FOR MULLIGAN PAGE
+// ============================================
+
+// Removed - using only global auth system
+
+function handleGuestMode() {
+    console.log('handleGuestMode() is disabled - using global auth system');
+    return;
+    
+    // Hide auth container overlay
+    const authContainer = document.getElementById('authContainer');
+    const userContainer = document.getElementById('userContainer');
+    
+    if (authContainer) authContainer.style.display = 'none';
+    // mainContent stays visible (it's already shown)
+    if (userContainer) {
+        userContainer.style.display = 'block';
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        if (usernameDisplay) {
+            usernameDisplay.textContent = 'Guest (Practice Mode)';
+            usernameDisplay.style.color = '#FFD34E';
+        }
+    }
+    
+    // Update button visibility
+    updateAuthButtons();
+    
+    // Use global auth system key
+    localStorage.setItem('drawstep_guest_mode', 'true');
+    
+    // Mark mulligan trainer as visited for this session
+    console.log('DEBUG: Setting mulligan_trainer_visited from handleGuestMode (session)');
+    sessionStorage.setItem('mulligan_trainer_visited', 'true');
+    
+    // Message is now handled by global auth system
+}
+
+function handleShowLogin() {
+    console.log('handleShowLogin() is disabled - using global auth system');
+    return;
+    
+    // Mark mulligan trainer as visited for this session when user chooses to see login options
+    console.log('DEBUG: Setting mulligan_trainer_visited from handleShowLogin (session)');
+    sessionStorage.setItem('mulligan_trainer_visited', 'true');
+}
+
+// Reset function to clear guest mode and show welcome screen again
+function resetToWelcomeScreen() {
+    localStorage.removeItem('mulligan_guest_mode');
+    sessionStorage.removeItem('mulligan_trainer_visited');
+    localAuthState.isGuest = false;
+    localAuthState.isLoggedIn = false;
+    localAuthState.user = null;
+    
+    const authContainer = document.getElementById('authContainer');
+    const userContainer = document.getElementById('userContainer');
+    
+    if (authContainer) authContainer.style.display = 'flex'; // Use flex for overlay centering
+    // mainContent stays visible in background
+    if (userContainer) userContainer.style.display = 'none';
+    
+    console.log('Reset to welcome screen');
+}
+
+// Add reset function to window for debugging
+window.resetToWelcomeScreen = resetToWelcomeScreen;
+
+// Update auth button visibility based on login state
+function updateAuthButtons() {
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const upgradeBtn = document.getElementById('upgradeToAccountBtn');
+    
+    // Also update hamburger menu buttons
+    const menuUserInfo = document.getElementById('menuUserInfo');
+    const menuLoginOptions = document.getElementById('menuLoginOptions');
+    const menuUsername = document.getElementById('menuUsername');
+    
+    if (localAuthState.isGuest) {
+        // Guest mode - show upgrade button only
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (upgradeBtn) upgradeBtn.style.display = 'inline';
+        
+        // Update hamburger menu for guest
+        if (menuUserInfo) menuUserInfo.style.display = 'block';
+        if (menuLoginOptions) menuLoginOptions.style.display = 'none';
+        if (menuUsername) menuUsername.textContent = 'Guest';
+    } else if (localAuthState.isLoggedIn) {
+        // Logged in - show logout button only
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'inline';
+        if (upgradeBtn) upgradeBtn.style.display = 'none';
+        
+        // Update hamburger menu for logged in user
+        if (menuUserInfo) menuUserInfo.style.display = 'block';
+        if (menuLoginOptions) menuLoginOptions.style.display = 'none';
+        if (menuUsername && localAuthState.user) {
+            menuUsername.textContent = localAuthState.user.username;
+        }
+    } else {
+        // Not logged in - show login button only
+        if (loginBtn) loginBtn.style.display = 'inline';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (upgradeBtn) upgradeBtn.style.display = 'none';
+        
+        // Update hamburger menu for not logged in
+        if (menuUserInfo) menuUserInfo.style.display = 'none';
+        if (menuLoginOptions) menuLoginOptions.style.display = 'block';
+    }
+}
+
+function showLocalMessage(message, type = 'info') {
+    // Create or get message container
+    let messageContainer = document.getElementById('localAuthMessages');
+    if (!messageContainer) {
+        messageContainer = document.createElement('div');
+        messageContainer.id = 'localAuthMessages';
+        messageContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        `;
+        document.body.appendChild(messageContainer);
+    }
+
+    // Create message element
+    const messageEl = document.createElement('div');
+    messageEl.style.cssText = `
+        background: ${type === 'error' ? '#ff4444' : type === 'success' ? '#44ff44' : '#4444ff'};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        animation: slideIn 0.3s ease;
+    `;
+    messageEl.textContent = message;
+
+    messageContainer.appendChild(messageEl);
+
+    // Remove message after 3 seconds
+    setTimeout(() => {
+        messageEl.remove();
+    }, 3000);
+}
+
+// DISABLED - using only global auth system
+function initLocalAuth() {
+    console.log('Local auth disabled - using global auth system only');
+    return;
+    
+    console.log('DEBUG: initLocalAuth - mulligan_trainer_visited (session):', hasVisitedBefore);
+    console.log('DEBUG: initLocalAuth - mulligan_guest_mode:', wasGuest);
+    
+    if (hasVisitedBefore) {
+        // User has visited before in this session - skip welcome screen
+        console.log('DEBUG: User has visited before in this session - skipping welcome screen');
+        
+        if (wasGuest) {
+            // Restore guest mode
+            localAuthState.isGuest = true;
+            localAuthState.user = { username: 'Guest', guest: true };
+            
+            const userContainer = document.getElementById('userContainer');
+            if (userContainer) {
+                userContainer.style.display = 'block';
+                const usernameDisplay = document.getElementById('usernameDisplay');
+                if (usernameDisplay) {
+                    usernameDisplay.textContent = 'Guest (Practice Mode)';
+                    usernameDisplay.style.color = '#FFD34E';
+                }
+            }
+        }
+        
+        // Update button visibility
+        updateAuthButtons();
+        
+        // Always hide welcome screen for returning visitors
+        const authContainer = document.getElementById('authContainer');
+        if (authContainer) authContainer.style.display = 'none';
+        
+    } else {
+        // First time visitor, show welcome screen overlay
+        const authContainer = document.getElementById('authContainer');
+        const userContainer = document.getElementById('userContainer');
+        
+        if (authContainer) {
+            authContainer.style.display = 'flex'; // Use flex for centering
+        }
+        // mainContent stays visible in background
+        if (userContainer) userContainer.style.display = 'none';
+        
+        console.log('Welcome screen initialized - first time visitor');
+    }
+    
+    // Update auth buttons regardless of state
+    updateAuthButtons();
+}
+
+// Add event listeners for login and logout buttons
+function setupLocalAuthEventListeners() {
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const upgradeBtn = document.getElementById('upgradeToAccountBtn');
+    
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            // Show login options
+            resetToWelcomeScreen();
+            handleShowLogin();
+        });
+    }
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Clear guest mode and show welcome screen
+            resetToWelcomeScreen();
+        });
+    }
+    
+    if (upgradeBtn) {
+        upgradeBtn.addEventListener('click', () => {
+            // Clear guest mode and show welcome screen with registration option
+            resetToWelcomeScreen();
+            handleShowLogin();
+        });
+    }
+    
+    // Menu login and register buttons
+    const menuLoginBtn = document.getElementById('menuLoginBtn');
+    const menuRegisterBtn = document.getElementById('menuRegisterBtn');
+    
+    // Menu login/register buttons are now handled by main.js
+    // Remove local event listeners to prevent conflicts
+}
+
+// RESET AUTH STATE AND USE CLEAN SYSTEM
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        // FORCE RESET of all auth data for clean state
+        localStorage.removeItem('drawstep_guest_mode');
+        localStorage.removeItem('drawstep_token');
+        localStorage.removeItem('mulligan_guest_mode');
+        sessionStorage.removeItem('mulligan_trainer_visited');
+        
+        console.log('Auth state reset to clean slate');
+        
+        // Force refresh the global auth manager if it exists
+        if (window.authManager) {
+            window.authManager.token = null;
+            window.authManager.user = null;
+            window.authManager.guestMode = false;
+            window.authManager.updateUI(); // Force UI update
+            console.log('Global auth manager reset and UI updated');
+        }
+        
+        // Always show welcome screen for first-time experience
+        const authContainer = document.getElementById('authContainer');
+        if (authContainer) {
+            authContainer.style.display = 'flex';
+            console.log('Welcome screen shown');
+        }
+        
+        // Setup welcome screen buttons
+        setupWelcomeScreenButtons();
+    }, 100);
+});
+
+// Setup welcome screen buttons to work with global auth system
+function setupWelcomeScreenButtons() {
+    const continueAsGuestBtn = document.getElementById('continueAsGuest');
+    const showLoginBtn = document.getElementById('showLogin');
+    
+    if (continueAsGuestBtn && !continueAsGuestBtn.hasListener) {
+        console.log('Setting up guest button listener');
+        continueAsGuestBtn.addEventListener('click', () => {
+            console.log('Guest button clicked - enabling guest mode via global auth');
+            // Use only global auth system
+            if (window.authManager) {
+                window.authManager.enableGuestMode();
+            }
+            // Hide welcome screen
+            const authContainer = document.getElementById('authContainer');
+            if (authContainer) authContainer.style.display = 'none';
+            
+            // Mark as visited
+            sessionStorage.setItem('mulligan_trainer_visited', 'true');
+        });
+        continueAsGuestBtn.hasListener = true; // Mark to prevent duplicate listeners
+    }
+    
+    if (showLoginBtn && !showLoginBtn.hasListener) {
+        console.log('Setting up login button listener');
+        showLoginBtn.addEventListener('click', () => {
+            console.log('Login button clicked');
+            // Hide welcome screen
+            const authContainer = document.getElementById('authContainer');
+            if (authContainer) authContainer.style.display = 'none';
+            
+            // Show login modal using global system
+            if (window.authManager) {
+                window.authManager.showLoginModal();
+            }
+            
+            // Mark as visited
+            sessionStorage.setItem('mulligan_trainer_visited', 'true');
+        });
+        showLoginBtn.hasListener = true; // Mark to prevent duplicate listeners
+    }
+}
+
+// Sync local auth state with global auth system
+function syncWithGlobalAuth() {
+    if (!window.authManager) return;
+    
+    // Check if user is logged in globally
+    if (window.authManager.isLoggedIn()) {
+        localAuthState.isLoggedIn = true;
+        localAuthState.isGuest = false;
+        localAuthState.user = window.authManager.user;
+        
+        // Update UI to reflect logged in state
+        const authContainer = document.getElementById('authContainer');
+        const userContainer = document.getElementById('userContainer');
+        
+        if (authContainer) authContainer.style.display = 'none';
+        if (userContainer) {
+            userContainer.style.display = 'block';
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            if (usernameDisplay) {
+                usernameDisplay.textContent = window.authManager.user.username;
+                usernameDisplay.style.color = '#3FD0C9';
+            }
+        }
+        
+        updateAuthButtons();
+        console.log('Synced with global auth - user logged in:', window.authManager.user.username);
+    } else if (window.authManager.guestMode) {
+        localAuthState.isGuest = true;
+        localAuthState.isLoggedIn = false;
+        localAuthState.user = { username: 'Guest', guest: true };
+        updateAuthButtons();
+        console.log('Synced with global auth - guest mode');
+    }
+}
+
+  
+</script>
+
+<div id="historyExportDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background: linear-gradient(145deg, #252629, #1f2022); color:#FFFFFF; padding:32px 24px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5); min-width:320px; text-align:center; border: 2px solid rgba(63, 208, 201, 0.3);">
+    <div style="margin-bottom:18px; font-size:1.2em; color: #FFD34E; font-family: 'Bebas Neue', cursive;">Mulligan-Historie speichern?</div>
+    <button id="exportDialogHtmlBtn" style="margin:6px;">Als HTML speichern</button>
+    <button id="exportDialogTxtBtn" style="margin:6px;">Als Text speichern</button>
+    <button id="exportDialogCancelBtn" style="margin:6px; background: linear-gradient(135deg, #666, #444);">Verwerfen</button>
+  </div>
+</div>
+
+</div> <!-- End of mainContent -->
+
+<div id="historyDeleteDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background: linear-gradient(145deg, #252629, #1f2022); color:#FFFFFF; padding:32px 24px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5); min-width:320px; text-align:center; border: 2px solid rgba(63, 208, 201, 0.3);">
+    <div style="margin-bottom:18px; font-size:1.2em; color: #FFD34E; font-family: 'Bebas Neue', cursive;">Mulligan-Historie wirklich löschen?</div>
+    <button id="deleteDialogYesBtn" style="margin:6px; background: linear-gradient(135deg, #ff4e4e, #cc3939);">Ja, löschen</button>
+    <button id="deleteDialogNoBtn" style="margin:6px; background: linear-gradient(135deg, #666, #444);">Abbrechen</button>
+  </div>
+</div>
+
+<div id="infoDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background: linear-gradient(145deg, #252629, #1f2022); color:#FFFFFF; padding:32px 24px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5); min-width:320px; text-align:center; border: 2px solid rgba(63, 208, 201, 0.3);">
+    <div id="infoDialogMsg" style="margin-bottom:18px; font-size:1.1em; color: #D0D0D0;"></div>
+    <button id="infoDialogOkBtn" style="margin:6px;">OK</button>
+  </div>
+</div>
+
+<div id="filenameDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background: linear-gradient(145deg, #252629, #1f2022); color:#FFFFFF; padding:32px 24px; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5); min-width:320px; text-align:center; border: 2px solid rgba(63, 208, 201, 0.3);">
+    <div style="margin-bottom:18px; font-size:1.2em; color: #FFD34E; font-family: 'Bebas Neue', cursive;">Dateiname wählen:</div>
+    <input id="filenameInput" type="text" style="padding:8px 12px; border-radius:8px; border:1px solid rgba(63, 208, 201, 0.5); width:80%; margin-bottom:14px; background: #252629; color: #FFFFFF; font-family: 'Inter', sans-serif;" />
+    <br>
+    <button id="filenameOkBtn" style="margin:6px;">OK</button>
+    <button id="filenameCancelBtn" style="margin:6px; background: linear-gradient(135deg, #666, #444);">Abbrechen</button>
+  </div>
+</div>
+
+<!-- Footer section -->
+<footer style="margin-top: 4rem; padding: 2rem 0; border-top: 1px solid rgba(63, 208, 201, 0.2); text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 0 20px;">
+        <p style="color: #D0D0D0; margin: 0; font-size: 0.9rem;">© 2025 Drawstep - TCG Strategy Hub</p>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <a href="../../impressum.html" style="color: #3FD0C9; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Imprint</a>
+            <span style="color: #666;">|</span>
+            <a href="../../datenschutz.html" style="color: #3FD0C9; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Privacy Policy</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Disabled global auth.js - using custom auth for mulligan page -->
+<!-- <script src="../../assets/js/auth.js"></script> -->
+<!-- Add auth modals to Lorcana page -->
+<!-- LOGIN MODAL -->
+<div class="auth-overlay" id="loginOverlay">
+    <div class="auth-content">
+        <button class="auth-close" id="loginClose">×</button>
+        <div class="auth-header">
+            <h3>Login to Your Account</h3>
+            <p>Access your saved progress and statistics</p>
+        </div>
+        <form id="mainLoginForm" class="auth-form">
+            <div class="form-group">
+                <input type="email" id="mainLoginEmail" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="mainLoginPassword" placeholder="Password" required>
+            </div>
+            <button type="submit" class="auth-btn">Login</button>
+        </form>
+        <p class="auth-switch">
+            Don't have an account? 
+            <button type="button" id="switchToRegister" class="link-btn">Sign up here</button>
+        </p>
+    </div>
+</div>
+
+<!-- Register Modal -->
+<div class="auth-overlay" id="registerOverlay">
+    <div class="auth-content">
+        <button class="auth-close" id="registerClose">×</button>
+        <div class="auth-header">
+            <h3>Create Account</h3>
+            <p>Save your progress and join the community</p>
+        </div>
+        <form id="mainRegisterForm" class="auth-form">
+            <div class="form-group">
+                <input type="text" id="mainRegisterUsername" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="mainRegisterEmail" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="mainRegisterPassword" placeholder="Password (min. 6 characters)" required minlength="6">
+            </div>
+            <button type="submit" class="auth-btn">Create Account</button>
+        </form>
+        <p class="auth-switch">
+            Already have an account? 
+            <button type="button" id="switchToLogin" class="link-btn">Sign in here</button>
+        </p>
+    </div>
+</div>
+
+<script src="../../assets/js/auth.js"></script>
+<!-- <script src="../../assets/js/main.js"></script> -->
+</body>
+</html>

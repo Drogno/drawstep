@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lorcana Muli-Trainer</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background-color: #0f0f0f; color: #fff; }
+    textarea { width: 100%; max-width: 600px; background: #1f1f1f; color: #fff; border: 1px solid #333; padding: 10px; }
+    img { max-height: 150px; margin: 5px; cursor: pointer; border: 2px solid transparent; border-radius: 8px; }
+    img.selected { border-color: #ff4e4e; }
+    button {
+      margin: 5px 5px 15px 0;
+      padding: 10px 15px;
+      background-color: #ff4e4e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #ff2e2e;
+    }
+    #newHandBtn, #mulliganBtn { display: none; }
+    #deckList { max-height: 200px; overflow-y: auto; background: #1f1f1f; padding: 10px; border-radius: 4px; border: 1px solid #333; }
+    h1, h2, h3 { color: #ffcb05; }
+    .mulligan-history-entry {
+      background: #181818;
+      border-radius: 8px;
+      border: 1px solid #333;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px #0004;
+    }
+    .mulligan-history-entry b {
+      color: #ffcb05;
+    }
+    .mulligan-history-entry .card-img {
+      height: 48px;
+      margin: 2px 4px 2px 0;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      vertical-align: middle;
+      transition: border 0.2s, opacity 0.2s;
+    }
+    .mulligan-history-entry .card-img.exchanged {
+      opacity: 0.35;
+      border: 2px solid #ff4e4e;
+      filter: grayscale(0.7);
+      position: relative;
+    }
+    .mulligan-history-entry .card-img.exchanged::after {
+      content: "✗";
+      color: #ff4e4e;
+      font-size: 1.5em;
+      position: absolute;
+      left: 12px;
+      top: 0;
+      pointer-events: none;
+    }
+    #deckImagesBox {
+  position: absolute;
+  top: 1000px; /* weiter unten */
+  right: 32px;
+  max-width: 420px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  z-index: 10;
+}
+#deckImagesBox .deck-card-img {
+  height: 80px; /* größer */
+  margin: 2px;
+  border-radius: 7px;
+  border: 1.5px solid #333;
+  background: #222;
+  box-shadow: 0 1px 6px #0007;
+  position: relative;
+}
+#deckImagesBox .deck-card-badge {
+  position: absolute;
+  top: 3px;
+  right: 7px;
+  background: rgba(0,0,0,0.55);
+  color: #ffcb05;
+  font-weight: bold;
+  font-size: 1.05em;
+  padding: 0 6px;
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 2;
+  min-width: 18px;
+  text-align: center;
+}
+#newHandBtn {
+  background-color: #2196f3 !important;
+  color: #fff !important;
+}
+#newHandBtn:hover {
+  background-color: #1769aa !important;
+}
+
+#mulliganModeArea select {
+  background: #181818;
+  color: #fff;
+  border: 1.5px solid #ffcb05;
+  border-radius: 6px;
+  font-size: 1em;
+}
+#mulliganModeArea label {
+  color: #ffcb05;
+}
+
+#deckModeArea select {
+  background: #181818;
+  color: #fff;
+  border: 1.5px solid #ffcb05;
+  border-radius: 6px;
+  font-size: 1em;
+}
+
+#deckModeArea label {
+  color: #ffcb05;
+}
+
+#deckModeArea select {
+  background: #181818;
+  color: #fff;
+  border: 1.5px solid #ffcb05;
+  border-radius: 6px;
+  font-size: 1.1em;
+  padding: 6px 12px;
+}
+  </style>
+</head>
+<body>
+
+  <div id="deckImagesBox" style="position:absolute; top:24px; right:32px; max-width:420px; display:flex; flex-wrap:wrap; gap:4px; z-index:10;"></div>
+
+  <div style="display:flex;align-items:center;gap:16px;">
+    <img src="https://imaginedragonsgermany.de/mulli.jpeg" alt="Muli Logo" style="height:96px;">
+    <h1 style="margin:0;">Lorcana Muli-Trainer</h1>
+  </div>
+
+<div id="deckModeArea" style="
+  margin-bottom: 28px;
+  padding: 18px 18px 12px 18px;
+  background: #232323;
+  border-radius: 12px;
+  border: 2px solid #ffcb05;
+  box-shadow: 0 2px 12px #0005;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+">
+  <span style="font-size:1.2em; font-weight:bold; color:#ffcb05; min-width:160px; display:inline-block;">
+    Deck-Auswahl
+  </span>
+  <img id="deckInkIcon1" src="" alt="" style="height:28px;vertical-align:middle;display:none;margin-right:2px;">
+<img id="deckInkIcon2" src="" alt="" style="height:28px;vertical-align:middle;display:none;margin-right:8px;">
+  <select id="deckMode" style="
+    background: #181818;
+    color: #fff;
+    border: 1.5px solid #ffcb05;
+    border-radius: 6px;
+    font-size: 1.1em;
+    padding: 6px 12px;
+    min-width: 260px;
+  ">
+    <option value="custom">Eigenes Deck einfügen</option>
+    <option value="meta">Vorgefertigtes Meta-Deck wählen</option>
+  </select>
+</div>
+
+<div id="customDeckArea">
+  <h2>Deckliste einfügen (z. B. von dreamborn.ink)</h2>
+  <textarea id="deckInput" rows="10" placeholder="4 Elsa - Snow Queen&#10;2 Friends on the Other Side"></textarea><br />
+  <button id="importDeckBtn">Deck importieren</button>
+  <span id="deckLoading" style="display:none; margin-left:12px; color:#ffcb05;">Deck wird geladen…</span>
+</div>
+
+<div id="metaDeckArea" style="display:none;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <h2 style="margin:0;">Meta-Deck wählen</h2>
+    <img id="metaInkIcon1" src="" alt="" style="height:28px;vertical-align:middle;display:none;">
+    <img id="metaInkIcon2" src="" alt="" style="height:28px;vertical-align:middle;display:none;">
+    <select id="presetDecks" style="
+      background: #181818;
+      color: #fff;
+      border: 1.5px solid #ffcb05;
+      border-radius: 6px;
+      font-size: 1.1em;
+      padding: 6px 12px;
+      min-width: 260px;
+    ">
+      <option value="">-- Bitte wählen --</option>
+      <option value="starter-amber-amethyst">Starterdeck Amber/Amethyst</option>
+      <option value="starter-emerald-ruby">Starterdeck Emerald/Ruby</option>
+      <option value="starter-steel-sapphire">Starterdeck Steel/Sapphire</option>
+    </select>
+    <button id="importMetaDeckBtn" disabled>Deck importieren</button>
+  </div>
+</div>
+
+<button id="chooseOtherDeckBtn" style="display:none;">Anderes Deck wählen</button>
+
+
+    
+
+<div id="mulliganModeArea" style="
+  margin: 32px 0 18px 0;
+  padding: 18px 18px 12px 18px;
+  background: #232323;
+  border-radius: 12px;
+  border: 2px solid #ffcb05;
+  box-shadow: 0 2px 12px #0005;
+  max-width: 600px;
+">
+  <div style="font-size:1.2em; font-weight:bold; color:#ffcb05; margin-bottom:10px;">
+    Mulligan-Situation wählen
+  </div>
+  <div style="display:flex; flex-wrap:wrap; gap:18px; align-items:center;">
+    <div>
+      <label for="mulliganRole" style="font-weight:bold;">Situation:</label>
+      <select id="mulliganRole" style="margin-left:8px; padding:4px 8px;">
+        <option value="otp-unknown">On the Play – Gegner unbekannt</option>
+        <option value="otd-unknown">On the Draw – Gegner unbekannt</option>
+        <option value="otp-meta">On the Play – Meta-Deck wählen</option>
+        <option value="otd-meta">On the Draw – Meta-Deck wählen</option>
+        <option value="random-role">Zufällig OTP/OTD – Gegner unbekannt</option>
+        <option value="random-meta">Zufällig OTP/OTD – zufälliges Meta-Deck</option>
+      </select>
+    </div>
+    <div id="opponentDeckArea" style="display:flex; align-items:center;">
+      <label for="opponentDeckSelect" style="font-weight:bold; margin-right:6px;">Meta-Deck:</label>
+      <select id="opponentDeckSelect" style="padding:4px 8px;">
+        <option value="">-- Meta-Deck wählen --</option>
+        <option value="starter-amber-amethyst">Starterdeck Amber/Amethyst</option>
+        <option value="starter-emerald-ruby">Starterdeck Emerald/Ruby</option>
+        <option value="starter-steel-sapphire">Starterdeck Steel/Sapphire</option>
+      </select>
+    </div>
+  </div>
+  <div id="situationInfo" style="margin:14px 0 0 0; font-size:1.1em; color:#ffcb05;"></div>
+</div>
+
+<div id="situationInfo" style="margin:10px 0 6px 0; font-size:1.1em; color:#ffcb05;"></div>
+
+<div id="hand" style="margin: 18px 0 18px 0;"></div>
+
+<button id="drawHandBtn" disabled>Hand ziehen (7 Karten)</button>
+
+  <button id="mulliganBtn">Mulligan durchführen</button>
+  <button id="newHandBtn">Neue Starthand ziehen</button>
+
+<br>
+<br>
+<br>
+
+<div id="historyExportArea" style="display:none;">
+ <button id="exportHistoryUnifiedBtn">Mulligan-Historie herunterladen</button>
+ <button id="clearHistoryBtn" style="margin-left:8px; background:#444;">Mulligan-Historie löschen</button>
+ <br>
+ <h3 style="display:inline-block; margin-left:18px;">Mulligan-Historie:</h3>
+</div>
+
+<div id="mulliganHistory"></div>
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="cardImageMap.js"></script>
+<script>
+  // --- Konstanten & DOM-Elemente ---
+const proxyUrl = 'https://monstersink.team/proxy.php?name=';
+let deck = [];
+let currentHand = [];
+const selectedIndices = new Set();
+let mulliganHistory = [];
+
+const deckLoading = document.getElementById('deckLoading');
+const importBtn = document.getElementById('importDeckBtn');
+const drawHandBtn = document.getElementById('drawHandBtn');
+const mulliganBtn = document.getElementById('mulliganBtn');
+const newHandBtn = document.getElementById('newHandBtn');
+const exportHistoryBtn = document.getElementById('exportHistoryBtn');
+const handDiv = document.getElementById('hand');
+
+
+const deckModeArea = document.getElementById('deckModeArea');
+
+const mulliganHistoryDiv = document.getElementById('mulliganHistory');
+const presetDecksSelect = document.getElementById('presetDecks');
+const chooseOtherDeckBtn = document.getElementById('chooseOtherDeckBtn');
+const deckMode = document.getElementById('deckMode');
+const customDeckArea = document.getElementById('customDeckArea');
+const metaDeckArea = document.getElementById('metaDeckArea');
+const importMetaDeckBtn = document.getElementById('importMetaDeckBtn');
+const mulliganRole = document.getElementById('mulliganRole');
+const opponentDeckSelect = document.getElementById('opponentDeckSelect');
+const situationInfo = document.getElementById('situationInfo');
+// --- Vorgefertigte Decks ---
+let presetDecks = {};
+
+async function loadMetaDecks() {
+  try {
+    const response = await fetch('metadecks.json');
+    presetDecks = await response.json();
+
+    // Select-Optionen dynamisch füllen
+    const presetDecksSelect = document.getElementById('presetDecks');
+    const opponentDeckSelect = document.getElementById('opponentDeckSelect');
+    [presetDecksSelect, opponentDeckSelect].forEach(select => {
+      if (!select) return;
+      // Entferne alte Optionen (außer die erste)
+      while (select.options.length > 1) select.remove(1);
+      Object.entries(presetDecks).forEach(([key, deck]) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = deck.name || key;
+        select.appendChild(opt);
+      });
+    });
+  } catch (e) {
+    await showInfoDialog('Meta-Decks konnten nicht geladen werden.');
+  }
+}
+
+// Direkt beim Laden aufrufen:
+const inkIcons = {
+  amber: 'kartenbilder/ink-amber.webp',
+  amethyst: 'kartenbilder/ink-amethyst.webp',
+  emerald: 'kartenbilder/ink-emerald.webp',
+  ruby: 'inkickartenbilderons/ink-ruby.webp',
+  sapphire: 'kartenbilder/ink-sapphire.webp',
+  steel: 'kartenbilder/ink-steel.webp'
+};
+
+function updateDeckInkIcons() {
+  const deckInkIcon1 = document.getElementById('deckInkIcon1');
+  const deckInkIcon2 = document.getElementById('deckInkIcon2');
+  const val = presetDecksSelect.value;
+  if (presetDecks[val]) {
+    const inks = getInksForDeckName(presetDecks[val].name || val);
+    if (inks[0] && inkIcons[inks[0]]) {
+      deckInkIcon1.src = inkIcons[inks[0]];
+      deckInkIcon1.style.display = '';
+    } else {
+      deckInkIcon1.style.display = 'none';
+    }
+    if (inks[1] && inkIcons[inks[1]]) {
+      deckInkIcon2.src = inkIcons[inks[1]];
+      deckInkIcon2.style.display = '';
+    } else {
+      deckInkIcon2.style.display = 'none';
+    }
+  } else {
+    deckInkIcon1.style.display = 'none';
+    deckInkIcon2.style.display = 'none';
+  }
+}
+
+function updateAllInkIcons() {
+  // Für Deck-Auswahl oben
+  const deckInkIcon1 = document.getElementById('deckInkIcon1');
+  const deckInkIcon2 = document.getElementById('deckInkIcon2');
+  const deckVal = presetDecksSelect.value;
+  if (presetDecks[deckVal]) {
+    const inks = getInksForDeckName(presetDecks[deckVal].name || deckVal);
+    if (inks[0] && inkIcons[inks[0]]) {
+      deckInkIcon1.src = inkIcons[inks[0]];
+      deckInkIcon1.style.display = '';
+    } else {
+      deckInkIcon1.style.display = 'none';
+    }
+    if (inks[1] && inkIcons[inks[1]]) {
+      deckInkIcon2.src = inkIcons[inks[1]];
+      deckInkIcon2.style.display = '';
+    } else {
+      deckInkIcon2.style.display = 'none';
+    }
+  } else {
+    deckInkIcon1.style.display = 'none';
+    deckInkIcon2.style.display = 'none';
+  }
+
+  // Für Meta-Deck-Auswahl
+  const metaInkIcon1 = document.getElementById('metaInkIcon1');
+  const metaInkIcon2 = document.getElementById('metaInkIcon2');
+  if (presetDecks[deckVal]) {
+    const inks = getInksForDeckName(presetDecks[deckVal].name || deckVal);
+    if (inks[0] && inkIcons[inks[0]]) {
+      metaInkIcon1.src = inkIcons[inks[0]];
+      metaInkIcon1.style.display = '';
+    } else {
+      metaInkIcon1.style.display = 'none';
+    }
+    if (inks[1] && inkIcons[inks[1]]) {
+      metaInkIcon2.src = inkIcons[inks[1]];
+      metaInkIcon2.style.display = '';
+    } else {
+      metaInkIcon2.style.display = 'none';
+    }
+  } else {
+    metaInkIcon1.style.display = 'none';
+    metaInkIcon2.style.display = 'none';
+  }
+}
+
+// Event-Handler anpassen:
+deckMode.addEventListener('change', function() {
+  if (deckMode.value === 'meta') {
+    customDeckArea.style.display = 'none';
+    metaDeckArea.style.display = '';
+    updateAllInkIcons();
+  } else {
+    customDeckArea.style.display = '';
+    metaDeckArea.style.display = 'none';
+    document.getElementById('deckInkIcon1').style.display = 'none';
+    document.getElementById('deckInkIcon2').style.display = 'none';
+    document.getElementById('metaInkIcon1').style.display = 'none';
+    document.getElementById('metaInkIcon2').style.display = 'none';
+  }
+});
+
+presetDecksSelect.addEventListener('change', function() {
+  updateDeckInkIcons();
+  importMetaDeckBtn.disabled = !presetDecks[this.value];
+});
+
+deckMode.addEventListener('change', function() {
+  if (deckMode.value === 'meta') {
+    customDeckArea.style.display = 'none';
+    metaDeckArea.style.display = '';
+  } else {
+    customDeckArea.style.display = '';
+    metaDeckArea.style.display = 'none';
+  }
+});
+// Beim Laden einmal ausführen, damit der richtige Bereich angezeigt wird:
+deckMode.dispatchEvent(new Event('change'));
+
+loadMetaDecks();
+
+
+let deckOpen = false;
+
+const nameCorrections = {
+  "Snow White - Fair-hearted": "Snow White - Fair-haired",
+  "Seven Dwarfs' Mine - Secure Fortress": "Seven Dwarfs' Mine"
+};
+
+
+clearHistoryBtn.addEventListener('click', () => {
+  showDeleteHistoryDialog().then(confirmed => {
+    if (confirmed) {
+      mulliganHistory = [];
+      updateMulliganHistory();
+    }
+  });
+});
+
+function showDeleteHistoryDialog() {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('historyDeleteDialog');
+    dialog.style.display = 'flex';
+    const yesBtn = document.getElementById('deleteDialogYesBtn');
+    const noBtn = document.getElementById('deleteDialogNoBtn');
+
+    function cleanup(result) {
+      dialog.style.display = 'none';
+      yesBtn.removeEventListener('click', onYes);
+      noBtn.removeEventListener('click', onNo);
+      resolve(result);
+    }
+    function onYes() { cleanup(true); }
+    function onNo() { cleanup(false); }
+
+    yesBtn.addEventListener('click', onYes);
+    noBtn.addEventListener('click', onNo);
+  });
+}
+
+// --- Hilfsfunktionen ---
+
+function promptFilename(defaultName) {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('filenameDialog');
+    const input = document.getElementById('filenameInput');
+    const okBtn = document.getElementById('filenameOkBtn');
+    const cancelBtn = document.getElementById('filenameCancelBtn');
+    input.value = defaultName || '';
+    dialog.style.display = 'flex';
+    input.focus();
+
+    function cleanup(result) {
+      dialog.style.display = 'none';
+      okBtn.removeEventListener('click', onOk);
+      cancelBtn.removeEventListener('click', onCancel);
+      input.removeEventListener('keydown', onKey);
+      resolve(result);
+    }
+    function onOk() {
+      let val = input.value.trim();
+      if (!val) val = defaultName;
+      cleanup(val);
+    }
+    function onCancel() { cleanup(null); }
+    function onKey(e) {
+      if (e.key === 'Enter') onOk();
+      if (e.key === 'Escape') onCancel();
+    }
+    okBtn.addEventListener('click', onOk);
+    cancelBtn.addEventListener('click', onCancel);
+    input.addEventListener('keydown', onKey);
+  });
+}
+
+function showInfoDialog(msg) {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('infoDialog');
+    const msgDiv = document.getElementById('infoDialogMsg');
+    const okBtn = document.getElementById('infoDialogOkBtn');
+    msgDiv.textContent = msg;
+    dialog.style.display = 'flex';
+    function cleanup() {
+      dialog.style.display = 'none';
+      okBtn.removeEventListener('click', onOk);
+      resolve();
+    }
+    function onOk() { cleanup(); }
+    okBtn.addEventListener('click', onOk);
+  });
+}
+function promptHistoryExport() {
+  if (!mulliganHistory.length) return Promise.resolve('discard');
+  return new Promise(resolve => {
+    const dialog = document.getElementById('historyExportDialog');
+    dialog.style.display = 'flex';
+    const htmlBtn = document.getElementById('exportDialogHtmlBtn');
+    const txtBtn = document.getElementById('exportDialogTxtBtn');
+    const cancelBtn = document.getElementById('exportDialogCancelBtn');
+
+    function cleanup(result) {
+      dialog.style.display = 'none';
+      htmlBtn.removeEventListener('click', onHtml);
+      txtBtn.removeEventListener('click', onTxt);
+      cancelBtn.removeEventListener('click', onCancel);
+      resolve(result);
+    }
+    function onHtml() { cleanup('html'); }
+    function onTxt() { cleanup('txt'); }
+    function onCancel() { cleanup('discard'); }
+
+    htmlBtn.addEventListener('click', onHtml);
+    txtBtn.addEventListener('click', onTxt);
+    cancelBtn.addEventListener('click', onCancel);
+  });
+}
+
+function shuffle(array) {
+  for (let i = array.length -1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let currentMulliganSituation = {
+  role: 'otp', // 'otp' oder 'otd'
+  opponent: 'unknown', // 'unknown' oder Deck-Name
+};
+
+function determineMulliganSituation() {
+  const val = mulliganRole.value;
+  if (val === 'otp-unknown') {
+    currentMulliganSituation = { role: 'otp', opponent: 'unknown' };
+  } else if (val === 'otd-unknown') {
+    currentMulliganSituation = { role: 'otd', opponent: 'unknown' };
+  } else if (val === 'otp-meta') {
+    currentMulliganSituation = { role: 'otp', opponent: opponentDeckSelect.value || 'unknown' };
+  } else if (val === 'otd-meta') {
+    currentMulliganSituation = { role: 'otd', opponent: opponentDeckSelect.value || 'unknown' };
+  } else if (val === 'random-role') {
+    currentMulliganSituation = { role: Math.random() < 0.5 ? 'otp' : 'otd', opponent: 'unknown' };
+  } else if (val === 'random-meta') {
+    const metaDecks = Object.keys(presetDecks);
+    const randomDeck = metaDecks[Math.floor(Math.random() * metaDecks.length)];
+    currentMulliganSituation = { role: Math.random() < 0.5 ? 'otp' : 'otd', opponent: randomDeck };
+  }
+}
+
+function updateSituationInfo() {
+  let text = (currentMulliganSituation.role === 'otp' ? 'On the Play (OTP)' : 'On the Draw (OTD)');
+  if (currentMulliganSituation.opponent && currentMulliganSituation.opponent !== 'unknown') {
+    text += ' vs. ' + (presetDecks[currentMulliganSituation.opponent] ? document.querySelector(`#opponentDeckSelect option[value="${currentMulliganSituation.opponent}"], #presetDecks option[value="${currentMulliganSituation.opponent}"]`)?.textContent || currentMulliganSituation.opponent : currentMulliganSituation.opponent);
+  } else {
+    text += ' vs. unbekannt';
+  }
+  situationInfo.textContent = text;
+}
+
+function updateDeckDisplay() {
+  const deckImagesBox = document.getElementById('deckImagesBox');
+  deckImagesBox.innerHTML = '';
+  const grouped = {};
+  deck.forEach(card => {
+    const key = (card.Name || '') + '|' + (card.Image || '');
+    if (!grouped[key]) grouped[key] = { card, count: 0 };
+    grouped[key].count++;
+  });
+  Object.values(grouped).forEach(({card, count}) => {
+    const wrap = document.createElement('div');
+    wrap.style.position = 'relative';
+    wrap.style.display = 'inline-block';
+
+    const img = document.createElement('img');
+    img.src = card.Image || '';
+    img.alt = card.Name || '';
+    img.title = (card.Name || '') + (count > 1 ? ` (${count}x)` : '');
+    img.className = 'deck-card-img';
+    wrap.appendChild(img);
+
+    if (count > 1) {
+      const badge = document.createElement('span');
+      badge.textContent = count;
+      badge.className = 'deck-card-badge';
+      wrap.appendChild(badge);
+    }
+    deckImagesBox.appendChild(wrap);
+  });
+}
+
+function showHand(hand, selectable = true) {
+  handDiv.innerHTML = '';
+  hand.forEach((card, i) => {
+    const img = document.createElement('img');
+    img.src = card.Image || '';
+    img.alt = card.Name || '(unbekannte Karte)';
+    img.title = card.Name || '';
+    img.dataset.index = i;
+    if (selectedIndices.has(i)) img.classList.add('selected');
+    if (selectable) {
+      img.addEventListener('click', () => {
+        if (selectedIndices.has(i)) {
+          selectedIndices.delete(i);
+          img.classList.remove('selected');
+        } else {
+          selectedIndices.add(i);
+          img.classList.add('selected');
+        }
+        
+      });
+      img.style.pointerEvents = '';
+      img.style.cursor = '';
+    } else {
+      img.style.pointerEvents = 'none';
+      img.style.cursor = 'not-allowed';
+    }
+    handDiv.appendChild(img);
+  });
+}
+
+function updateMulliganHistory() {
+  mulliganHistoryDiv.innerHTML = '';
+  mulliganHistory.forEach((entry, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'mulligan-history-entry';
+
+    // Situation-Zeile (alleinstehend oben)
+    const situationDiv = document.createElement('div');
+    situationDiv.style.fontWeight = 'bold';
+    situationDiv.style.color = '#ffcb05';
+    situationDiv.style.marginBottom = '6px';
+    let sitText = (entry.situation.role === 'otp' ? 'On the Play (OTP)' : 'On the Draw (OTD)');
+    if (entry.situation.opponent && entry.situation.opponent !== 'unknown') {
+      const deckName = presetDecks[entry.situation.opponent]
+        ? document.querySelector(`#opponentDeckSelect option[value="${entry.situation.opponent}"], #presetDecks option[value="${entry.situation.opponent}"]`)?.textContent || entry.situation.opponent
+        : entry.situation.opponent;
+      sitText += ' vs. ' + deckName;
+    } else {
+      sitText += ' vs. unbekannt';
+    }
+
+  // Bereich nur anzeigen, wenn mindestens ein Eintrag vorhanden ist
+  const historyExportArea = document.getElementById('historyExportArea');
+  if (historyExportArea) {
+    historyExportArea.style.display = mulliganHistory.length > 0 ? '' : 'none';
+  }
+    situationDiv.textContent = sitText;
+    wrap.appendChild(situationDiv);
+
+    // Vorherige Hand
+  const beforeDiv = document.createElement('div');
+beforeDiv.style.marginBottom = '2px';
+const beforeLabel = document.createElement('div');
+beforeLabel.innerHTML = `<b>Hand vor Mulligan:</b>`;
+beforeDiv.appendChild(beforeLabel);
+const beforeCards = document.createElement('div');
+entry.before.forEach((card, i) => {
+  const img = document.createElement('img');
+  img.src = card.Image || '';
+  img.alt = card.Name || '';
+  img.title = card.Name || '';
+  img.className = 'card-img';
+  if (entry.exchanged[i]) img.classList.add('exchanged');
+  beforeCards.appendChild(img);
+});
+beforeDiv.appendChild(beforeCards);
+wrap.appendChild(beforeDiv);
+
+// Nachherige Hand
+const afterDiv = document.createElement('div');
+afterDiv.style.marginTop = '6px';
+const afterLabel = document.createElement('div');
+afterLabel.innerHTML = `<b>Neue Hand:</b>`;
+afterDiv.appendChild(afterLabel);
+const afterCards = document.createElement('div');
+entry.after.forEach(card => {
+  const img = document.createElement('img');
+  img.src = card.Image || '';
+  img.alt = card.Name || '';
+  img.title = card.Name || '';
+  img.className = 'card-img';
+  afterCards.appendChild(img);
+});
+afterDiv.appendChild(afterCards);
+wrap.appendChild(afterDiv);
+
+    mulliganHistoryDiv.appendChild(wrap);
+  });
+}
+
+// --- Event-Handler ---
+
+deckMode.addEventListener('change', function() {
+  const deckInkIcon1 = document.getElementById('deckInkIcon1');
+  const deckInkIcon2 = document.getElementById('deckInkIcon2');
+  if (deckMode.value === 'meta') {
+    customDeckArea.style.display = 'none';
+    metaDeckArea.style.display = '';
+
+    // Zeige die Farben des aktuell gewählten Meta-Decks
+    const val = presetDecksSelect.value;
+    if (presetDecks[val]) {
+      const inks = getInksForDeckName(presetDecks[val].name || val);
+      if (inks[0] && inkIcons[inks[0]]) {
+        deckInkIcon1.src = inkIcons[inks[0]];
+        deckInkIcon1.style.display = '';
+      } else {
+        deckInkIcon1.style.display = 'none';
+      }
+      if (inks[1] && inkIcons[inks[1]]) {
+        deckInkIcon2.src = inkIcons[inks[1]];
+        deckInkIcon2.style.display = '';
+      } else {
+        deckInkIcon2.style.display = 'none';
+      }
+    } else {
+      deckInkIcon1.style.display = 'none';
+      deckInkIcon2.style.display = 'none';
+    }
+  } else {
+    customDeckArea.style.display = '';
+    metaDeckArea.style.display = 'none';
+    deckInkIcon1.style.display = 'none';
+    deckInkIcon2.style.display = 'none';
+  }
+});
+
+// Aktualisiere die Icons auch, wenn das Meta-Deck gewechselt wird:
+presetDecksSelect.addEventListener('change', function() {
+  const deckInkIcon1 = document.getElementById('deckInkIcon1');
+  const deckInkIcon2 = document.getElementById('deckInkIcon2');
+  if (presetDecks[this.value]) {
+    const inks = getInksForDeckName(presetDecks[this.value].name || this.value);
+    if (inks[0] && inkIcons[inks[0]]) {
+      deckInkIcon1.src = inkIcons[inks[0]];
+      deckInkIcon1.style.display = '';
+    } else {
+      deckInkIcon1.style.display = 'none';
+    }
+    if (inks[1] && inkIcons[inks[1]]) {
+      deckInkIcon2.src = inkIcons[inks[1]];
+      deckInkIcon2.style.display = '';
+    } else {
+      deckInkIcon2.style.display = 'none';
+    }
+  } else {
+    deckInkIcon1.style.display = 'none';
+    deckInkIcon2.style.display = 'none';
+  }
+});
+
+presetDecksSelect.addEventListener('change', function() {
+  importMetaDeckBtn.disabled = !presetDecks[this.value];
+});
+
+importMetaDeckBtn.addEventListener('click', () => {
+  const key = presetDecksSelect.value;
+  const deckKey = Object.keys(presetDecks).find(k => k.toLowerCase() === key.toLowerCase());
+  if (deckKey && presetDecks[deckKey]) {
+    deckInput.value = presetDecks[deckKey].list;
+    importBtn.click();
+  }
+});
+
+importBtn.addEventListener('click', async () => {
+  const rawText = deckInput.value.trim();
+  if (!rawText) {
+    await showInfoDialog('Bitte Deck einfügen.');
+    return;
+  }
+
+  let error = false;
+  deckLoading.style.display = ''; // Ladeanzeige EIN
+
+  const lines = rawText.split('\n').filter(line => line.trim() !== '');
+  deck = [];
+  let totalCards = 0;
+
+  for (const line of lines) {
+  const match = line.match(/^(\d+)\s+(.+)$/);
+  if (!match) continue;
+
+  const count = parseInt(match[1]);
+  let name = match[2];
+
+  if (nameCorrections[name]) {
+    name = nameCorrections[name];
+  }
+
+  const imageFile = cardImageMap[name] || cardImageMap[name.toLowerCase()];;
+  const imageUrl = imageFile ? '/kartenbilder/' + imageFile : '';
+
+  if (!imageFile) {
+    error = true;
+    await showInfoDialog(`Karte nicht gefunden: ${name}`);
+    continue;
+  }
+
+  const card = { Name: name, Image: imageUrl };
+  for (let i = 0; i < count; i++) {
+    deck.push(card);
+    totalCards++;
+  }
+}
+
+  updateDeckDisplay();
+
+  drawHandBtn.disabled = deck.length < 7;
+
+  mulliganBtn.style.display = 'none';
+  newHandBtn.style.display = 'none';
+  drawHandBtn.style.display = 'inline-block';
+  handDiv.innerHTML = '';
+  currentHand = [];
+  selectedIndices.clear();
+
+  customDeckArea.style.display = 'none';
+  metaDeckArea.style.display = 'none';
+  deckModeArea.style.display = 'none';
+  chooseOtherDeckBtn.style.display = 'inline-block';
+  
+
+  deckLoading.style.display = 'none'; // Ladeanzeige AUS
+
+  if (!error && deck.length > 0) {
+    await showInfoDialog(`Deck erfolgreich geladen (${totalCards} Karten)!`);
+  } else if (!error && deck.length === 0) {
+    error = true;
+    await showInfoDialog('Es wurden keine Karten importiert.');
+  }
+});
+
+ 
+
+
+mulliganRole.addEventListener('change', () => {
+  const opponentDeckArea = document.getElementById('opponentDeckArea');
+  if (mulliganRole.value === 'otp-meta' || mulliganRole.value === 'otd-meta') {
+    opponentDeckArea.style.display = 'flex';
+  } else {
+    opponentDeckArea.style.display = 'none';
+    opponentDeckSelect.value = '';
+  }
+});
+mulliganRole.dispatchEvent(new Event('change'));
+
+
+drawHandBtn.addEventListener('click', () => {
+  determineMulliganSituation();
+  updateSituationInfo();
+  if (deck.length < 7) {
+    
+    return;
+  }
+  deck = shuffle(deck);
+  currentHand = deck.splice(0,7);
+  showHand(currentHand, true);
+  
+  selectedIndices.clear();
+
+  
+
+  mulliganBtn.style.display = 'inline-block';
+  newHandBtn.style.display = 'none';
+  drawHandBtn.style.display = 'none';
+});
+
+mulliganBtn.addEventListener('click', () => {
+  
+  const mulliganCards = [];
+  const keptCards = [];
+
+  currentHand.forEach((card, i) => {
+    if (selectedIndices.has(i)) {
+      mulliganCards.push(card);
+    } else {
+      keptCards.push(card);
+    }
+  });
+
+  deck = deck.concat(mulliganCards);
+  deck = shuffle(deck);
+
+  const newCards = deck.splice(0, selectedIndices.size);
+
+  mulliganHistory.push({
+    before: [...currentHand],
+    exchanged: currentHand.map((c, i) => selectedIndices.has(i)),
+    after: keptCards.concat(newCards),
+    situation: { ...currentMulliganSituation }
+  });
+
+  currentHand = keptCards.concat(newCards);
+  showHand(currentHand, false);
+  
+  selectedIndices.clear();
+
+  mulliganBtn.style.display = 'none';
+  newHandBtn.style.display = 'inline-block';
+  drawHandBtn.style.display = 'none';
+
+  updateMulliganHistory();
+});
+
+newHandBtn.addEventListener('click', () => {
+  determineMulliganSituation();        
+  updateSituationInfo();  
+  if (deck.length < 7) {
+    
+    return;
+  }
+  deck = deck.concat(currentHand);
+  deck = shuffle(deck);
+
+  currentHand = deck.splice(0, 7);
+  showHand(currentHand, true);
+  
+  selectedIndices.clear();
+
+  mulliganBtn.style.display = 'inline-block';
+  newHandBtn.style.display = 'none';
+  drawHandBtn.style.display = 'none';
+  updateMulliganHistory();
+});
+
+
+  const css = `
+    <style>
+      body { background: #181818; color: #fff; font-family: sans-serif; }
+      .mulligan-history-entry {
+        background: #181818;
+        border-radius: 8px;
+        border: 1px solid #333;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        box-shadow: 0 2px 8px #0004;
+      }
+      .mulligan-history-entry b { color: #ffcb05; }
+      .card-img {
+        height: 96px;
+        margin: 2px 4px 2px 0;
+        border-radius: 6px;
+        border: 2px solid transparent;
+        vertical-align: middle;
+        transition: border 0.2s, opacity 0.2s;
+      }
+      .card-img.exchanged {
+        opacity: 0.35;
+        border: 2px solid #ff4e4e;
+        filter: grayscale(0.7);
+        position: relative;
+      }
+      .card-img.exchanged::after {
+        content: "✗";
+        color: #ff4e4e;
+        font-size: 2.5em;
+        position: absolute;
+        left: 18px;
+        top: 0;
+        pointer-events: none;
+      }
+    </style>
+  `;
+  
+
+// Nach loadMetaDecks();
+presetDecksSelect.addEventListener('change', function() {
+  const val = this.value;
+  const metaInkIcon1 = document.getElementById('metaInkIcon1');
+  const metaInkIcon2 = document.getElementById('metaInkIcon2');
+  const importMetaDeckBtn = document.getElementById('importMetaDeckBtn');
+  if (presetDecks[val]) {
+    const inks = getInksForDeckName(presetDecks[val].name || val);
+    if (inks[0] && inkIcons[inks[0]]) {
+      metaInkIcon1.src = inkIcons[inks[0]];
+      metaInkIcon1.style.display = '';
+    } else {
+      metaInkIcon1.style.display = 'none';
+    }
+    if (inks[1] && inkIcons[inks[1]]) {
+      metaInkIcon2.src = inkIcons[inks[1]];
+      metaInkIcon2.style.display = '';
+    } else {
+      metaInkIcon2.style.display = 'none';
+    }
+    importMetaDeckBtn.disabled = false;
+  } else {
+    metaInkIcon1.style.display = 'none';
+    metaInkIcon2.style.display = 'none';
+    importMetaDeckBtn.disabled = true;
+  }
+});
+// Beim Laden einmal ausführen:
+presetDecksSelect.dispatchEvent(new Event('change'));
+
+chooseOtherDeckBtn.addEventListener('click', async () => {
+  // Prüfe, ob Historie vorhanden ist und frage nach Export
+  const exportChoice = await promptHistoryExport();
+  if (exportChoice === 'html' || exportChoice === 'txt') {
+    exportHistoryUnifiedBtn.click();
+  }
+  // Historie zurücksetzen
+  mulliganHistory = [];
+  updateMulliganHistory();
+
+  deckMode.value = 'custom'; 
+
+  deckModeArea.style.display = '';          // Deck-Auswahl Dropdown wieder anzeigen
+  customDeckArea.style.display = '';       // Eigenes Deck-Bereich wieder anzeigen
+  metaDeckArea.style.display = 'none';     // Meta-Deck-Bereich ausblenden (Standard: eigenes Deck)
+  chooseOtherDeckBtn.style.display = 'none';
+  deckInput.value = '';
+  
+  drawHandBtn.disabled = true;
+  handDiv.innerHTML = '';
+  deck = [];
+  currentHand = [];
+  selectedIndices.clear();
+  updateDeckDisplay();
+});
+
+const exportHistoryUnifiedBtn = document.getElementById('exportHistoryUnifiedBtn');
+const exportHistoryFormat = document.getElementById('exportHistoryFormat');
+
+exportHistoryUnifiedBtn.addEventListener('click', async () => {
+  if (!mulliganHistory.length) {
+    alert('Keine Mulligan-Historie vorhanden.');
+    return;
+  }
+  // Dialog anzeigen und auf Auswahl warten
+  const format = await promptHistoryExport();
+  if (format === 'discard') return;
+
+  // Dateinamen abfragen
+  let defaultName = format === 'html' ? 'mulligan-historie.html' : 'mulligan-historie.txt';
+  const filename = await promptFilename(defaultName);
+  if (!filename) return;
+
+  if (format === 'html') {
+    // HTML-Export (wie gehabt)
+    const histDiv = document.getElementById('mulliganHistory');
+    const clone = histDiv.cloneNode(true);
+    const imgElements = clone.querySelectorAll('img');
+    for (const img of imgElements){
+      if (img.src && !img.src.startsWith('data:')) {
+        try {
+          const response = await fetch(img.src);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          await new Promise(resolve => {
+            reader.onload = () => {
+              img.src = reader.result;
+              resolve();
+            };
+            reader.readAsDataURL(blob);
+          });
+        } catch (e) {
+          // Bild konnte nicht geladen werden, lasse src wie es ist
+        }
+      }
+    }
+    const css = `
+      <style>
+        body { background: #181818; color: #fff; font-family: sans-serif; }
+        .mulligan-history-entry {
+          background: #181818;
+          border-radius: 8px;
+          border: 1px solid #333;
+          padding: 10px 12px;
+          margin-bottom: 18px;
+          box-shadow: 0 2px 8px #0004;
+        }
+        .mulligan-history-entry b { color: #ffcb05; }
+        .card-img {
+          height: 96px;
+          margin: 2px 4px 2px 0;
+          border-radius: 6px;
+          border: 2px solid transparent;
+          vertical-align: middle;
+          transition: border 0.2s, opacity 0.2s;
+        }
+        .card-img.exchanged {
+          opacity: 0.35;
+          border: 2px solid #ff4e4e;
+          filter: grayscale(0.7);
+          position: relative;
+        }
+        .card-img.exchanged::after {
+          content: "✗";
+          color: #ff4e4e;
+          font-size: 2.5em;
+          position: absolute;
+          left: 18px;
+          top: 0;
+          pointer-events: none;
+        }
+      </style>
+    `;
+    const html = `
+      <html><head><meta charset="UTF-8"><title>Mulligan-Historie</title>${css}</head>
+      <body>${clone.innerHTML}</body></html>
+    `;
+    const blob = new Blob([html], {type: 'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename.endsWith('.html') ? filename : filename + '.html';
+    a.click();
+    URL.revokeObjectURL(url);
+  } else if (format === 'txt') {
+    // TXT-Export
+    let txt = '';
+    mulliganHistory.forEach((entry, idx) => {
+      let sitText = (entry.situation.role === 'otp' ? 'On the Play (OTP)' : 'On the Draw (OTD)');
+      if (entry.situation.opponent && entry.situation.opponent !== 'unknown') {
+        const deckName = presetDecks[entry.situation.opponent]
+          ? document.querySelector(`#opponentDeckSelect option[value="${entry.situation.opponent}"], #presetDecks option[value="${entry.situation.opponent}"]`)?.textContent || entry.situation.opponent
+          : entry.situation.opponent;
+        sitText += ' vs. ' + deckName;
+      } else {
+        sitText += ' vs. unbekannt';
+      }
+      txt += `#${idx + 1}: ${sitText}\n`;
+      txt += 'Hand vor Mulligan: ' + entry.before.map((c, i) =>
+        `${c.Name}${entry.exchanged[i] ? ' (getauscht)' : ''}`
+      ).join(', ') + '\n';
+      txt += 'Neue Hand: ' + entry.after.map(c => c.Name).join(', ') + '\n\n';
+    });
+
+    const blob = new Blob([txt], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename.endsWith('.txt') ? filename : filename + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+});
+ 
+</script>
+
+<div id="historyExportDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#222; color:#fff; padding:32px 24px; border-radius:12px; box-shadow:0 4px 24px #000a; min-width:260px; text-align:center;">
+    <div style="margin-bottom:18px; font-size:1.1em;">Mulligan-Historie speichern?</div>
+    <button id="exportDialogHtmlBtn" style="margin:6px;">Als HTML speichern</button>
+    <button id="exportDialogTxtBtn" style="margin:6px;">Als Text speichern</button>
+    <button id="exportDialogCancelBtn" style="margin:6px; background:#444;">Verwerfen</button>
+  </div>
+</div>
+
+<div id="historyDeleteDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#222; color:#fff; padding:32px 24px; border-radius:12px; box-shadow:0 4px 24px #000a; min-width:260px; text-align:center;">
+    <div style="margin-bottom:18px; font-size:1.1em;">Mulligan-Historie wirklich löschen?</div>
+    <button id="deleteDialogYesBtn" style="margin:6px; background:#ff4e4e;">Ja, löschen</button>
+    <button id="deleteDialogNoBtn" style="margin:6px; background:#444;">Abbrechen</button>
+  </div>
+</div>
+
+<div id="infoDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#222; color:#fff; padding:32px 24px; border-radius:12px; box-shadow:0 4px 24px #000a; min-width:260px; text-align:center;">
+    <div id="infoDialogMsg" style="margin-bottom:18px; font-size:1.1em;"></div>
+    <button id="infoDialogOkBtn" style="margin:6px; background:#2196f3;">OK</button>
+  </div>
+</div>
+
+<div id="filenameDialog" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#222; color:#fff; padding:32px 24px; border-radius:12px; box-shadow:0 4px 24px #000a; min-width:260px; text-align:center;">
+    <div style="margin-bottom:18px; font-size:1.1em;">Dateiname wählen:</div>
+    <input id="filenameInput" type="text" style="padding:6px 10px; border-radius:6px; border:1px solid #888; width:80%; margin-bottom:14px;" />
+    <br>
+    <button id="filenameOkBtn" style="margin:6px; background:#2196f3;">OK</button>
+    <button id="filenameCancelBtn" style="margin:6px; background:#444;">Abbrechen</button>
+  </div>
+</div>
+
+</body>
+</html>
